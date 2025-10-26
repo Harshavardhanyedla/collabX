@@ -52,7 +52,7 @@ The project is organized to be **modular, scalable, and easy to navigate**:
 - **Data**: Sample JSON data for roadmaps, projects, and community posts  
 - **Assets**: Images, icons, and other static resources  
 
-This structure ensures the codebase is **clean, maintainable, and scalable**, making it easier for contributors to understand and extend the project.---
+This structure ensures the codebase is **clean, maintainable, and scalable**, making it easier for contributors to understand and extend the project.
 
 ## 📱 Pages & Features
 
