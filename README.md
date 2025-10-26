@@ -109,7 +109,7 @@ src/
 
 ---
 
-📝 License
+### 📝 License
 All Rights Reserved © 2025 Harsha Vardhan
 This software is the intellectual property of Harsha Vardhan. No part of this code may be copied, modified, distributed, or used without explicit written permission from the author.
 
