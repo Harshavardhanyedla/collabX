@@ -1,10 +1,10 @@
-zproject:
+project:
   name: "Student Corner"
   tagline: "For Students, From Students"
   description: >
     A modern, accessible, production-ready React website that showcases learning roadmaps,
-    open-source student projects, and a vibrant community area. Built with TypeScript, Tailwind CSS,
-    and modern web technologies.
+    open-source student projects, and a vibrant community area. Built with TypeScript,
+    Tailwind CSS, and modern web technologies.
 
 features:
   core_functionality:
@@ -41,7 +41,7 @@ project_structure:
         - Footer.tsx
         - RoadmapCard.tsx
         - ProjectCard.tsx
-      tests: "__tests__"
+      tests: "tests"
     pages:
       description: "Route components"
       files:
@@ -129,5 +129,4 @@ license:
 support:
   email: "codeharshaa@gmail.com"
   github_issues: "https://github.com/harshavardhanyedla/collabX/issues"
-
 
