@@ -1,6 +1,6 @@
 # Student Corner
 
-> **For Students, From Students**
+> **For Students, From Student**
 
 A modern, accessible, production-ready React website that showcases learning roadmaps, open-source student projects, and a vibrant community area. Built with TypeScript, Tailwind CSS, and modern web technologies.
 
