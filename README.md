@@ -40,18 +40,19 @@ A modern, accessible, production-ready React website that showcases learning roa
 ---
 
 ## 📁 Project Architecture
-The project is organized to be modular, scalable, and easy to navigate:
-Components: Reusable UI elements like navigation bar, footer, roadmap cards, and project cards.
-Pages: Main routes of the application including Home, Roadmaps, Projects, Community, and Contact.
-Context: React Context providers for managing global state, such as theme switching.
-Hooks: Custom React hooks for functionality like localStorage management and debouncing.
-Utils: Utility functions used throughout the project.
-Types: TypeScript type definitions to ensure type safety.
-Data: Sample JSON data for roadmaps, projects, and community posts.
-Assets: Images, icons, and other static resources.
-This structure ensures the codebase is clean, maintainable, and scalable, making it easier for contributors to understand and extend the project.
 
----
+The project is organized to be **modular, scalable, and easy to navigate**:
+
+- **Components**: Reusable UI elements like navigation bar, footer, roadmap cards, and project cards  
+- **Pages**: Main routes of the application including Home, Roadmaps, Projects, Community, and Contact  
+- **Context**: React Context providers for managing global state, such as theme switching  
+- **Hooks**: Custom React hooks for functionality like localStorage management and debouncing  
+- **Utils**: Utility functions used throughout the project  
+- **Types**: TypeScript type definitions to ensure type safety  
+- **Data**: Sample JSON data for roadmaps, projects, and community posts  
+- **Assets**: Images, icons, and other static resources  
+
+This structure ensures the codebase is **clean, maintainable, and scalable**, making it easier for contributors to understand and extend the project.---
 
 ## 📱 Pages & Features
 
