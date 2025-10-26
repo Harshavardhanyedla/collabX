@@ -109,22 +109,6 @@ src/
 
 ---
 
-## 🤝 Contributing
-
-1. Fork the repository  
-2. Create a feature branch:  
-   ```bash
-   git checkout -b feature/amazing-feature
-Commit your changes:
-git commit -m "Add amazing feature"
-Push to the branch:
-git push origin feature/amazing-feature
-Open a Pull Request
-Notes:
-Follow TypeScript best practices
-Write tests for new components
-Ensure accessibility
-Follow the design system
 📝 License
 All Rights Reserved © 2025 Harsha Vardhan
 This software is the intellectual property of Harsha Vardhan. No part of this code may be copied, modified, distributed, or used without explicit written permission from the author.
