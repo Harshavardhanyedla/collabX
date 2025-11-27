@@ -22,6 +22,7 @@
   "dependencies": {
     "@headlessui/react": "^2.2.9",
     "@heroicons/react": "^2.2.0",
+    "@supabase/supabase-js": "^2.86.0",
     "@types/aos": "^3.0.7",
     "@types/json-server": "^0.14.8",
     "@types/react-router-dom": "^5.3.3",
