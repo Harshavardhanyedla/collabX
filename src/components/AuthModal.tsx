@@ -5,10 +5,11 @@ import { supabase } from '../lib/supabase';
 interface AuthModalProps {
     isOpen: boolean;
     onClose: () => void;
+    initialView?: 'login' | 'signup';
 }
 
-const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
-    const [isLogin, setIsLogin] = useState(true);
+const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialView = 'login' }) => {
+    const [isLogin, setIsLogin] = useState(initialView === 'login');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);

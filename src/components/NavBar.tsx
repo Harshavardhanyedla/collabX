@@ -8,6 +8,7 @@ import logoImg from '../assets/logo.jpg';
 const NavBar: React.FC = () => {
     const [user, setUser] = useState<User | null>(null);
     const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+    const [authModalInitialView, setAuthModalInitialView] = useState<'login' | 'signup'>('login');
     const [scrolled, setScrolled] = useState(false);
 
     useEffect(() => {
@@ -87,17 +88,24 @@ const NavBar: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Right Side: Contact + Auth */}
+                    {/* Right Side: Search + Contact + Auth */}
                     <div className="flex items-center gap-6">
+                        {/* Search Icon */}
+                        <button className="text-blue-100 hover:text-white transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                            </svg>
+                        </button>
+
                         {/* Contact Link */}
                         <button
                             onClick={() => scrollToSection('contact')}
                             className="hidden md:block text-[15px] font-medium text-blue-100 hover:text-white transition-colors"
                         >
-                            Get in Touch
+                            Contact
                         </button>
 
-                        {/* Auth Button */}
+                        {/* Auth Buttons */}
                         {user ? (
                             <div className="flex items-center gap-4">
                                 <span className="text-sm font-medium text-white hidden sm:block">
@@ -111,16 +119,36 @@ const NavBar: React.FC = () => {
                                 </button>
                             </div>
                         ) : (
-                            <button
-                                onClick={() => setIsAuthModalOpen(true)}
-                                className="px-6 py-2 rounded-full text-sm font-bold transition-all bg-white text-blue-700 hover:bg-blue-50 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                            >
-                                Login
-                            </button>
+                            <div className="flex items-center gap-4">
+                                <button
+                                    onClick={() => {
+                                        setAuthModalInitialView('login');
+                                        setIsAuthModalOpen(true);
+                                    }}
+                                    className="text-[15px] font-medium text-blue-100 hover:text-white transition-colors"
+                                >
+                                    Log in
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        setAuthModalInitialView('signup');
+                                        setIsAuthModalOpen(true);
+                                    }}
+                                    className="px-5 py-2 rounded-full text-sm font-bold transition-all bg-cyan-400 text-blue-900 hover:bg-cyan-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                                >
+                                    Sign up
+                                </button>
+                            </div>
                         )}
                     </div>
                 </div>
             </motion.nav>
+
+            <AuthModal
+                isOpen={isAuthModalOpen}
+                onClose={() => setIsAuthModalOpen(false)}
+                initialView={authModalInitialView}
+            />
 
             <AuthModal
                 isOpen={isAuthModalOpen}
