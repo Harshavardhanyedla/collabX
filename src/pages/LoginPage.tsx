@@ -56,47 +56,33 @@ const LoginPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-[#0f172a] relative overflow-hidden">
-            {/* Background Gradient (CollabX Theme) */}
-            <div className="absolute inset-0 hero-bg opacity-100" />
+        <div className="min-h-screen flex flex-col items-center justify-center bg-black relative overflow-hidden font-sans">
+            {/* Background Gradient (CollabX Theme - Subtle) */}
+            <div className="absolute inset-0 bg-[#0f172a]" />
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/80" />
 
-            {/* Subtle Animated Background Elements */}
-            <motion.div
-                className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-500/10 rounded-full blur-[100px]"
-                animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.5, 0.3] }}
-                transition={{ duration: 10, repeat: Infinity }}
-            />
-            <motion.div
-                className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-500/10 rounded-full blur-[100px]"
-                animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.5, 0.3] }}
-                transition={{ duration: 12, repeat: Infinity, delay: 2 }}
-            />
+            {/* Top Left Logo */}
+            <div className="absolute top-6 left-6 z-20">
+                <div className="flex items-center gap-2">
+                    {/* Triangle Logo Icon */}
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 4L20 20H4L12 4Z" fill="white" />
+                    </svg>
+                    <span className="text-white font-bold font-variex tracking-wide text-lg">CollabX</span>
+                </div>
+            </div>
 
             <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="w-full max-w-[400px] z-10"
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.3 }}
+                className="w-full max-w-[320px] z-10"
             >
                 {/* Header */}
-                <div className="text-center mb-10">
-                    <motion.div
-                        initial={{ scale: 0.9, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{ delay: 0.2 }}
-                        className="mb-6 inline-block"
-                    >
-                        {/* Logo Placeholder or Icon if needed, for now just text */}
-                        <h1 className="text-5xl font-bold font-variex text-white tracking-wide drop-shadow-lg">
-                            CollabX
-                        </h1>
-                    </motion.div>
-                    <h2 className="text-2xl font-bold text-white mb-2">
+                <div className="text-center mb-8">
+                    <h1 className="text-3xl font-bold text-white mb-6 tracking-tight">
                         {isLogin ? 'Log in to CollabX' : 'Sign up for CollabX'}
-                    </h2>
-                    <p className="text-gray-400 text-sm">
-                        {isLogin ? 'Enter your details below' : 'Create your account to get started'}
-                    </p>
+                    </h1>
                 </div>
 
                 {/* Form */}
@@ -107,15 +93,16 @@ const LoginPage: React.FC = () => {
                             required
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="w-full px-4 py-3 bg-black/20 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all text-sm"
+                            className="w-full px-3 py-2.5 bg-[#111] border border-[#333] rounded-md text-white placeholder-gray-500 focus:outline-none focus:border-white focus:ring-1 focus:ring-white transition-all text-[14px]"
                             placeholder="Email Address"
                         />
+                        {/* Only show password if user has typed email or is signing up - mimicking Vercel flow slightly, but keeping it simple for now */}
                         <input
                             type="password"
                             required
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="w-full px-4 py-3 bg-black/20 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all text-sm"
+                            className="w-full px-3 py-2.5 bg-[#111] border border-[#333] rounded-md text-white placeholder-gray-500 focus:outline-none focus:border-white focus:ring-1 focus:ring-white transition-all text-[14px]"
                             placeholder="Password"
                             minLength={6}
                         />
@@ -127,7 +114,7 @@ const LoginPage: React.FC = () => {
                                 initial={{ opacity: 0, height: 0 }}
                                 animate={{ opacity: 1, height: 'auto' }}
                                 exit={{ opacity: 0, height: 0 }}
-                                className="text-red-400 text-sm text-center"
+                                className="text-red-500 text-xs text-center pt-2"
                             >
                                 {error}
                             </motion.div>
@@ -137,54 +124,50 @@ const LoginPage: React.FC = () => {
                                 initial={{ opacity: 0, height: 0 }}
                                 animate={{ opacity: 1, height: 'auto' }}
                                 exit={{ opacity: 0, height: 0 }}
-                                className="text-green-400 text-sm text-center"
+                                className="text-green-500 text-xs text-center pt-2"
                             >
                                 {message}
                             </motion.div>
                         )}
                     </AnimatePresence>
 
-                    <motion.button
-                        whileHover={{ scale: 1.01 }}
-                        whileTap={{ scale: 0.99 }}
+                    <button
                         type="submit"
                         disabled={loading}
-                        className="w-full py-3 bg-white text-black rounded-lg font-medium text-sm hover:bg-gray-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full py-2.5 bg-white text-black rounded-md font-medium text-[14px] hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-2"
                     >
                         {loading ? 'Processing...' : (isLogin ? 'Continue with Email' : 'Sign Up with Email')}
-                    </motion.button>
+                    </button>
                 </form>
 
-                {/* Divider */}
-                <div className="relative my-8">
-                    <div className="absolute inset-0 flex items-center">
-                        <div className="w-full border-t border-white/10"></div>
-                    </div>
-                    <div className="relative flex justify-center text-xs uppercase tracking-wider">
-                        <span className="px-4 bg-[#0f172a] text-gray-500">Or</span>
-                    </div>
-                </div>
+                {/* Divider - Vercel style often just stacks, but we'll add a subtle spacer */}
+                <div className="h-4"></div>
 
                 {/* Social Login */}
                 <div className="space-y-3">
-                    <motion.button
-                        whileHover={{ scale: 1.01, backgroundColor: 'rgba(255,255,255,0.05)' }}
-                        whileTap={{ scale: 0.99 }}
+                    <button
                         onClick={handleGoogleLogin}
-                        className="w-full py-3 px-4 bg-transparent border border-white/15 rounded-lg text-white font-medium flex items-center justify-center gap-3 transition-all text-sm group"
+                        className="w-full py-2.5 px-4 bg-black border border-[#333] rounded-md text-white font-medium flex items-center justify-center gap-3 transition-colors hover:bg-[#111] text-[14px] group"
                     >
                         <img
                             src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
                             alt="Google"
-                            className="w-5 h-5 opacity-90 group-hover:opacity-100 transition-opacity"
+                            className="w-4 h-4"
                         />
                         <span>Continue with Google</span>
-                    </motion.button>
+                    </button>
+                    <button
+                        className="w-full py-2.5 px-4 bg-black border border-[#333] rounded-md text-white font-medium flex items-center justify-center gap-3 transition-colors hover:bg-[#111] text-[14px] group opacity-50 cursor-not-allowed"
+                        title="Coming soon"
+                    >
+                        <svg className="w-4 h-4 fill-white" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.419-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" /></svg>
+                        <span>Continue with GitHub</span>
+                    </button>
                 </div>
 
                 {/* Footer */}
                 <div className="mt-8 text-center">
-                    <p className="text-gray-500 text-sm">
+                    <p className="text-[#666] text-xs">
                         {isLogin ? "Don't have an account? " : "Already have an account? "}
                         <button
                             onClick={() => setIsLogin(!isLogin)}
