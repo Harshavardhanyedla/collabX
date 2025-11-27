@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import type { ContactForm } from '../types';
+import { supabase } from '../lib/supabase';
 
 const ContactSection: React.FC = () => {
   const [formData, setFormData] = useState<ContactForm>({
@@ -40,30 +41,47 @@ const ContactSection: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
 
     setIsSubmitting(true);
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    setIsSubmitting(false);
-    setIsSubmitted(true);
-    
-    // Reset form after 3 seconds
-    setTimeout(() => {
-      setIsSubmitted(false);
-      setFormData({ name: '', email: '', subject: '', message: '' });
-    }, 3000);
+
+    try {
+      const { error } = await supabase
+        .from('contact_messages')
+        .insert([
+          {
+            name: formData.name,
+            email: formData.email,
+            subject: formData.subject,
+            message: formData.message,
+          }
+        ]);
+
+      if (error) throw error;
+
+      setIsSubmitting(false);
+      setIsSubmitted(true);
+
+      // Reset form after 3 seconds
+      setTimeout(() => {
+        setIsSubmitted(false);
+        setFormData({ name: '', email: '', subject: '', message: '' });
+      }, 3000);
+    } catch (err) {
+      console.error('Error submitting form:', err);
+      setIsSubmitting(false);
+      // Optionally handle error state here
+      alert('Failed to send message. Please try again.');
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    
+
     // Clear error when user starts typing
     if (errors[name as keyof ContactForm]) {
       setErrors(prev => ({ ...prev, [name]: undefined }));
@@ -214,9 +232,8 @@ const ContactSection: React.FC = () => {
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-600 transition-all ${
-                      errors.name ? 'border-red-500' : 'border-gray-300'
-                    }`}
+                    className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-600 transition-all ${errors.name ? 'border-red-500' : 'border-gray-300'
+                      }`}
                     placeholder="Your full name"
                   />
                   {errors.name && (
@@ -234,9 +251,8 @@ const ContactSection: React.FC = () => {
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-600 transition-all ${
-                      errors.email ? 'border-red-500' : 'border-gray-300'
-                    }`}
+                    className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-600 transition-all ${errors.email ? 'border-red-500' : 'border-gray-300'
+                      }`}
                     placeholder="your.email@example.com"
                   />
                   {errors.email && (
@@ -255,9 +271,8 @@ const ContactSection: React.FC = () => {
                   name="subject"
                   value={formData.subject}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-600 transition-all ${
-                    errors.subject ? 'border-red-500' : 'border-gray-300'
-                  }`}
+                  className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-600 transition-all ${errors.subject ? 'border-red-500' : 'border-gray-300'
+                    }`}
                   placeholder="What's this about?"
                 />
                 {errors.subject && (
@@ -275,9 +290,8 @@ const ContactSection: React.FC = () => {
                   rows={6}
                   value={formData.message}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-600 transition-all resize-none ${
-                    errors.message ? 'border-red-500' : 'border-gray-300'
-                  }`}
+                  className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-600 transition-all resize-none ${errors.message ? 'border-red-500' : 'border-gray-300'
+                    }`}
                   placeholder="Tell us more about your message..."
                 />
                 {errors.message && (

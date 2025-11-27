@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { supabase } from '../lib/supabase';
 import AuthModal from './AuthModal';
 import type { User } from '@supabase/supabase-js';
+import logoImg from '../assets/logo.jpg';
 
 const NavBar: React.FC = () => {
     const [user, setUser] = useState<User | null>(null);
@@ -47,14 +48,15 @@ const NavBar: React.FC = () => {
     return (
         <>
             <motion.nav
-                className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${scrolled ? 'bg-white/80 backdrop-blur-md shadow-md py-4' : 'bg-transparent py-6'
+                className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white/80 backdrop-blur-md shadow-md py-4' : 'bg-transparent py-6'
                     }`}
                 initial={{ y: -100 }}
                 animate={{ y: 0 }}
                 transition={{ duration: 0.5 }}
             >
                 <div className="container mx-auto px-6 flex justify-between items-center">
-                    <div className="flex items-center gap-2 cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+                    <div className="flex items-center gap-3 cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+                        <img src={logoImg} alt="CollabX Logo" className="h-10 w-auto rounded-md shadow-sm" />
                         <span className={`text-2xl font-bold font-variex ${scrolled ? 'text-gray-900' : 'text-white'}`}>
                             CollabX
                         </span>
