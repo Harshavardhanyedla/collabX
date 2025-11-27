@@ -1,5 +1,5 @@
 
-# Student Corner
+# CollabX
 
 > **For Students, From Students**
 
@@ -225,7 +225,7 @@ npm run build
 Create a `.env` file for environment-specific configuration:
 
 ```env
-VITE_APP_TITLE=Student Corner
+VITE_APP_TITLE=CollabX
 VITE_APP_DESCRIPTION=For Students, From Students
 VITE_API_URL=http://localhost:3001
 ```
@@ -278,7 +278,7 @@ Custom configuration in `tailwind.config.js`:
 
 ## 📝 License
 
-Copyright (c) 2024 Student Corner. All rights reserved.
+Copyright (c) 2024 CollabX. All rights reserved.
 
 Unauthorized copying of this file, via any medium is strictly prohibited.
 Proprietary and confidential.
@@ -299,7 +299,7 @@ Proprietary and confidential.
 
 ---
 
-**Built with ❤️ by the Student Corner Team**
+**Built with ❤️ by the CollabX Team**
 
 *For Students, From Students*
 

@@ -10,10 +10,10 @@ const Hero: React.FC = () => {
   };
 
   return (
-    <section className="hero-bg" style={{ 
-      minHeight: '100vh', 
-      display: 'flex', 
-      alignItems: 'center', 
+    <section className="hero-bg" style={{
+      minHeight: '100vh',
+      display: 'flex',
+      alignItems: 'center',
       justifyContent: 'center',
       position: 'relative',
       overflow: 'hidden'
@@ -31,7 +31,7 @@ const Hero: React.FC = () => {
           ease: "easeInOut"
         }}
       />
-      
+
       <motion.div
         className="absolute top-40 right-15 w-16 h-16 bg-white bg-opacity-10 rounded-full"
         animate={{
@@ -66,9 +66,9 @@ const Hero: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
-          Collabx
+          CollabX
         </motion.h1>
-        
+
         <motion.p
           className="text-2xl md:text-3xl font-semibold mb-4 text-blue-100"
           initial={{ opacity: 0, y: 30 }}
@@ -77,7 +77,7 @@ const Hero: React.FC = () => {
         >
           By Students, For Students
         </motion.p>
-        
+
         <motion.p
           className="text-lg md:text-xl mb-12 text-blue-200 max-w-2xl mx-auto leading-relaxed"
           initial={{ opacity: 0, y: 30 }}
@@ -95,7 +95,7 @@ const Hero: React.FC = () => {
         >
           <motion.button
             className="btn btn-primary text-lg px-8 py-4 rounded-xl font-semibold shadow-2xl"
-            whileHover={{ 
+            whileHover={{
               scale: 1.05,
               boxShadow: "0 20px 40px rgba(59, 130, 246, 0.4)"
             }}
@@ -104,10 +104,10 @@ const Hero: React.FC = () => {
           >
             Explore Roadmaps
           </motion.button>
-          
+
           <motion.button
             className="btn btn-secondary text-lg px-8 py-4 rounded-xl font-semibold shadow-2xl"
-            whileHover={{ 
+            whileHover={{
               scale: 1.05,
               backgroundColor: "#3b82f6",
               color: "white"

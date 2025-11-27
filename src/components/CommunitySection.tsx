@@ -53,7 +53,7 @@ const CommunitySection: React.FC = () => {
       id: 'a1',
       title: 'New Learning Path: Cybersecurity Fundamentals',
       content: 'We\'re excited to announce our new cybersecurity learning path! This comprehensive course covers ethical hacking, network security, and more.',
-      author: 'Student Corner Team',
+      author: 'CollabX Team',
       timestamp: '3 days ago',
       likes: 89,
       comments: 5,
@@ -63,7 +63,7 @@ const CommunitySection: React.FC = () => {
       id: 'a2',
       title: 'Community Guidelines Update',
       content: 'We\'ve updated our community guidelines to ensure a positive and inclusive environment for all students.',
-      author: 'Student Corner Team',
+      author: 'CollabX Team',
       timestamp: '1 week ago',
       likes: 34,
       comments: 2,
@@ -125,21 +125,19 @@ const CommunitySection: React.FC = () => {
           <div className="bg-white p-1 rounded-xl shadow-lg">
             <button
               onClick={() => setActiveTab('discussions')}
-              className={`px-6 py-3 rounded-lg font-medium transition-all ${
-                activeTab === 'discussions'
+              className={`px-6 py-3 rounded-lg font-medium transition-all ${activeTab === 'discussions'
                   ? 'bg-primary-600 text-white shadow-lg'
                   : 'text-gray-600 hover:text-gray-900'
-              }`}
+                }`}
             >
               Discussions
             </button>
             <button
               onClick={() => setActiveTab('announcements')}
-              className={`px-6 py-3 rounded-lg font-medium transition-all ${
-                activeTab === 'announcements'
+              className={`px-6 py-3 rounded-lg font-medium transition-all ${activeTab === 'announcements'
                   ? 'bg-primary-600 text-white shadow-lg'
                   : 'text-gray-600 hover:text-gray-900'
-              }`}
+                }`}
             >
               Announcements
             </button>
@@ -159,7 +157,7 @@ const CommunitySection: React.FC = () => {
               key={post.id}
               className="card card-hover"
               variants={itemVariants}
-              whileHover={{ 
+              whileHover={{
                 scale: 1.02,
                 boxShadow: "0 20px 40px rgba(0, 0, 0, 0.1)"
               }}
@@ -174,7 +172,7 @@ const CommunitySection: React.FC = () => {
                   </p>
                 </div>
               </div>
-              
+
               <div className="flex flex-wrap gap-2 mb-4">
                 {post.tags.map((tag) => (
                   <span
@@ -185,7 +183,7 @@ const CommunitySection: React.FC = () => {
                   </span>
                 ))}
               </div>
-              
+
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-4 text-sm text-gray-500">
                   <span>👤 {post.author}</span>
