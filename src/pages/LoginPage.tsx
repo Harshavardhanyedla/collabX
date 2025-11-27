@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
-import { EnvelopeIcon, LockClosedIcon } from '@heroicons/react/24/outline';
 
 const LoginPage: React.FC = () => {
     const navigate = useNavigate();
@@ -57,194 +56,145 @@ const LoginPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen flex overflow-hidden bg-[#0f172a]">
-            {/* Left Panel - Brand Showcase (Hidden on Mobile) */}
-            <div className="hidden lg:flex lg:w-1/2 relative hero-bg items-center justify-center overflow-hidden">
-                <div className="absolute inset-0 bg-black/20 backdrop-blur-[1px]" />
+        <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-[#0f172a] relative overflow-hidden">
+            {/* Background Gradient (CollabX Theme) */}
+            <div className="absolute inset-0 hero-bg opacity-100" />
 
-                {/* Animated Background Shapes */}
-                <motion.div
-                    className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl"
-                    animate={{
-                        scale: [1, 1.2, 1],
-                        x: [0, 50, 0],
-                        y: [0, 30, 0],
-                    }}
-                    transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-                />
-                <motion.div
-                    className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-purple-500/20 rounded-full blur-3xl"
-                    animate={{
-                        scale: [1.2, 1, 1.2],
-                        x: [0, -50, 0],
-                        y: [0, -30, 0],
-                    }}
-                    transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-                />
+            {/* Subtle Animated Background Elements */}
+            <motion.div
+                className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-500/10 rounded-full blur-[100px]"
+                animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.5, 0.3] }}
+                transition={{ duration: 10, repeat: Infinity }}
+            />
+            <motion.div
+                className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-500/10 rounded-full blur-[100px]"
+                animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.5, 0.3] }}
+                transition={{ duration: 12, repeat: Infinity, delay: 2 }}
+            />
 
-                <div className="relative z-10 text-center p-12">
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="w-full max-w-[400px] z-10"
+            >
+                {/* Header */}
+                <div className="text-center mb-10">
                     <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
+                        initial={{ scale: 0.9, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
                         transition={{ delay: 0.2 }}
+                        className="mb-6 inline-block"
                     >
-                        <h1 className="text-8xl font-bold font-variex text-white mb-8 tracking-wider drop-shadow-2xl">
+                        {/* Logo Placeholder or Icon if needed, for now just text */}
+                        <h1 className="text-5xl font-bold font-variex text-white tracking-wide drop-shadow-lg">
                             CollabX
                         </h1>
                     </motion.div>
-                    <motion.p
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.4 }}
-                        className="text-2xl text-blue-100 font-light max-w-lg mx-auto leading-relaxed tracking-wide"
-                    >
-                        Where students build the future, together.
-                    </motion.p>
+                    <h2 className="text-2xl font-bold text-white mb-2">
+                        {isLogin ? 'Log in to CollabX' : 'Sign up for CollabX'}
+                    </h2>
+                    <p className="text-gray-400 text-sm">
+                        {isLogin ? 'Enter your details below' : 'Create your account to get started'}
+                    </p>
                 </div>
-            </div>
 
-            {/* Right Panel - Login Form */}
-            <div className="w-full lg:w-1/2 flex items-center justify-center p-6 relative bg-[#0f172a]">
-                {/* Mobile Background Gradient */}
-                <div className="absolute inset-0 hero-bg lg:hidden opacity-20" />
-
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.5, ease: "easeOut" }}
-                    className="w-full max-w-[400px] relative z-10"
-                >
-                    <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
-                        {/* Top Glow */}
-                        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-blue-500/50 to-transparent" />
-
-                        <div className="text-center mb-10">
-                            <h2 className="text-3xl font-bold text-white mb-3 tracking-tight">
-                                {isLogin ? 'Welcome Back' : 'Create Account'}
-                            </h2>
-                            <p className="text-gray-400 text-sm">
-                                {isLogin ? 'Enter your credentials to access your account' : 'Join our community of student developers'}
-                            </p>
-                        </div>
-
-                        {/* Google Login Button */}
-                        <motion.button
-                            whileHover={{ scale: 1.01, backgroundColor: '#f8fafc' }}
-                            whileTap={{ scale: 0.98 }}
-                            onClick={handleGoogleLogin}
-                            className="w-full py-3.5 px-4 bg-white text-gray-700 rounded-xl font-medium flex items-center justify-center gap-3 transition-all mb-8 shadow-lg hover:shadow-xl border border-gray-200"
-                        >
-                            <img
-                                src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
-                                alt="Google"
-                                className="w-5 h-5"
-                            />
-                            <span className="text-[15px] font-semibold">Continue with Google</span>
-                        </motion.button>
-
-                        <div className="relative mb-8">
-                            <div className="absolute inset-0 flex items-center">
-                                <div className="w-full border-t border-white/10"></div>
-                            </div>
-                            <div className="relative flex justify-center text-xs uppercase tracking-wider">
-                                <span className="px-4 bg-[#0f172a]/50 backdrop-blur-xl text-gray-500 rounded-full">Or continue with email</span>
-                            </div>
-                        </div>
-
-                        <form onSubmit={handleEmailAuth} className="space-y-5">
-                            <div className="space-y-1.5">
-                                <label className="text-xs font-semibold text-gray-300 ml-1 uppercase tracking-wide">Email Address</label>
-                                <div className="relative">
-                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                        <EnvelopeIcon className="h-5 w-5 text-gray-500" />
-                                    </div>
-                                    <input
-                                        type="email"
-                                        required
-                                        value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
-                                        className="w-full pl-11 pr-4 py-3.5 bg-black/20 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all text-sm"
-                                        placeholder="name@example.com"
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="space-y-1.5">
-                                <label className="text-xs font-semibold text-gray-300 ml-1 uppercase tracking-wide">Password</label>
-                                <div className="relative">
-                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                        <LockClosedIcon className="h-5 w-5 text-gray-500" />
-                                    </div>
-                                    <input
-                                        type="password"
-                                        required
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
-                                        className="w-full pl-11 pr-4 py-3.5 bg-black/20 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all text-sm"
-                                        placeholder="••••••••"
-                                        minLength={6}
-                                    />
-                                </div>
-                            </div>
-
-                            <AnimatePresence>
-                                {error && (
-                                    <motion.div
-                                        initial={{ opacity: 0, y: -10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        exit={{ opacity: 0, y: -10 }}
-                                        className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm text-center"
-                                    >
-                                        {error}
-                                    </motion.div>
-                                )}
-                                {message && (
-                                    <motion.div
-                                        initial={{ opacity: 0, y: -10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        exit={{ opacity: 0, y: -10 }}
-                                        className="p-3 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-sm text-center"
-                                    >
-                                        {message}
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-
-                            <motion.button
-                                whileHover={{ scale: 1.02, boxShadow: "0 0 20px rgba(59, 130, 246, 0.4)" }}
-                                whileTap={{ scale: 0.98 }}
-                                type="submit"
-                                disabled={loading}
-                                className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-bold text-[15px] shadow-lg shadow-blue-600/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all mt-2"
-                            >
-                                {loading ? (
-                                    <span className="flex items-center justify-center gap-2">
-                                        <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                        </svg>
-                                        Processing...
-                                    </span>
-                                ) : (
-                                    isLogin ? 'Sign In' : 'Create Account'
-                                )}
-                            </motion.button>
-                        </form>
-
-                        <div className="mt-8 text-center">
-                            <p className="text-gray-400 text-sm">
-                                {isLogin ? "Don't have an account? " : "Already have an account? "}
-                                <button
-                                    onClick={() => setIsLogin(!isLogin)}
-                                    className="text-blue-400 font-semibold hover:text-blue-300 transition-colors"
-                                >
-                                    {isLogin ? 'Sign Up' : 'Sign In'}
-                                </button>
-                            </p>
-                        </div>
+                {/* Form */}
+                <form onSubmit={handleEmailAuth} className="space-y-4">
+                    <div className="space-y-4">
+                        <input
+                            type="email"
+                            required
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="w-full px-4 py-3 bg-black/20 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all text-sm"
+                            placeholder="Email Address"
+                        />
+                        <input
+                            type="password"
+                            required
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className="w-full px-4 py-3 bg-black/20 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all text-sm"
+                            placeholder="Password"
+                            minLength={6}
+                        />
                     </div>
-                </motion.div>
-            </div>
+
+                    <AnimatePresence>
+                        {error && (
+                            <motion.div
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: 'auto' }}
+                                exit={{ opacity: 0, height: 0 }}
+                                className="text-red-400 text-sm text-center"
+                            >
+                                {error}
+                            </motion.div>
+                        )}
+                        {message && (
+                            <motion.div
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: 'auto' }}
+                                exit={{ opacity: 0, height: 0 }}
+                                className="text-green-400 text-sm text-center"
+                            >
+                                {message}
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+
+                    <motion.button
+                        whileHover={{ scale: 1.01 }}
+                        whileTap={{ scale: 0.99 }}
+                        type="submit"
+                        disabled={loading}
+                        className="w-full py-3 bg-white text-black rounded-lg font-medium text-sm hover:bg-gray-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        {loading ? 'Processing...' : (isLogin ? 'Continue with Email' : 'Sign Up with Email')}
+                    </motion.button>
+                </form>
+
+                {/* Divider */}
+                <div className="relative my-8">
+                    <div className="absolute inset-0 flex items-center">
+                        <div className="w-full border-t border-white/10"></div>
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase tracking-wider">
+                        <span className="px-4 bg-[#0f172a] text-gray-500">Or</span>
+                    </div>
+                </div>
+
+                {/* Social Login */}
+                <div className="space-y-3">
+                    <motion.button
+                        whileHover={{ scale: 1.01, backgroundColor: 'rgba(255,255,255,0.05)' }}
+                        whileTap={{ scale: 0.99 }}
+                        onClick={handleGoogleLogin}
+                        className="w-full py-3 px-4 bg-transparent border border-white/15 rounded-lg text-white font-medium flex items-center justify-center gap-3 transition-all text-sm group"
+                    >
+                        <img
+                            src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+                            alt="Google"
+                            className="w-5 h-5 opacity-90 group-hover:opacity-100 transition-opacity"
+                        />
+                        <span>Continue with Google</span>
+                    </motion.button>
+                </div>
+
+                {/* Footer */}
+                <div className="mt-8 text-center">
+                    <p className="text-gray-500 text-sm">
+                        {isLogin ? "Don't have an account? " : "Already have an account? "}
+                        <button
+                            onClick={() => setIsLogin(!isLogin)}
+                            className="text-blue-400 hover:text-blue-300 transition-colors"
+                        >
+                            {isLogin ? 'Sign Up' : 'Log In'}
+                        </button>
+                    </p>
+                </div>
+            </motion.div>
         </div>
     );
 };
