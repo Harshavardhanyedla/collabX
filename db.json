@@ -1,0 +1,82 @@
+{
+  "roadmaps": [
+    {
+      "id": "ml-roadmap",
+      "title": "Machine Learning: Scratch → Advanced",
+      "description": "A comprehensive roadmap to master machine learning from fundamentals to advanced techniques",
+      "difficulty": "Intermediate",
+      "estimatedTime": "6-8 months",
+      "category": "AIML",
+      "tags": ["Python", "TensorFlow", "PyTorch", "Scikit-learn", "Deep Learning"],
+      "image": "/api/placeholder/400/300",
+      "milestones": [
+        {
+          "id": "ml-1",
+          "title": "Mathematics & Statistics Foundation",
+          "description": "Build strong mathematical foundation for ML",
+          "estimatedHours": 40,
+          "resources": [
+            {
+              "type": "article",
+              "title": "Linear Algebra for Machine Learning",
+              "url": "https://example.com/linear-algebra-ml",
+              "description": "Essential linear algebra concepts"
+            },
+            {
+              "type": "video",
+              "title": "Statistics for Data Science",
+              "url": "https://example.com/stats-ds",
+              "description": "Probability and statistics fundamentals"
+            },
+            {
+              "type": "project",
+              "title": "Statistical Analysis Project",
+              "description": "Analyze a dataset using statistical methods"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "id": "project-1",
+      "title": "Student Grade Tracker",
+      "description": "A web application to help students track their grades, calculate GPAs, and set academic goals. Built with React and Firebase.",
+      "author": "Sarah Chen",
+      "githubUrl": "https://github.com/sarahchen/grade-tracker",
+      "stars": 45,
+      "tags": ["React", "Firebase", "JavaScript", "Education"],
+      "category": "Web Development",
+      "difficulty": "Beginner",
+      "image": "/api/placeholder/400/300",
+      "contributionGuidelines": "We welcome contributions! Please read our contributing guidelines and submit a PR.",
+      "readme": "A comprehensive grade tracking system for students...",
+      "status": "active",
+      "createdAt": "2024-01-15",
+      "lastUpdated": "2024-01-20"
+    }
+  ],
+  "community": [
+    {
+      "id": "thread-1",
+      "title": "Looking for Study Partners for Machine Learning Course",
+      "author": "Alex Chen",
+      "content": "I'm taking CS229 this semester and would love to form a study group. We can meet weekly to go through problem sets and discuss concepts. Anyone interested?",
+      "category": "Study Groups",
+      "tags": ["Machine Learning", "CS229", "Study Group"],
+      "replies": 8,
+      "views": 45,
+      "createdAt": "2024-01-20T10:30:00Z",
+      "lastActivity": "2024-01-22T14:20:00Z",
+      "replies": [
+        {
+          "id": "reply-1",
+          "author": "Sarah Kim",
+          "content": "I'm interested! I'm also taking CS229. When are you thinking of meeting?",
+          "createdAt": "2024-01-20T11:15:00Z"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+[
+  {
+    "id": "1",
+    "title": "Full-Stack Web Development",
+    "description": "Complete roadmap from HTML/CSS to advanced React and Node.js applications",
+    "difficulty": "Beginner",
+    "tags": ["HTML", "CSS", "JavaScript", "React", "Node.js"],
+    "duration": "5-6 months",
+    "author": "Sarah Chen",
+    "image": "https://images.unsplash.com/photo-1555066931-4365d14bab8c9?w=400&h=300&fit=crop",
+    "youtubeUrl": "https://www.youtube.com/watch?v=nu_pCVPKzTk"
+  },
+  {
+    "id": "2",
+    "title": "Machine Learning",
+    "description": "Learn ML from scratch with Python, TensorFlow, and real-world projects",
+    "difficulty": "Intermediate",
+    "tags": ["Python", "TensorFlow", "Scikit-learn", "Pandas", "NumPy"],
+    "duration": "6-8 months",
+    "author": "Alex Rodriguez",
+    "image": "https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=400&h=300&fit=crop",
+    "youtubeUrl": "https://youtube.com/playlist?list=PLoROMvodv4rMiGQp3WXShtMGgzqpfVfbU"
+  },
+  {
+    "id": "3",
+    "title": "Mobile App Development",
+    "description": "Build iOS and Android apps with React Native and Flutter",
+    "difficulty": "Intermediate",
+    "tags": ["React Native", "Flutter", "Swift", "Kotlin", "Firebase"],
+    "duration": "4-6 months",
+    "author": "Maria Garcia",
+    "image": "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=400&h=300&fit=crop",
+    "youtubeUrl": "https://youtu.be/2esQdKzRUCw"
+  },
+  {
+    "id": "4",
+    "title": "DevOps",
+    "description": "Master AWS, Docker, Kubernetes, and CI/CD pipelines",
+    "difficulty": "Advanced",
+    "tags": ["AWS", "Docker", "Kubernetes", "Jenkins", "Terraform"],
+    "duration": "7-9 months",
+    "author": "David Kim",
+    "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=400&h=300&fit=crop",
+    "youtubeUrl": "https://youtu.be/H5FAxTBuNM8"
+  },
+  {
+    "id": "5",
+    "title": "Data Science",
+    "description": "Comprehensive data science journey with Python and R",
+    "difficulty": "Intermediate",
+    "tags": ["Python", "R", "SQL", "Tableau", "Power BI"],
+    "duration": "5-7 months",
+    "author": "Emily Watson",
+    "image": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=300&fit=crop",
+    "youtubeUrl": "https://youtu.be/ua-CiDNNj30"
+  },
+  {
+    "id": "6",
+    "title": "Cybersecurity",
+    "description": "Learn ethical hacking, network security, and penetration testing",
+    "difficulty": "Advanced",
+    "tags": ["Ethical Hacking", "Network Security", "Cryptography", "Linux", "Wireshark"],
+    "duration": "8-10 months",
+    "author": "James Wilson",
+    "image": "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=400&h=300&fit=crop",
+    "youtubeUrl": "https://youtu.be/s19BxFpoSd0"
+  }
+]

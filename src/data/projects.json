@@ -1,0 +1,74 @@
+[
+  {
+    "id": "1",
+    "title": "E-Commerce Platform",
+    "description": "Full-stack e-commerce solution with React, Node.js, and MongoDB",
+    "tags": ["React", "Node.js", "MongoDB", "Stripe", "JWT"],
+    "githubUrl": "https://github.com/student/ecommerce-platform",
+    "liveUrl": "https://ecommerce-demo.vercel.app",
+    "author": "Alex Chen",
+    "image": "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=300&fit=crop",
+    "stars": 127,
+    "language": "JavaScript"
+  },
+  {
+    "id": "2",
+    "title": "AI Chatbot Assistant",
+    "description": "Intelligent chatbot using OpenAI API and natural language processing",
+    "tags": ["Python", "OpenAI", "Flask", "NLP", "Machine Learning"],
+    "githubUrl": "https://github.com/student/ai-chatbot",
+    "liveUrl": "https://ai-chatbot-demo.herokuapp.com",
+    "author": "Sarah Johnson",
+    "image": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=300&fit=crop",
+    "stars": 89,
+    "language": "Python"
+  },
+  {
+    "id": "3",
+    "title": "Task Management App",
+    "description": "Collaborative task management with real-time updates and team features",
+    "tags": ["React Native", "Firebase", "Redux", "TypeScript", "Expo"],
+    "githubUrl": "https://github.com/student/task-manager",
+    "liveUrl": "https://taskmanager.app",
+    "author": "Mike Rodriguez",
+    "image": "https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=400&h=300&fit=crop",
+    "stars": 156,
+    "language": "TypeScript"
+  },
+  {
+    "id": "4",
+    "title": "Weather Dashboard",
+    "description": "Beautiful weather app with forecasts, maps, and historical data",
+    "tags": ["Vue.js", "Chart.js", "OpenWeather API", "PWA", "CSS3"],
+    "githubUrl": "https://github.com/student/weather-dashboard",
+    "liveUrl": "https://weather-dashboard.netlify.app",
+    "author": "Emma Davis",
+    "image": "https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?w=400&h=300&fit=crop",
+    "stars": 73,
+    "language": "Vue"
+  },
+  {
+    "id": "5",
+    "title": "Blockchain Voting System",
+    "description": "Secure voting system built on Ethereum blockchain with smart contracts",
+    "tags": ["Solidity", "Web3.js", "React", "Ethereum", "MetaMask"],
+    "githubUrl": "https://github.com/student/blockchain-voting",
+    "liveUrl": "https://blockchain-voting.vercel.app",
+    "author": "David Kim",
+    "image": "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=400&h=300&fit=crop",
+    "stars": 234,
+    "language": "Solidity"
+  },
+  {
+    "id": "6",
+    "title": "Social Media Analytics",
+    "description": "Analytics dashboard for social media metrics and engagement tracking",
+    "tags": ["Python", "Django", "PostgreSQL", "D3.js", "Redis"],
+    "githubUrl": "https://github.com/student/social-analytics",
+    "liveUrl": "https://social-analytics.herokuapp.com",
+    "author": "Lisa Wang",
+    "image": "https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=400&h=300&fit=crop",
+    "stars": 98,
+    "language": "Python"
+  }
+]
