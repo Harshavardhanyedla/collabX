@@ -59,8 +59,12 @@ const NavBar: React.FC = () => {
                     <div className="flex items-center gap-8">
                         {/* Logo */}
                         <div className="flex items-center gap-2 cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-                            <img src={logoImg} alt="CollabX Logo" className="h-9 w-auto rounded-md" />
-                            <span className="text-xl font-bold tracking-tight text-white">
+                            <img
+                                src={logoImg}
+                                alt="CollabX Logo"
+                                className="h-10 w-10 rounded-full object-cover border-2 border-white/20 shadow-sm"
+                            />
+                            <span className="text-xl font-bold tracking-tight text-white font-sans">
                                 CollabX
                             </span>
                         </div>
