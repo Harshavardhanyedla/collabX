@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
+import { EnvelopeIcon, LockClosedIcon } from '@heroicons/react/24/outline';
 
 const LoginPage: React.FC = () => {
     const navigate = useNavigate();
@@ -63,38 +64,39 @@ const LoginPage: React.FC = () => {
 
                 {/* Animated Background Shapes */}
                 <motion.div
-                    className="absolute top-20 left-20 w-64 h-64 bg-blue-500/30 rounded-full blur-3xl"
+                    className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl"
                     animate={{
                         scale: [1, 1.2, 1],
                         x: [0, 50, 0],
                         y: [0, 30, 0],
                     }}
-                    transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+                    transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
                 />
                 <motion.div
-                    className="absolute bottom-20 right-20 w-96 h-96 bg-purple-500/30 rounded-full blur-3xl"
+                    className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-purple-500/20 rounded-full blur-3xl"
                     animate={{
                         scale: [1.2, 1, 1.2],
                         x: [0, -50, 0],
                         y: [0, -30, 0],
                     }}
-                    transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+                    transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
                 />
 
                 <div className="relative z-10 text-center p-12">
-                    <motion.h1
+                    <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 }}
-                        className="text-7xl font-bold font-variex text-white mb-6 tracking-wide"
                     >
-                        CollabX
-                    </motion.h1>
+                        <h1 className="text-8xl font-bold font-variex text-white mb-8 tracking-wider drop-shadow-2xl">
+                            CollabX
+                        </h1>
+                    </motion.div>
                     <motion.p
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.4 }}
-                        className="text-2xl text-blue-100 font-light max-w-md mx-auto leading-relaxed"
+                        className="text-2xl text-blue-100 font-light max-w-lg mx-auto leading-relaxed tracking-wide"
                     >
                         Where students build the future, together.
                     </motion.p>
@@ -102,77 +104,87 @@ const LoginPage: React.FC = () => {
             </div>
 
             {/* Right Panel - Login Form */}
-            <div className="w-full lg:w-1/2 flex items-center justify-center p-6 relative">
+            <div className="w-full lg:w-1/2 flex items-center justify-center p-6 relative bg-[#0f172a]">
                 {/* Mobile Background Gradient */}
                 <div className="absolute inset-0 hero-bg lg:hidden opacity-20" />
 
                 <motion.div
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.5 }}
-                    className="w-full max-w-md"
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5, ease: "easeOut" }}
+                    className="w-full max-w-[400px] relative z-10"
                 >
-                    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
-                        {/* Glow Effect */}
-                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-50" />
+                    <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
+                        {/* Top Glow */}
+                        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-blue-500/50 to-transparent" />
 
-                        <div className="text-center mb-8">
-                            <h2 className="text-3xl font-bold text-white mb-2">
+                        <div className="text-center mb-10">
+                            <h2 className="text-3xl font-bold text-white mb-3 tracking-tight">
                                 {isLogin ? 'Welcome Back' : 'Create Account'}
                             </h2>
-                            <p className="text-gray-400">
-                                {isLogin ? 'Enter your details to access your account' : 'Start your journey with us today'}
+                            <p className="text-gray-400 text-sm">
+                                {isLogin ? 'Enter your credentials to access your account' : 'Join our community of student developers'}
                             </p>
                         </div>
 
                         {/* Google Login Button */}
                         <motion.button
-                            whileHover={{ scale: 1.02 }}
+                            whileHover={{ scale: 1.01, backgroundColor: '#f8fafc' }}
                             whileTap={{ scale: 0.98 }}
                             onClick={handleGoogleLogin}
-                            className="w-full py-3.5 px-4 bg-white text-gray-900 rounded-xl font-medium flex items-center justify-center gap-3 hover:bg-gray-50 transition-all mb-6 shadow-lg group"
+                            className="w-full py-3.5 px-4 bg-white text-gray-700 rounded-xl font-medium flex items-center justify-center gap-3 transition-all mb-8 shadow-lg hover:shadow-xl border border-gray-200"
                         >
                             <img
                                 src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
                                 alt="Google"
-                                className="w-5 h-5 group-hover:scale-110 transition-transform"
+                                className="w-5 h-5"
                             />
-                            <span>Sign in with Google</span>
+                            <span className="text-[15px] font-semibold">Continue with Google</span>
                         </motion.button>
 
                         <div className="relative mb-8">
                             <div className="absolute inset-0 flex items-center">
                                 <div className="w-full border-t border-white/10"></div>
                             </div>
-                            <div className="relative flex justify-center text-sm">
+                            <div className="relative flex justify-center text-xs uppercase tracking-wider">
                                 <span className="px-4 bg-[#0f172a]/50 backdrop-blur-xl text-gray-500 rounded-full">Or continue with email</span>
                             </div>
                         </div>
 
                         <form onSubmit={handleEmailAuth} className="space-y-5">
-                            <div className="space-y-1">
-                                <label className="text-sm font-medium text-gray-300 ml-1">Email Address</label>
-                                <input
-                                    type="email"
-                                    required
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    className="w-full px-4 py-3.5 bg-black/20 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all"
-                                    placeholder="name@example.com"
-                                />
+                            <div className="space-y-1.5">
+                                <label className="text-xs font-semibold text-gray-300 ml-1 uppercase tracking-wide">Email Address</label>
+                                <div className="relative">
+                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                        <EnvelopeIcon className="h-5 w-5 text-gray-500" />
+                                    </div>
+                                    <input
+                                        type="email"
+                                        required
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        className="w-full pl-11 pr-4 py-3.5 bg-black/20 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all text-sm"
+                                        placeholder="name@example.com"
+                                    />
+                                </div>
                             </div>
 
-                            <div className="space-y-1">
-                                <label className="text-sm font-medium text-gray-300 ml-1">Password</label>
-                                <input
-                                    type="password"
-                                    required
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full px-4 py-3.5 bg-black/20 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all"
-                                    placeholder="••••••••"
-                                    minLength={6}
-                                />
+                            <div className="space-y-1.5">
+                                <label className="text-xs font-semibold text-gray-300 ml-1 uppercase tracking-wide">Password</label>
+                                <div className="relative">
+                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                        <LockClosedIcon className="h-5 w-5 text-gray-500" />
+                                    </div>
+                                    <input
+                                        type="password"
+                                        required
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        className="w-full pl-11 pr-4 py-3.5 bg-black/20 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all text-sm"
+                                        placeholder="••••••••"
+                                        minLength={6}
+                                    />
+                                </div>
                             </div>
 
                             <AnimatePresence>
@@ -199,11 +211,11 @@ const LoginPage: React.FC = () => {
                             </AnimatePresence>
 
                             <motion.button
-                                whileHover={{ scale: 1.02 }}
+                                whileHover={{ scale: 1.02, boxShadow: "0 0 20px rgba(59, 130, 246, 0.4)" }}
                                 whileTap={{ scale: 0.98 }}
                                 type="submit"
                                 disabled={loading}
-                                className="w-full py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-bold text-lg shadow-lg shadow-blue-600/20 hover:shadow-blue-600/40 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                                className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-bold text-[15px] shadow-lg shadow-blue-600/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all mt-2"
                             >
                                 {loading ? (
                                     <span className="flex items-center justify-center gap-2">
@@ -220,7 +232,7 @@ const LoginPage: React.FC = () => {
                         </form>
 
                         <div className="mt-8 text-center">
-                            <p className="text-gray-400">
+                            <p className="text-gray-400 text-sm">
                                 {isLogin ? "Don't have an account? " : "Already have an account? "}
                                 <button
                                     onClick={() => setIsLogin(!isLogin)}
