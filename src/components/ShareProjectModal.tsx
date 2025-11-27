@@ -21,6 +21,19 @@ const ShareProjectModal: React.FC<ShareProjectModalProps> = ({ isOpen, onClose }
     const [error, setError] = useState('');
     const [success, setSuccess] = useState(false);
 
+    React.useEffect(() => {
+        if (isOpen) {
+            supabase.auth.getUser().then(({ data: { user } }) => {
+                if (user?.email) {
+                    setFormData(prev => ({
+                        ...prev,
+                        author: user.email!.split('@')[0]
+                    }));
+                }
+            });
+        }
+    }, [isOpen]);
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
