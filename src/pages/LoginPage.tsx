@@ -55,7 +55,7 @@ const LoginPage: React.FC = () => {
         }
     };
 
-    // Inline styles to bypass missing Tailwind JIT
+    // Inline styles for Blue/White Theme
     const styles = {
         container: {
             minHeight: '100vh',
@@ -63,7 +63,7 @@ const LoginPage: React.FC = () => {
             flexDirection: 'column' as const,
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: 'black',
+            backgroundColor: '#f0f9ff', // Light blue tint fallback
             position: 'relative' as const,
             overflow: 'hidden',
             fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
@@ -74,8 +74,9 @@ const LoginPage: React.FC = () => {
             left: 0,
             right: 0,
             bottom: 0,
-            background: 'linear-gradient(to bottom, #0f172a 0%, #000000 100%)',
-            opacity: 0.8,
+            // Hero-like gradient: Blue to Light Blue
+            background: 'linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #60a5fa 100%)',
+            opacity: 1,
         },
         logoContainer: {
             position: 'absolute' as const,
@@ -89,79 +90,110 @@ const LoginPage: React.FC = () => {
         logoText: {
             color: 'white',
             fontWeight: 'bold',
-            fontSize: '18px',
+            fontSize: '20px',
             letterSpacing: '0.025em',
+            fontFamily: 'variex, sans-serif', // Assuming variex is available globally or falls back
         },
         card: {
             width: '100%',
-            maxWidth: '320px',
+            maxWidth: '360px',
             zIndex: 10,
-            padding: '0 16px',
+            padding: '40px 32px',
+            backgroundColor: 'white',
+            borderRadius: '24px',
+            boxShadow: '0 20px 40px rgba(0, 0, 0, 0.2)', // Stronger shadow for pop
         },
         header: {
             textAlign: 'center' as const,
             marginBottom: '32px',
         },
         title: {
-            fontSize: '24px',
-            fontWeight: '700',
-            color: 'white',
+            fontSize: '28px',
+            fontWeight: '800',
+            color: '#111827', // Dark gray for text on white
             marginBottom: '8px',
+            letterSpacing: '-0.02em',
+        },
+        subtitle: {
+            fontSize: '14px',
+            color: '#6b7280',
         },
         input: {
             width: '100%',
-            padding: '10px 12px',
-            backgroundColor: '#111',
-            border: '1px solid #333',
-            borderRadius: '6px',
-            color: 'white',
-            fontSize: '14px',
+            padding: '12px 16px',
+            backgroundColor: '#f9fafb', // Very light gray
+            border: '1px solid #e5e7eb', // Light border
+            borderRadius: '12px',
+            color: '#1f2937', // Dark text
+            fontSize: '15px',
             marginBottom: '16px',
             outline: 'none',
+            transition: 'all 0.2s ease',
         },
         primaryButton: {
             width: '100%',
-            padding: '10px',
-            backgroundColor: 'white',
-            color: 'black',
+            padding: '12px',
+            backgroundColor: '#2563eb', // Brand Blue
+            color: 'white',
             border: 'none',
-            borderRadius: '6px',
-            fontWeight: '500',
-            fontSize: '14px',
+            borderRadius: '12px',
+            fontWeight: '600',
+            fontSize: '15px',
             cursor: 'pointer',
             marginTop: '8px',
+            boxShadow: '0 4px 12px rgba(37, 99, 235, 0.2)',
+            transition: 'transform 0.1s ease',
         },
         secondaryButton: {
             width: '100%',
-            padding: '10px',
-            backgroundColor: 'black',
-            color: 'white',
-            border: '1px solid #333',
-            borderRadius: '6px',
+            padding: '12px',
+            backgroundColor: 'white',
+            color: '#374151',
+            border: '1px solid #e5e7eb',
+            borderRadius: '12px',
             fontWeight: '500',
-            fontSize: '14px',
+            fontSize: '15px',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             gap: '10px',
+            transition: 'background-color 0.1s ease',
         },
         divider: {
-            height: '20px',
+            height: '24px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: '8px 0',
+        },
+        dividerLine: {
+            height: '1px',
+            backgroundColor: '#e5e7eb',
+            width: '100%',
+        },
+        dividerText: {
+            padding: '0 10px',
+            color: '#9ca3af',
+            fontSize: '12px',
+            textTransform: 'uppercase' as const,
+            letterSpacing: '0.05em',
+            backgroundColor: 'white',
         },
         footer: {
             marginTop: '32px',
             textAlign: 'center' as const,
-            fontSize: '12px',
-            color: '#666',
+            fontSize: '14px',
+            color: '#6b7280',
         },
         link: {
-            color: '#3b82f6',
+            color: '#2563eb',
             background: 'none',
             border: 'none',
             cursor: 'pointer',
             padding: 0,
             marginLeft: '4px',
+            fontWeight: '600',
         },
     };
 
@@ -172,22 +204,25 @@ const LoginPage: React.FC = () => {
 
             {/* Logo */}
             <div style={styles.logoContainer}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 4L20 20H4L12 4Z" fill="white" />
                 </svg>
                 <span style={styles.logoText}>CollabX</span>
             </div>
 
             <motion.div
-                initial={{ opacity: 0, scale: 0.98 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.3 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
                 style={styles.card}
             >
                 <div style={styles.header}>
                     <h1 style={styles.title}>
-                        {isLogin ? 'Log in to CollabX' : 'Sign up for CollabX'}
+                        {isLogin ? 'Welcome back' : 'Create account'}
                     </h1>
+                    <p style={styles.subtitle}>
+                        {isLogin ? 'Enter your details to access your account' : 'Start building your future today'}
+                    </p>
                 </div>
 
                 <form onSubmit={handleEmailAuth}>
@@ -197,7 +232,7 @@ const LoginPage: React.FC = () => {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         style={styles.input}
-                        placeholder="Email Address"
+                        placeholder="Email address"
                     />
                     <input
                         type="password"
@@ -215,7 +250,7 @@ const LoginPage: React.FC = () => {
                                 initial={{ opacity: 0, height: 0 }}
                                 animate={{ opacity: 1, height: 'auto' }}
                                 exit={{ opacity: 0, height: 0 }}
-                                style={{ color: '#ef4444', fontSize: '12px', textAlign: 'center', paddingBottom: '10px' }}
+                                style={{ color: '#ef4444', fontSize: '13px', textAlign: 'center', paddingBottom: '12px' }}
                             >
                                 {error}
                             </motion.div>
@@ -225,35 +260,44 @@ const LoginPage: React.FC = () => {
                                 initial={{ opacity: 0, height: 0 }}
                                 animate={{ opacity: 1, height: 'auto' }}
                                 exit={{ opacity: 0, height: 0 }}
-                                style={{ color: '#22c55e', fontSize: '12px', textAlign: 'center', paddingBottom: '10px' }}
+                                style={{ color: '#16a34a', fontSize: '13px', textAlign: 'center', paddingBottom: '12px' }}
                             >
                                 {message}
                             </motion.div>
                         )}
                     </AnimatePresence>
 
-                    <button
+                    <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
                         type="submit"
                         disabled={loading}
                         style={{ ...styles.primaryButton, opacity: loading ? 0.7 : 1 }}
                     >
-                        {loading ? 'Processing...' : (isLogin ? 'Continue with Email' : 'Sign Up with Email')}
-                    </button>
+                        {loading ? 'Processing...' : (isLogin ? 'Sign in' : 'Sign up')}
+                    </motion.button>
                 </form>
 
-                <div style={styles.divider}></div>
+                <div style={styles.divider}>
+                    <div style={{ position: 'relative', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <div style={styles.dividerLine}></div>
+                        <span style={{ position: 'absolute', ...styles.dividerText }}>OR</span>
+                    </div>
+                </div>
 
-                <button
+                <motion.button
+                    whileHover={{ scale: 1.02, backgroundColor: '#f9fafb' }}
+                    whileTap={{ scale: 0.98 }}
                     onClick={handleGoogleLogin}
                     style={styles.secondaryButton}
                 >
                     <img
                         src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
                         alt="Google"
-                        style={{ width: '16px', height: '16px' }}
+                        style={{ width: '18px', height: '18px' }}
                     />
                     <span>Continue with Google</span>
-                </button>
+                </motion.button>
 
                 <div style={styles.footer}>
                     <p>
@@ -262,7 +306,7 @@ const LoginPage: React.FC = () => {
                             onClick={() => setIsLogin(!isLogin)}
                             style={styles.link}
                         >
-                            {isLogin ? 'Sign Up' : 'Log In'}
+                            {isLogin ? 'Sign up' : 'Log in'}
                         </button>
                     </p>
                 </div>
