@@ -62,15 +62,20 @@ const NavBar: React.FC = () => {
                         </span>
                     </div>
 
-                    <div className="hidden md:flex items-center gap-8">
-                        {['Roadmaps', 'Projects', 'Community', 'Contact'].map((item) => (
+                    <div className="flex items-center gap-6">
+                        {[
+                            { name: 'Learning Roadmaps', id: 'roadmaps' },
+                            { name: 'Projects', id: 'projects' },
+                            { name: 'Community Hub', id: 'community' },
+                            { name: 'Get in Touch', id: 'contact' }
+                        ].map((item) => (
                             <button
-                                key={item}
-                                onClick={() => scrollToSection(item.toLowerCase())}
-                                className={`text-sm font-medium transition-colors ${scrolled ? 'text-gray-600 hover:text-blue-600' : 'text-gray-200 hover:text-white'
+                                key={item.id}
+                                onClick={() => scrollToSection(item.id)}
+                                className={`text-sm font-medium transition-colors whitespace-nowrap ${scrolled ? 'text-gray-600 hover:text-blue-600' : 'text-gray-200 hover:text-white'
                                     }`}
                             >
-                                {item}
+                                {item.name}
                             </button>
                         ))}
                     </div>
