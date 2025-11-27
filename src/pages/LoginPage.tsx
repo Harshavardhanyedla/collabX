@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
+import logoImg from '../assets/logo.jpg';
 
 const LoginPage: React.FC = () => {
     const navigate = useNavigate();
@@ -204,6 +205,7 @@ const LoginPage: React.FC = () => {
 
             {/* Logo */}
             <div style={styles.logoContainer}>
+                <img src={logoImg} alt="CollabX Logo" style={{ height: '32px', borderRadius: '4px' }} />
                 <span style={styles.logoText}>CollabX</span>
             </div>
 
