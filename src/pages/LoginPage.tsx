@@ -204,9 +204,6 @@ const LoginPage: React.FC = () => {
 
             {/* Logo */}
             <div style={styles.logoContainer}>
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 4L20 20H4L12 4Z" fill="white" />
-                </svg>
                 <span style={styles.logoText}>CollabX</span>
             </div>
 
