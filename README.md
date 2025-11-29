@@ -283,14 +283,6 @@ Copyright (c) 2024 CollabX. All rights reserved.
 Unauthorized copying of this file, via any medium is strictly prohibited.
 Proprietary and confidential.
 
-## 🙏 Acknowledgments
-
-- **React Team** - For the amazing framework
-- **Tailwind CSS** - For the utility-first CSS framework
-- **Heroicons** - For the beautiful icon set
-- **Framer Motion** - For smooth animations
-- **Student Community** - For inspiration and feedback
-
 ## 📞 Support
 
 - **Email**: contact@studentcorner.com
