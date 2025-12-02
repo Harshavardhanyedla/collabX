@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../lib/supabase';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const LoginPage: React.FC = () => {
     const navigate = useNavigate();
@@ -64,22 +64,12 @@ const LoginPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center bg-white relative overflow-hidden font-sans">
+        <div className="min-h-screen flex flex-col items-center justify-center bg-white relative overflow-hidden font-sans pt-20">
             {/* Background Decoration */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
                 <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-purple-100 rounded-full blur-3xl opacity-50"></div>
                 <div className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-blue-50 rounded-full blur-3xl opacity-50"></div>
             </div>
-
-            {/* Logo */}
-            <Link to="/" className="absolute top-6 left-6 z-20 flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-[#5865F2] flex items-center justify-center text-white">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.499 5.24 50.534 50.534 0 00-2.658.813m-15.482 0A50.717 50.717 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5" />
-                    </svg>
-                </div>
-                <span className="text-xl font-bold text-[#0f172a] tracking-tight">CollabX</span>
-            </Link>
 
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -87,37 +77,94 @@ const LoginPage: React.FC = () => {
                 transition={{ duration: 0.4, ease: "easeOut" }}
                 className="w-full max-w-md z-10 p-8 md:p-10 bg-white rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100"
             >
+                {/* Card Header Icon */}
+                <div className="flex justify-center mb-6">
+                    <div className="w-12 h-12 rounded-xl bg-[#5865F2] flex items-center justify-center text-white shadow-lg shadow-indigo-500/30">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M15.59 14.37a6 6 0 0 1-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 0 0 6.16-12.12A14.98 14.98 0 0 0 9.631 8.41m5.96 5.96a14.926 14.926 0 0 1-5.841 2.58m-.119-8.54a6 6 0 0 0-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 0 0-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 0 1-2.448-2.448 14.9 14.9 0 0 1 .06-.312m-2.24 2.39a4.493 4.493 0 0 0-1.757 4.306 4.493 4.493 0 0 0 4.306-1.758M16.5 9a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z" />
+                        </svg>
+                    </div>
+                </div>
+
                 <div className="text-center mb-8">
-                    <h1 className="text-3xl font-bold text-[#0f172a] mb-2 tracking-tight">
+                    <h1 className="text-2xl font-bold text-[#0f172a] mb-2 tracking-tight">
                         {isLogin ? 'Welcome back' : 'Create account'}
                     </h1>
                     <p className="text-gray-500 text-sm">
-                        {isLogin ? 'Enter your details to access your account' : 'Start building your future today'}
+                        {isLogin ? 'Please enter your details to sign in' : 'Start building your future today'}
                     </p>
+                </div>
+
+                {/* Google Login - Top */}
+                <motion.button
+                    whileHover={{ scale: 1.01, backgroundColor: '#f8fafc' }}
+                    whileTap={{ scale: 0.99 }}
+                    onClick={handleGoogleLogin}
+                    className="w-full py-3 rounded-xl bg-white border border-gray-200 text-gray-700 font-medium flex items-center justify-center gap-3 hover:border-gray-300 transition-all mb-6"
+                >
+                    <img
+                        src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+                        alt="Google"
+                        className="w-5 h-5"
+                    />
+                    <span>{isLogin ? 'Sign in with Google' : 'Sign up with Google'}</span>
+                </motion.button>
+
+                <div className="relative flex items-center justify-center mb-6">
+                    <div className="absolute w-full h-px bg-gray-200"></div>
+                    <span className="relative px-3 bg-white text-xs font-medium text-gray-400">Or continue with email</span>
                 </div>
 
                 <form onSubmit={handleEmailAuth} className="space-y-4">
                     <div>
-                        <input
-                            type="email"
-                            required
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            className="w-full px-4 py-3.5 rounded-xl bg-gray-50 border border-gray-200 text-[#0f172a] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#5865F2]/20 focus:border-[#5865F2] transition-all"
-                            placeholder="Email address"
-                        />
+                        <label className="block text-xs font-bold text-gray-700 mb-1.5 ml-1">Email address</label>
+                        <div className="relative">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-gray-400">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+                                </svg>
+                            </div>
+                            <input
+                                type="email"
+                                required
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#1e293b] border border-transparent text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#5865F2] transition-all"
+                                placeholder="you@university.edu"
+                            />
+                        </div>
                     </div>
                     <div>
-                        <input
-                            type="password"
-                            required
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            className="w-full px-4 py-3.5 rounded-xl bg-gray-50 border border-gray-200 text-[#0f172a] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#5865F2]/20 focus:border-[#5865F2] transition-all"
-                            placeholder="Password"
-                            minLength={6}
-                        />
+                        <label className="block text-xs font-bold text-gray-700 mb-1.5 ml-1">Password</label>
+                        <div className="relative">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-gray-400">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+                                </svg>
+                            </div>
+                            <input
+                                type="password"
+                                required
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#1e293b] border border-transparent text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#5865F2] transition-all"
+                                placeholder="••••••••"
+                                minLength={6}
+                            />
+                        </div>
                     </div>
+
+                    {isLogin && (
+                        <div className="flex items-center justify-between text-sm">
+                            <label className="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-[#5865F2] focus:ring-[#5865F2]" />
+                                <span className="text-gray-600">Remember me</span>
+                            </label>
+                            <button type="button" className="text-[#5865F2] font-medium hover:underline">
+                                Forgot password?
+                            </button>
+                        </div>
+                    )}
 
                     <AnimatePresence>
                         {error && (
@@ -147,30 +194,11 @@ const LoginPage: React.FC = () => {
                         whileTap={{ scale: 0.99 }}
                         type="submit"
                         disabled={loading}
-                        className={`w-full py-3.5 rounded-xl bg-[#0f172a] text-white font-bold shadow-lg hover:bg-gray-800 transition-all ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
+                        className={`w-full py-3 rounded-xl bg-[#5865F2] text-white font-bold shadow-lg shadow-indigo-500/30 hover:bg-[#4752c4] transition-all ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
                     >
                         {loading ? 'Processing...' : (isLogin ? 'Sign in' : 'Sign up')}
                     </motion.button>
                 </form>
-
-                <div className="relative flex items-center justify-center my-8">
-                    <div className="absolute w-full h-px bg-gray-200"></div>
-                    <span className="relative px-3 bg-white text-xs font-bold text-gray-400 uppercase tracking-wider">OR</span>
-                </div>
-
-                <motion.button
-                    whileHover={{ scale: 1.01, backgroundColor: '#f8fafc' }}
-                    whileTap={{ scale: 0.99 }}
-                    onClick={handleGoogleLogin}
-                    className="w-full py-3.5 rounded-xl bg-white border border-gray-200 text-gray-700 font-medium flex items-center justify-center gap-3 hover:border-gray-300 transition-all"
-                >
-                    <img
-                        src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
-                        alt="Google"
-                        className="w-5 h-5"
-                    />
-                    <span>Continue with Google</span>
-                </motion.button>
 
                 <div className="mt-8 text-center text-sm text-gray-500">
                     <p>
@@ -179,7 +207,7 @@ const LoginPage: React.FC = () => {
                             onClick={() => setIsLogin(!isLogin)}
                             className="text-[#5865F2] font-bold hover:underline ml-1"
                         >
-                            {isLogin ? 'Sign up' : 'Log in'}
+                            {isLogin ? 'Sign up for free' : 'Log in'}
                         </button>
                     </p>
                 </div>
