@@ -93,27 +93,24 @@ const NavBar: React.FC = () => {
 
                     {/* Auth / Profile */}
                     <div className="hidden md:flex items-center gap-4">
-                        {user ? (
+                        {!user && (
                             <Link
-                                to="/profile"
-                                className="flex items-center gap-2 bg-[#0f172a] text-white px-5 py-2.5 rounded-full hover:bg-gray-800 transition-colors"
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-                                </svg>
-                                <span className="text-sm font-medium">Profile</span>
-                            </Link>
-                        ) : (
-                            <button
-                                onClick={() => {
-                                    setAuthModalInitialView('login');
-                                    setIsAuthModalOpen(true);
-                                }}
-                                className="bg-[#0f172a] text-white px-6 py-2.5 rounded-full text-sm font-medium hover:bg-gray-800 transition-colors"
+                                to="/login"
+                                className="text-sm font-medium text-gray-600 hover:text-[#5865F2] transition-colors"
                             >
                                 Log in
-                            </button>
+                            </Link>
                         )}
+
+                        <Link
+                            to="/profile"
+                            className="flex items-center gap-2 bg-[#0f172a] text-white px-5 py-2.5 rounded-full hover:bg-gray-800 transition-colors"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                            </svg>
+                            <span className="text-sm font-medium">Profile</span>
+                        </Link>
                     </div>
 
                     {/* Mobile Menu Button */}
