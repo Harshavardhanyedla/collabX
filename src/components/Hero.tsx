@@ -20,8 +20,8 @@ const Hero: React.FC = () => {
           transition={{ duration: 0.5 }}
           className="mb-8"
         >
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-50 border border-purple-100 text-[#5865F2] text-xs font-bold tracking-wide uppercase">
-            <span className="w-2 h-2 rounded-full bg-[#5865F2]"></span>
+          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-[#0066FF] text-xs font-bold tracking-wide uppercase">
+            <span className="w-2 h-2 rounded-full bg-[#0066FF]"></span>
             Beta is Live
           </span>
         </motion.div>
@@ -34,7 +34,7 @@ const Hero: React.FC = () => {
           className="text-5xl md:text-7xl font-bold text-[#0f172a] tracking-tight mb-6 leading-tight max-w-4xl"
         >
           Build. Learn. <br />
-          <span className="text-[#5865F2]">Collaborate.</span>
+          <span className="text-[#0066FF]">Collaborate.</span>
         </motion.h1>
 
         {/* Subheadline */}
@@ -63,7 +63,7 @@ const Hero: React.FC = () => {
             <input
               type="text"
               placeholder="Search for 'GATE Notes' or 'React Projects'..."
-              className="w-full pl-12 pr-32 py-4 rounded-2xl border border-gray-200 shadow-sm focus:ring-2 focus:ring-[#5865F2] focus:border-transparent outline-none text-gray-700 bg-white"
+              className="w-full pl-12 pr-32 py-4 rounded-2xl border border-gray-200 shadow-sm focus:ring-2 focus:ring-[#0066FF] focus:border-transparent outline-none text-gray-700 bg-white"
             />
             <button className="absolute right-2 top-2 bottom-2 bg-[#0f172a] text-white px-6 rounded-xl text-sm font-medium hover:bg-gray-800 transition-colors">
               Search
@@ -80,7 +80,7 @@ const Hero: React.FC = () => {
         >
           <button
             onClick={() => scrollToSection('roadmaps')}
-            className="btn-primary flex items-center gap-2 px-8 py-3.5 rounded-xl text-base shadow-lg shadow-purple-500/20"
+            className="btn-primary flex items-center gap-2 px-8 py-3.5 rounded-xl text-base shadow-lg shadow-blue-500/20"
           >
             Find Resources
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
@@ -105,7 +105,7 @@ const Hero: React.FC = () => {
           <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-8">Trusted by students from</p>
           <div className="flex flex-wrap justify-center gap-8 md:gap-16 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
             {['IIT Bombay', 'BITS Pilani', 'NIT Trichy', 'Delhi University'].map((uni) => (
-              <span key={uni} className="text-lg font-bold text-gray-400 hover:text-[#5865F2] transition-colors cursor-default">
+              <span key={uni} className="text-lg font-bold text-gray-400 hover:text-[#0066FF] transition-colors cursor-default">
                 {uni}
               </span>
             ))}
