@@ -47,14 +47,19 @@ const CommunitySection: React.FC = () => {
 
         <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
           <div className="max-w-2xl">
-            <h2 className="text-4xl font-bold text-[#0f172a] mb-4">Meet Your Future Co-founders</h2>
+            <h2 className="text-4xl font-bold text-[#0f172a] mb-4">Students</h2>
             <p className="text-lg text-gray-500">
               Connect with ambitious students from top universities who are building the next big thing.
             </p>
           </div>
-          <button className="btn-primary px-8 py-3 rounded-xl shadow-lg shadow-purple-500/20 whitespace-nowrap">
+          <a
+            href="https://chat.whatsapp.com/L4AfqBc5pIh5o2D5BGt5rv"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-primary px-8 py-3 rounded-xl shadow-lg shadow-blue-500/20 whitespace-nowrap"
+          >
             Join the Community
-          </button>
+          </a>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -65,9 +70,9 @@ const CommunitySection: React.FC = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
-              className="group relative bg-white rounded-2xl p-6 border border-gray-100 hover:border-purple-100 hover:shadow-xl hover:shadow-purple-500/5 transition-all duration-300"
+              className="group relative bg-white rounded-2xl p-6 border border-gray-100 hover:border-blue-100 hover:shadow-xl hover:shadow-blue-500/5 transition-all duration-300"
             >
-              <div className="absolute top-4 right-4 text-gray-300 group-hover:text-[#5865F2] transition-colors">
+              <div className="absolute top-4 right-4 text-gray-300 group-hover:text-[#0066FF] transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
                 </svg>
@@ -78,7 +83,7 @@ const CommunitySection: React.FC = () => {
               </div>
 
               <h3 className="text-lg font-bold text-[#0f172a] mb-1">{student.name}</h3>
-              <p className="text-[#5865F2] font-medium text-sm mb-4">{student.role}</p>
+              <p className="text-[#0066FF] font-medium text-sm mb-4">{student.role}</p>
 
               <div className="flex items-center gap-2 text-gray-500 text-sm mb-6">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">

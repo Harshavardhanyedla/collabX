@@ -9,6 +9,7 @@ import Profile from './pages/Profile';
 import RoadmapDetail from './pages/RoadmapDetail';
 import ResourceDetail from './pages/ResourceDetail';
 import LoginPage from './pages/LoginPage';
+import Footer from './components/Footer';
 
 const Home: React.FC = () => (
     <main className="bg-white min-h-screen">
@@ -30,6 +31,7 @@ const App: React.FC = () => {
                 <Route path="/resource/:resourceId" element={<ResourceDetail />} />
                 <Route path="/login" element={<LoginPage />} />
             </Routes>
+            <Footer />
         </div>
     );
 };

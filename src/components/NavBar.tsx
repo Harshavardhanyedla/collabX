@@ -68,11 +68,9 @@ const NavBar: React.FC = () => {
                 <div className="container-custom w-full flex justify-between items-center">
                     {/* Logo */}
                     <Link to="/" className="flex items-center gap-3" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-                        <div className="w-10 h-10 rounded-lg bg-[#5865F2] flex items-center justify-center text-white">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-                                <path fillRule="evenodd" d="M9.315 7.584C12.195 3.883 16.695 1.5 21.75 1.5a.75.75 0 01.75.75c0 5.056-2.383 9.555-6.084 12.436h.001c-3.698 2.88-8.196 5.263-13.25 5.263a.75.75 0 01-.75-.75c0-5.055 2.383-9.555 6.084-12.436z" clipRule="evenodd" />
-                                <path d="M4.786 2.547a.75.75 0 011.004 1.004A22.05 22.05 0 001.5 9.75a22.05 22.05 0 004.29 6.199.75.75 0 01-1.004 1.004A23.55 23.55 0 01.008 9.75c0-2.758.62-5.372 1.73-7.705a.75.75 0 013.048.502z" />
-                                <path d="M18.214 21.453a.75.75 0 01-1.004-1.004 22.05 22.05 0 004.29-6.199 22.05 22.05 0 00-4.29-6.199.75.75 0 011.004-1.004 23.55 23.55 0 014.722 7.203c0 2.758-.62 5.372-1.73 7.705a.75.75 0 01-3.048-.502z" />
+                        <div className="w-10 h-10 rounded-lg bg-[#0066FF] flex items-center justify-center text-white">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
                             </svg>
                         </div>
                         <span className="text-xl font-bold text-[#0f172a] tracking-tight">CollabX</span>
@@ -84,7 +82,7 @@ const NavBar: React.FC = () => {
                             <button
                                 key={link.name}
                                 onClick={() => handleNavClick(link)}
-                                className="text-sm font-medium text-gray-600 hover:text-[#5865F2] transition-colors"
+                                className="text-sm font-medium text-gray-600 hover:text-[#0066FF] transition-colors"
                             >
                                 {link.name}
                             </button>
@@ -96,7 +94,7 @@ const NavBar: React.FC = () => {
                         {!user && (
                             <Link
                                 to="/login"
-                                className="text-sm font-medium text-gray-600 hover:text-[#5865F2] transition-colors"
+                                className="text-sm font-medium text-gray-600 hover:text-[#0066FF] transition-colors"
                             >
                                 Log in
                             </Link>

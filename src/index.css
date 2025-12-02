@@ -37,7 +37,7 @@ body {
 }
 
 .btn-primary {
-  @apply bg-[#5865F2] text-white font-medium px-6 py-2.5 rounded-lg hover:bg-[#4752c4] transition-colors duration-200;
+  @apply bg-[#0066FF] text-white font-medium px-6 py-2.5 rounded-lg hover:bg-[#0052cc] transition-colors duration-200;
 }
 
 .btn-secondary {
@@ -45,7 +45,7 @@ body {
 }
 
 .text-gradient {
-  @apply bg-clip-text text-transparent bg-gradient-to-r from-[#5865F2] to-[#7c3aed];
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-[#0066FF] to-[#0052cc];
 }
 
 
