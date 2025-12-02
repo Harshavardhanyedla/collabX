@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import AuthModal from './AuthModal';
 import type { User } from '@supabase/supabase-js';
@@ -11,6 +11,7 @@ const NavBar: React.FC = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     const navigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => {
         supabase.auth.getSession().then(({ data: { session } }) => {
@@ -30,15 +31,35 @@ const NavBar: React.FC = () => {
     };
 
     const navLinks = [
-        { name: 'Home', path: '/' },
-        { name: 'Resources', path: '/resources' }, // Assuming this maps to Roadmaps/Resources
-        { name: 'Projects', path: '/projects' },
-        { name: 'Students', path: '/students' },
+        { name: 'Home', path: '/', type: 'route' },
+        { name: 'Resources', path: 'roadmaps', type: 'scroll' },
+        { name: 'Projects', path: 'projects', type: 'scroll' },
+        { name: 'Students', path: 'community', type: 'scroll' },
     ];
 
-    const handleNavClick = (path: string) => {
-        navigate(path);
+    const handleNavClick = (link: { name: string; path: string; type: string }) => {
         setIsMobileMenuOpen(false);
+
+        if (link.type === 'route') {
+            navigate(link.path);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+            if (location.pathname !== '/') {
+                navigate('/');
+                // Wait for navigation to complete before scrolling
+                setTimeout(() => {
+                    const element = document.getElementById(link.path);
+                    if (element) {
+                        element.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }, 100);
+            } else {
+                const element = document.getElementById(link.path);
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+        }
     };
 
     return (
@@ -46,7 +67,7 @@ const NavBar: React.FC = () => {
             <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 h-20 flex items-center">
                 <div className="container-custom w-full flex justify-between items-center">
                     {/* Logo */}
-                    <Link to="/" className="flex items-center gap-3">
+                    <Link to="/" className="flex items-center gap-3" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
                         <div className="w-10 h-10 rounded-lg bg-[#5865F2] flex items-center justify-center text-white">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
                                 <path fillRule="evenodd" d="M9.315 7.584C12.195 3.883 16.695 1.5 21.75 1.5a.75.75 0 01.75.75c0 5.056-2.383 9.555-6.084 12.436h.001c-3.698 2.88-8.196 5.263-13.25 5.263a.75.75 0 01-.75-.75c0-5.055 2.383-9.555 6.084-12.436z" clipRule="evenodd" />
@@ -62,7 +83,7 @@ const NavBar: React.FC = () => {
                         {navLinks.map((link) => (
                             <button
                                 key={link.name}
-                                onClick={() => handleNavClick(link.path)}
+                                onClick={() => handleNavClick(link)}
                                 className="text-sm font-medium text-gray-600 hover:text-[#5865F2] transition-colors"
                             >
                                 {link.name}
@@ -112,7 +133,7 @@ const NavBar: React.FC = () => {
                         {navLinks.map((link) => (
                             <button
                                 key={link.name}
-                                onClick={() => handleNavClick(link.path)}
+                                onClick={() => handleNavClick(link)}
                                 className="text-left text-gray-600 font-medium py-2 hover:text-[#5865F2]"
                             >
                                 {link.name}
