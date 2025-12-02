@@ -11,7 +11,18 @@ const Footer: React.FC = () => {
                         <Link to="/" className="flex items-center gap-3 mb-6">
                             <div className="w-8 h-8 rounded-lg bg-[#0066FF] flex items-center justify-center text-white">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M10.05 4.575a1.575 1.575 0 1 0-3.15 0v3m3.15-3v-1.5a1.575 1.575 0 0 1 3.15 0v1.5m-3.15 0 .075 5.951a.983.983 0 0 1-.825.59h-1.635a1 1 0 0 1-.822-.425l-2.922-4.591a1.575 1.575 0 0 0-2.672 1.705l3.257 5.113a3.735 3.735 0 0 0 3.16 1.723h5.29a4.5 4.5 0 0 0 4.5-4.5v-6.375a1.575 1.575 0 0 0-3.15 0v-1.5a1.575 1.575 0 0 0-3.15 0v1.5A1.575 1.575 0 0 0 13.2 1.5a1.575 1.575 0 0 0-1.575 1.575v3" />
+                                    {/* Fist */}
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M10 11V8a2 2 0 1 1 4 0v3l.5.5a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2l.5-.5z" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M10 11l4 0" />
+                                    {/* Rays */}
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 21v-2" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 12h2" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 12h-2" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M5.6 5.6l1.4 1.4" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M18.4 18.4l-1.4-1.4" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M18.4 5.6l-1.4 1.4" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M5.6 18.4l1.4-1.4" />
                                 </svg>
                             </div>
                             <span className="text-xl font-bold tracking-tight">CollabX</span>
