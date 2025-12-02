@@ -107,7 +107,7 @@ const LoginPage: React.FC = () => {
                         alt="Google"
                         className="w-5 h-5"
                     />
-                    <span>{isLogin ? 'Sign in with Google' : 'Sign up with Google'}</span>
+                    <span>Continue with Google</span>
                 </motion.button>
 
                 <div className="relative flex items-center justify-center mb-6">
