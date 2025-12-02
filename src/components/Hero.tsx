@@ -10,130 +10,109 @@ const Hero: React.FC = () => {
   };
 
   return (
-    <section className="hero-bg" style={{
-      minHeight: '100vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      position: 'relative',
-      overflow: 'hidden'
-    }}>
-      {/* Animated background elements */}
-      <motion.div
-        className="absolute top-20 left-10 w-20 h-20 bg-white bg-opacity-10 rounded-full"
-        animate={{
-          y: [0, -20, 0],
-          rotate: [0, 180, 360]
-        }}
-        transition={{
-          duration: 6,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-      />
+    <section className="relative w-full pt-32 pb-20 overflow-hidden bg-white">
+      <div className="container-custom mx-auto flex flex-col items-center text-center">
 
-      <motion.div
-        className="absolute top-40 right-15 w-16 h-16 bg-white bg-opacity-10 rounded-full"
-        animate={{
-          y: [0, 20, 0],
-          rotate: [360, 180, 0]
-        }}
-        transition={{
-          duration: 8,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-      />
-
-      <motion.div
-        className="absolute bottom-20 left-1/4 w-12 h-12 bg-white bg-opacity-10 rounded-full"
-        animate={{
-          y: [0, -15, 0],
-          x: [0, 10, 0]
-        }}
-        transition={{
-          duration: 4,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-      />
-
-      {/* Main content */}
-      <div className="relative z-10 text-center text-white px-4 max-w-4xl mx-auto">
-        <motion.h1
-          className="text-6xl md:text-8xl font-bold mb-6 leading-tight font-variex lowercase"
-          initial={{ opacity: 0, y: 50 }}
+        {/* Beta Badge */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
+          transition={{ duration: 0.5 }}
+          className="mb-8"
         >
-          CollabX
+          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-50 border border-purple-100 text-[#5865F2] text-xs font-bold tracking-wide uppercase">
+            <span className="w-2 h-2 rounded-full bg-[#5865F2]"></span>
+            Beta is Live
+          </span>
+        </motion.div>
+
+        {/* Headline */}
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="text-5xl md:text-7xl font-bold text-[#0f172a] tracking-tight mb-6 leading-tight max-w-4xl"
+        >
+          Build. Learn. <br />
+          <span className="text-[#5865F2]">Collaborate.</span>
         </motion.h1>
 
+        {/* Subheadline */}
         <motion.p
-          className="text-2xl md:text-3xl font-semibold mb-4 text-blue-100"
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="text-lg md:text-xl text-gray-500 max-w-2xl mb-10 leading-relaxed"
         >
-          By Students, For Students
+          The all-in-one platform for students to find exam resources, join ambitious projects, and connect with peers across colleges.
         </motion.p>
 
-        <motion.p
-          className="text-lg md:text-xl mb-12 text-blue-200 max-w-2xl mx-auto leading-relaxed"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
-        >
-          Discover learning roadmaps, showcase your projects, and connect with a global community of passionate students building the future.
-        </motion.p>
-
+        {/* Search Bar */}
         <motion.div
-          className="flex flex-col sm:flex-row gap-4 justify-center items-center"
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="w-full max-w-2xl relative mb-10"
         >
-          <motion.button
-            className="btn btn-primary text-lg px-8 py-4 rounded-xl font-semibold shadow-2xl"
-            whileHover={{
-              scale: 1.05,
-              boxShadow: "0 20px 40px rgba(59, 130, 246, 0.4)"
-            }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => scrollToSection('roadmaps')}
-          >
-            Explore Roadmaps
-          </motion.button>
-
-          <motion.button
-            className="btn btn-secondary text-lg px-8 py-4 rounded-xl font-semibold shadow-2xl"
-            whileHover={{
-              scale: 1.05,
-              backgroundColor: "#3b82f6",
-              color: "white"
-            }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => scrollToSection('projects')}
-          >
-            Share a Project
-          </motion.button>
+          <div className="relative flex items-center">
+            <div className="absolute left-4 text-gray-400">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+              </svg>
+            </div>
+            <input
+              type="text"
+              placeholder="Search for 'GATE Notes' or 'React Projects'..."
+              className="w-full pl-12 pr-32 py-4 rounded-2xl border border-gray-200 shadow-sm focus:ring-2 focus:ring-[#5865F2] focus:border-transparent outline-none text-gray-700 bg-white"
+            />
+            <button className="absolute right-2 top-2 bottom-2 bg-[#0f172a] text-white px-6 rounded-xl text-sm font-medium hover:bg-gray-800 transition-colors">
+              Search
+            </button>
+          </div>
         </motion.div>
-      </div>
 
-      {/* Scroll indicator */}
-      <motion.div
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
-        animate={{ y: [0, 10, 0] }}
-        transition={{ duration: 2, repeat: Infinity }}
-      >
-        <div className="w-6 h-10 border-2 border-white rounded-full flex justify-center">
-          <motion.div
-            className="w-1 h-3 bg-white rounded-full mt-2"
-            animate={{ y: [0, 12, 0] }}
-            transition={{ duration: 2, repeat: Infinity }}
-          />
-        </div>
-      </motion.div>
+        {/* CTA Buttons */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+          className="flex flex-col sm:flex-row gap-4 mb-20"
+        >
+          <button
+            onClick={() => scrollToSection('roadmaps')}
+            className="btn-primary flex items-center gap-2 px-8 py-3.5 rounded-xl text-base shadow-lg shadow-purple-500/20"
+          >
+            Find Resources
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+            </svg>
+          </button>
+          <button
+            onClick={() => scrollToSection('projects')}
+            className="btn-secondary px-8 py-3.5 rounded-xl text-base"
+          >
+            Join a Project
+          </button>
+        </motion.div>
+
+        {/* Trusted By */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.6 }}
+          className="border-t border-gray-100 w-full pt-10"
+        >
+          <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-8">Trusted by students from</p>
+          <div className="flex flex-wrap justify-center gap-8 md:gap-16 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
+            {['IIT Bombay', 'BITS Pilani', 'NIT Trichy', 'Delhi University'].map((uni) => (
+              <span key={uni} className="text-lg font-bold text-gray-400 hover:text-[#5865F2] transition-colors cursor-default">
+                {uni}
+              </span>
+            ))}
+          </div>
+        </motion.div>
+
+      </div>
     </section>
   );
 };

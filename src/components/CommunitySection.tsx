@@ -1,234 +1,110 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
-import type { CommunityPost } from '../types';
+
+const students = [
+  {
+    id: 1,
+    name: 'Arjun Reddy',
+    role: 'Full Stack Developer',
+    institution: 'IIT Madras',
+    image: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Arjun',
+    skills: ['React', 'Node.js', 'AWS'],
+    lookingFor: 'UI Designer'
+  },
+  {
+    id: 2,
+    name: 'Priya Sharma',
+    role: 'AI Researcher',
+    institution: 'IIIT Hyderabad',
+    image: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Priya',
+    skills: ['Python', 'PyTorch', 'NLP'],
+    lookingFor: 'Frontend Dev'
+  },
+  {
+    id: 3,
+    name: 'Rahul Verma',
+    role: 'Product Designer',
+    institution: 'NID Ahmedabad',
+    image: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Rahul',
+    skills: ['Figma', 'User Research', 'Prototyping'],
+    lookingFor: 'Backend Dev'
+  },
+  {
+    id: 4,
+    name: 'Sneha Patel',
+    role: 'Blockchain Dev',
+    institution: 'BITS Pilani',
+    image: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sneha',
+    skills: ['Solidity', 'Web3.js', 'Rust'],
+    lookingFor: 'Marketing Lead'
+  }
+];
 
 const CommunitySection: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'discussions' | 'announcements'>('discussions');
-
-  const discussions: CommunityPost[] = [
-    {
-      id: '1',
-      title: 'Best practices for learning React in 2024',
-      content: 'I\'ve been learning React for the past 6 months and wanted to share some insights that really helped me...',
-      author: 'Sarah Chen',
-      timestamp: '2 hours ago',
-      likes: 24,
-      comments: 8,
-      tags: ['React', 'Learning', 'Best Practices']
-    },
-    {
-      id: '2',
-      title: 'Looking for study partners for Machine Learning course',
-      content: 'Anyone interested in forming a study group for the ML course? We could meet weekly and work on projects together.',
-      author: 'Alex Rodriguez',
-      timestamp: '5 hours ago',
-      likes: 18,
-      comments: 12,
-      tags: ['Machine Learning', 'Study Group', 'Collaboration']
-    },
-    {
-      id: '3',
-      title: 'Showcase: Built a full-stack e-commerce app with MERN',
-      content: 'Just finished my first major project! It\'s a complete e-commerce solution with user authentication, payment processing, and admin dashboard.',
-      author: 'Mike Johnson',
-      timestamp: '1 day ago',
-      likes: 45,
-      comments: 15,
-      tags: ['MERN Stack', 'E-commerce', 'Showcase']
-    },
-    {
-      id: '4',
-      title: 'Tips for landing your first developer internship',
-      content: 'After going through 20+ interviews, here are the key things that helped me land my first internship...',
-      author: 'Emily Watson',
-      timestamp: '2 days ago',
-      likes: 67,
-      comments: 23,
-      tags: ['Career', 'Internship', 'Interview Tips']
-    }
-  ];
-
-  const announcements: CommunityPost[] = [
-    {
-      id: 'a1',
-      title: 'New Learning Path: Cybersecurity Fundamentals',
-      content: 'We\'re excited to announce our new cybersecurity learning path! This comprehensive course covers ethical hacking, network security, and more.',
-      author: 'CollabX Team',
-      timestamp: '3 days ago',
-      likes: 89,
-      comments: 5,
-      tags: ['Announcement', 'Cybersecurity', 'New Course']
-    },
-    {
-      id: 'a2',
-      title: 'Community Guidelines Update',
-      content: 'We\'ve updated our community guidelines to ensure a positive and inclusive environment for all students.',
-      author: 'CollabX Team',
-      timestamp: '1 week ago',
-      likes: 34,
-      comments: 2,
-      tags: ['Guidelines', 'Community', 'Update']
-    }
-  ];
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.5
-      }
-    }
-  };
-
-  const formatTimeAgo = (timestamp: string) => {
-    return timestamp;
-  };
-
   return (
-    <section id="community" className="section-padding bg-gray-50">
-      <div className="container-custom">
-        <motion.div
-          className="text-center mb-16"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-        >
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Community Hub
-          </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Connect with fellow students, ask questions, share knowledge, and build amazing projects together.
-          </p>
-        </motion.div>
+    <section id="community" className="py-24 bg-white">
+      <div className="container-custom mx-auto">
 
-        {/* Tab Navigation */}
-        <motion.div
-          className="flex justify-center mb-12"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          viewport={{ once: true }}
-        >
-          <div className="bg-white p-1 rounded-xl shadow-lg">
-            <button
-              onClick={() => setActiveTab('discussions')}
-              className={`px-6 py-3 rounded-lg font-medium transition-all ${activeTab === 'discussions'
-                  ? 'bg-primary-600 text-white shadow-lg'
-                  : 'text-gray-600 hover:text-gray-900'
-                }`}
-            >
-              Discussions
-            </button>
-            <button
-              onClick={() => setActiveTab('announcements')}
-              className={`px-6 py-3 rounded-lg font-medium transition-all ${activeTab === 'announcements'
-                  ? 'bg-primary-600 text-white shadow-lg'
-                  : 'text-gray-600 hover:text-gray-900'
-                }`}
-            >
-              Announcements
-            </button>
+        <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+          <div className="max-w-2xl">
+            <h2 className="text-4xl font-bold text-[#0f172a] mb-4">Meet Your Future Co-founders</h2>
+            <p className="text-lg text-gray-500">
+              Connect with ambitious students from top universities who are building the next big thing.
+            </p>
           </div>
-        </motion.div>
+          <button className="btn-primary px-8 py-3 rounded-xl shadow-lg shadow-purple-500/20 whitespace-nowrap">
+            Join the Community
+          </button>
+        </div>
 
-        {/* Content */}
-        <motion.div
-          className="grid grid-cols-1 lg:grid-cols-2 gap-8"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-        >
-          {(activeTab === 'discussions' ? discussions : announcements).map((post) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {students.map((student, index) => (
             <motion.div
-              key={post.id}
-              className="card card-hover"
-              variants={itemVariants}
-              whileHover={{
-                scale: 1.02,
-                boxShadow: "0 20px 40px rgba(0, 0, 0, 0.1)"
-              }}
+              key={student.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.1 }}
+              className="group relative bg-white rounded-2xl p-6 border border-gray-100 hover:border-purple-100 hover:shadow-xl hover:shadow-purple-500/5 transition-all duration-300"
             >
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex-1">
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">
-                    {post.title}
-                  </h3>
-                  <p className="text-gray-600 mb-4 leading-relaxed">
-                    {post.content}
-                  </p>
+              <div className="absolute top-4 right-4 text-gray-300 group-hover:text-[#5865F2] transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
+                </svg>
+              </div>
+
+              <div className="w-20 h-20 rounded-full bg-gray-50 mb-6 overflow-hidden border-2 border-white shadow-md group-hover:scale-105 transition-transform duration-300">
+                <img src={student.image} alt={student.name} className="w-full h-full object-cover" />
+              </div>
+
+              <h3 className="text-lg font-bold text-[#0f172a] mb-1">{student.name}</h3>
+              <p className="text-[#5865F2] font-medium text-sm mb-4">{student.role}</p>
+
+              <div className="flex items-center gap-2 text-gray-500 text-sm mb-6">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.499 5.24 50.534 50.534 0 00-2.658.813m-15.482 0A50.717 50.717 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5" />
+                </svg>
+                {student.institution}
+              </div>
+
+              <div className="border-t border-gray-50 pt-4">
+                <p className="text-xs text-gray-400 font-medium uppercase tracking-wider mb-3">Skills</p>
+                <div className="flex flex-wrap gap-2">
+                  {student.skills.map((skill) => (
+                    <span key={skill} className="px-2.5 py-1 rounded-md bg-gray-50 text-gray-600 text-xs font-medium border border-gray-100">
+                      {skill}
+                    </span>
+                  ))}
                 </div>
               </div>
 
-              <div className="flex flex-wrap gap-2 mb-4">
-                {post.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="badge badge-blue text-sm"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-
-              <div className="flex justify-between items-center">
-                <div className="flex items-center gap-4 text-sm text-gray-500">
-                  <span>👤 {post.author}</span>
-                  <span>🕒 {formatTimeAgo(post.timestamp)}</span>
-                </div>
-                <div className="flex items-center gap-4 text-sm text-gray-500">
-                  <span>❤️ {post.likes}</span>
-                  <span>💬 {post.comments}</span>
-                </div>
-              </div>
+              <button className="w-full mt-6 py-2.5 rounded-xl border border-gray-200 text-gray-600 font-medium text-sm hover:bg-gray-50 hover:text-[#0f172a] transition-colors">
+                View Profile
+              </button>
             </motion.div>
           ))}
-        </motion.div>
+        </div>
 
-        {/* Call to Action */}
-        <motion.div
-          className="text-center mt-16"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-        >
-          <h3 className="text-2xl font-bold text-gray-900 mb-4">
-            Join the Conversation
-          </h3>
-          <p className="text-gray-600 mb-6">
-            Have a question or want to share something with the community?
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <motion.button
-              className="btn btn-primary text-lg px-8 py-4"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Start Discussion
-            </motion.button>
-            <motion.button
-              className="btn btn-secondary text-lg px-8 py-4"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Browse All Posts
-            </motion.button>
-          </div>
-        </motion.div>
       </div>
     </section>
   );

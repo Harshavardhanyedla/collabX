@@ -38,8 +38,12 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialView = 'l
                 if (error) throw error;
                 setMessage('Check your email for the confirmation link!');
             }
-        } catch (err: any) {
-            setError(err.message);
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError('An unexpected error occurred');
+            }
         } finally {
             setLoading(false);
         }

@@ -1,38 +1,37 @@
+import React from 'react';
 import { Routes, Route } from 'react-router-dom';
+import NavBar from './components/NavBar';
 import Hero from './components/Hero';
 import RoadmapsSection from './components/RoadmapsSection';
 import ProjectsSection from './components/ProjectsSection';
 import CommunitySection from './components/CommunitySection';
-import ContactSection from './components/ContactSection';
-import NavBar from './components/NavBar';
+import Profile from './pages/Profile';
+import RoadmapDetail from './pages/RoadmapDetail';
+import ResourceDetail from './pages/ResourceDetail';
 import LoginPage from './pages/LoginPage';
-import PrivateRoute from './components/PrivateRoute';
-import './index.css';
 
-function Dashboard() {
-  return (
-    <div className="min-h-screen bg-white text-gray-900">
-      <NavBar />
-      <Hero />
-      <main>
+const Home: React.FC = () => (
+    <main className="bg-white min-h-screen">
+        <Hero />
         <RoadmapsSection />
         <ProjectsSection />
         <CommunitySection />
-        <ContactSection />
-      </main>
-    </div>
-  );
-}
+    </main>
+);
 
-function App() {
-  return (
-    <Routes>
-      <Route path="/login" element={<LoginPage />} />
-      <Route element={<PrivateRoute />}>
-        <Route path="/" element={<Dashboard />} />
-      </Route>
-    </Routes>
-  );
-}
+const App: React.FC = () => {
+    return (
+        <div className="min-h-screen bg-white text-[#0f172a] font-sans">
+            <NavBar />
+            <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/roadmap/:roadmapId" element={<RoadmapDetail />} />
+                <Route path="/resource/:resourceId" element={<ResourceDetail />} />
+                <Route path="/login" element={<LoginPage />} />
+            </Routes>
+        </div>
+    );
+};
 
 export default App;

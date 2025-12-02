@@ -1,158 +1,149 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import AuthModal from './AuthModal';
 import type { User } from '@supabase/supabase-js';
-import logoImg from '../assets/logo.jpg';
 
 const NavBar: React.FC = () => {
     const [user, setUser] = useState<User | null>(null);
     const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
     const [authModalInitialView, setAuthModalInitialView] = useState<'login' | 'signup'>('login');
-    const [scrolled, setScrolled] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
-        // Check active session
         supabase.auth.getSession().then(({ data: { session } }) => {
             setUser(session?.user ?? null);
         });
 
-        // Listen for auth changes
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
             setUser(session?.user ?? null);
         });
 
-        // Scroll handler
-        const handleScroll = () => {
-            setScrolled(window.scrollY > 20);
-        };
-
-        window.addEventListener('scroll', handleScroll);
-
-        return () => {
-            subscription.unsubscribe();
-            window.removeEventListener('scroll', handleScroll);
-        };
+        return () => subscription.unsubscribe();
     }, []);
 
     const handleLogout = async () => {
         await supabase.auth.signOut();
+        setIsMobileMenuOpen(false);
     };
 
-    const scrollToSection = (sectionId: string) => {
-        const element = document.getElementById(sectionId);
-        if (element) {
-            element.scrollIntoView({ behavior: 'smooth' });
-        }
+    const navLinks = [
+        { name: 'Home', path: '/' },
+        { name: 'Resources', path: '/resources' }, // Assuming this maps to Roadmaps/Resources
+        { name: 'Projects', path: '/projects' },
+        { name: 'Students', path: '/students' },
+    ];
+
+    const handleNavClick = (path: string) => {
+        navigate(path);
+        setIsMobileMenuOpen(false);
     };
 
     return (
         <>
-            <motion.nav
-                className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-blue-700/95 backdrop-blur-md shadow-lg py-3' : 'bg-transparent py-5'
-                    }`}
-                initial={{ y: -100 }}
-                animate={{ y: 0 }}
-                transition={{ duration: 0.5 }}
-            >
-                <div className="container mx-auto px-6 flex justify-between items-center">
-                    {/* Left Side: Logo + Main Navigation */}
-                    <div className="flex items-center gap-8">
-                        {/* Logo */}
-                        <div className="flex items-center gap-2 cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-                            <img
-                                src={logoImg}
-                                alt="CollabX Logo"
-                                className="h-10 w-10 rounded-full object-cover border-2 border-white/20 shadow-sm"
-                            />
-                            <span className="text-xl font-bold tracking-tight text-white font-sans">
-                                CollabX
-                            </span>
+            <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 h-20 flex items-center">
+                <div className="container-custom w-full flex justify-between items-center">
+                    {/* Logo */}
+                    <Link to="/" className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-lg bg-[#5865F2] flex items-center justify-center text-white">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+                                <path fillRule="evenodd" d="M9.315 7.584C12.195 3.883 16.695 1.5 21.75 1.5a.75.75 0 01.75.75c0 5.056-2.383 9.555-6.084 12.436h.001c-3.698 2.88-8.196 5.263-13.25 5.263a.75.75 0 01-.75-.75c0-5.055 2.383-9.555 6.084-12.436z" clipRule="evenodd" />
+                                <path d="M4.786 2.547a.75.75 0 011.004 1.004A22.05 22.05 0 001.5 9.75a22.05 22.05 0 004.29 6.199.75.75 0 01-1.004 1.004A23.55 23.55 0 01.008 9.75c0-2.758.62-5.372 1.73-7.705a.75.75 0 013.048.502z" />
+                                <path d="M18.214 21.453a.75.75 0 01-1.004-1.004 22.05 22.05 0 004.29-6.199 22.05 22.05 0 00-4.29-6.199.75.75 0 011.004-1.004 23.55 23.55 0 014.722 7.203c0 2.758-.62 5.372-1.73 7.705a.75.75 0 01-3.048-.502z" />
+                            </svg>
                         </div>
+                        <span className="text-xl font-bold text-[#0f172a] tracking-tight">CollabX</span>
+                    </Link>
 
-                        {/* Main Links (Desktop) */}
-                        <div className="hidden md:flex items-center gap-6">
-                            {[
-                                { name: 'Learning Roadmaps', id: 'roadmaps' },
-                                { name: 'Projects', id: 'projects' },
-                                { name: 'Community Hub', id: 'community' },
-                            ].map((item) => (
-                                <button
-                                    key={item.id}
-                                    onClick={() => scrollToSection(item.id)}
-                                    className="text-[15px] font-medium text-blue-100 hover:text-white transition-colors whitespace-nowrap"
-                                >
-                                    {item.name}
-                                </button>
-                            ))}
-                        </div>
+                    {/* Desktop Navigation */}
+                    <div className="hidden md:flex items-center gap-8">
+                        {navLinks.map((link) => (
+                            <button
+                                key={link.name}
+                                onClick={() => handleNavClick(link.path)}
+                                className="text-sm font-medium text-gray-600 hover:text-[#5865F2] transition-colors"
+                            >
+                                {link.name}
+                            </button>
+                        ))}
                     </div>
 
-                    {/* Right Side: Search + Contact + Auth */}
-                    <div className="flex items-center gap-6">
-                        {/* Search Icon */}
-                        <button className="text-blue-100 hover:text-white transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-                            </svg>
-                        </button>
-
-                        {/* Contact Link */}
-                        <button
-                            onClick={() => scrollToSection('contact')}
-                            className="hidden md:block text-[15px] font-medium text-blue-100 hover:text-white transition-colors"
-                        >
-                            Contact
-                        </button>
-
-                        {/* Auth Buttons */}
+                    {/* Auth / Profile */}
+                    <div className="hidden md:flex items-center gap-4">
                         {user ? (
-                            <div className="flex items-center gap-4">
-                                <span className="text-sm font-medium text-white hidden sm:block">
-                                    {user.email?.split('@')[0]}
-                                </span>
-                                <button
-                                    onClick={handleLogout}
-                                    className="px-5 py-2 rounded-full text-sm font-semibold transition-all bg-white/10 text-white hover:bg-white/20 border border-white/20"
-                                >
-                                    Logout
-                                </button>
-                            </div>
+                            <Link
+                                to="/profile"
+                                className="flex items-center gap-2 bg-[#0f172a] text-white px-5 py-2.5 rounded-full hover:bg-gray-800 transition-colors"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                                </svg>
+                                <span className="text-sm font-medium">Profile</span>
+                            </Link>
                         ) : (
-                            <div className="flex items-center gap-4">
-                                <button
-                                    onClick={() => {
-                                        setAuthModalInitialView('login');
-                                        setIsAuthModalOpen(true);
-                                    }}
-                                    className="text-[15px] font-medium text-blue-100 hover:text-white transition-colors"
-                                >
-                                    Log in
-                                </button>
-                                <button
-                                    onClick={() => {
-                                        setAuthModalInitialView('signup');
-                                        setIsAuthModalOpen(true);
-                                    }}
-                                    className="px-5 py-2 rounded-full text-sm font-bold transition-all bg-cyan-400 text-blue-900 hover:bg-cyan-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                                >
-                                    Sign up
-                                </button>
-                            </div>
+                            <button
+                                onClick={() => {
+                                    setAuthModalInitialView('login');
+                                    setIsAuthModalOpen(true);
+                                }}
+                                className="bg-[#0f172a] text-white px-6 py-2.5 rounded-full text-sm font-medium hover:bg-gray-800 transition-colors"
+                            >
+                                Log in
+                            </button>
                         )}
                     </div>
+
+                    {/* Mobile Menu Button */}
+                    <button
+                        className="md:hidden p-2 text-gray-600"
+                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                        </svg>
+                    </button>
                 </div>
-            </motion.nav>
+
+                {/* Mobile Menu */}
+                {isMobileMenuOpen && (
+                    <div className="absolute top-20 left-0 w-full bg-white border-b border-gray-100 shadow-lg py-4 px-6 flex flex-col gap-4 md:hidden">
+                        {navLinks.map((link) => (
+                            <button
+                                key={link.name}
+                                onClick={() => handleNavClick(link.path)}
+                                className="text-left text-gray-600 font-medium py-2 hover:text-[#5865F2]"
+                            >
+                                {link.name}
+                            </button>
+                        ))}
+                        <hr className="border-gray-100" />
+                        {user ? (
+                            <div className="flex flex-col gap-3">
+                                <Link to="/profile" className="text-gray-600 font-medium py-2">Profile</Link>
+                                <button onClick={handleLogout} className="text-red-500 font-medium py-2 text-left">Logout</button>
+                            </div>
+                        ) : (
+                            <button
+                                onClick={() => {
+                                    setAuthModalInitialView('login');
+                                    setIsAuthModalOpen(true);
+                                    setIsMobileMenuOpen(false);
+                                }}
+                                className="bg-[#0f172a] text-white px-6 py-2.5 rounded-full text-sm font-medium text-center"
+                            >
+                                Log in
+                            </button>
+                        )}
+                    </div>
+                )}
+            </nav>
 
             <AuthModal
                 isOpen={isAuthModalOpen}
                 onClose={() => setIsAuthModalOpen(false)}
                 initialView={authModalInitialView}
-            />
-
-            <AuthModal
-                isOpen={isAuthModalOpen}
-                onClose={() => setIsAuthModalOpen(false)}
             />
         </>
     );
