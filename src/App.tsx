@@ -10,13 +10,16 @@ import RoadmapDetail from './pages/RoadmapDetail';
 import ResourceDetail from './pages/ResourceDetail';
 import LoginPage from './pages/LoginPage';
 import Footer from './components/Footer';
+import ContactSection from './components/ContactSection';
 
 const Home: React.FC = () => (
     <main className="bg-white min-h-screen">
+        <NavBar />
         <Hero />
         <RoadmapsSection />
         <ProjectsSection />
         <CommunitySection />
+        <ContactSection />
     </main>
 );
 
