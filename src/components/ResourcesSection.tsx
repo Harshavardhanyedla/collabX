@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { db, auth } from '../lib/firebase';
 import { collection, getDocs, addDoc, deleteDoc, doc, query } from 'firebase/firestore';
-import { onAuthStateChanged, type User } from 'firebase/auth';
+import { onAuthStateChanged } from 'firebase/auth';
 
 interface Resource {
     id: string;

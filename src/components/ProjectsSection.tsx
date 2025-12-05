@@ -171,7 +171,7 @@ const ProjectsSection: React.FC = () => {
           <div className="lg:w-3/4">
             {/* Categories */}
             <div className="flex flex-wrap gap-2 mb-8">
-              {categories.map((category, index) => (
+              {categories.map((category) => (
                 <button
                   key={category}
                   onClick={() => setActiveCategory(category)}
