@@ -33,10 +33,10 @@ const NavBar: React.FC = () => {
     };
 
     const navLinks = [
-        { name: 'Roadmaps', path: '/roadmaps' },
-        { name: 'Projects', path: '/projects' },
-        { name: 'Resources', path: '/resources' },
-        { name: 'Students', path: '/students' },
+        { name: 'Roadmaps', path: '/#roadmaps' },
+        { name: 'Projects', path: '/#projects' },
+        { name: 'Resources', path: '/#resources' },
+        { name: 'Students', path: '/#community' },
     ];
 
     return (
@@ -66,13 +66,24 @@ const NavBar: React.FC = () => {
 
                     <div className="hidden md:flex items-center gap-8">
                         {navLinks.map((link) => (
-                            <Link
+                            <a
                                 key={link.name}
-                                to={link.path}
-                                className={`text-sm font-medium transition-colors ${location.pathname === link.path ? 'text-[#0066FF]' : 'text-gray-600 hover:text-[#0066FF]'}`}
+                                href={link.path}
+                                onClick={(e) => {
+                                    if (location.pathname === '/' && link.path.startsWith('/#')) {
+                                        e.preventDefault();
+                                        const id = link.path.substring(2);
+                                        const element = document.getElementById(id);
+                                        if (element) {
+                                            element.scrollIntoView({ behavior: 'smooth' });
+                                            window.history.pushState(null, '', link.path);
+                                        }
+                                    }
+                                }}
+                                className={`text-sm font-medium transition-colors ${location.hash === link.path.substring(1) ? 'text-[#0066FF]' : 'text-gray-600 hover:text-[#0066FF]'}`}
                             >
                                 {link.name}
-                            </Link>
+                            </a>
                         ))}
                     </div>
 
@@ -120,14 +131,25 @@ const NavBar: React.FC = () => {
                 {isMobileMenuOpen && (
                     <div className="md:hidden absolute top-full left-0 w-full bg-white border-t border-gray-100 shadow-xl p-4 flex flex-col gap-4">
                         {navLinks.map((link) => (
-                            <Link
+                            <a
                                 key={link.name}
-                                to={link.path}
+                                href={link.path}
                                 className="text-gray-600 font-medium py-2"
-                                onClick={() => setIsMobileMenuOpen(false)}
+                                onClick={(e) => {
+                                    setIsMobileMenuOpen(false);
+                                    if (location.pathname === '/' && link.path.startsWith('/#')) {
+                                        e.preventDefault();
+                                        const id = link.path.substring(2);
+                                        const element = document.getElementById(id);
+                                        if (element) {
+                                            element.scrollIntoView({ behavior: 'smooth' });
+                                            window.history.pushState(null, '', link.path);
+                                        }
+                                    }
+                                }}
                             >
                                 {link.name}
-                            </Link>
+                            </a>
                         ))}
                         <div className="border-t border-gray-100 pt-4 flex flex-col gap-3">
                             {user ? (

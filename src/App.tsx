@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import NavBar from './components/NavBar';
 import Hero from './components/Hero';
 import RoadmapsSection from './components/RoadmapsSection';
@@ -13,16 +13,32 @@ import Footer from './components/Footer';
 import ContactSection from './components/ContactSection';
 import PrivateRoute from './components/PrivateRoute';
 
-const Home: React.FC = () => (
-    <main className="bg-white min-h-screen">
-        <NavBar />
-        <Hero />
-        <RoadmapsSection />
-        <ProjectsSection />
-        <CommunitySection />
-        <ContactSection />
-    </main>
-);
+const Home: React.FC = () => {
+    const location = useLocation();
+
+    React.useEffect(() => {
+        if (location.hash) {
+            const id = location.hash.substring(1);
+            setTimeout(() => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth' });
+                }
+            }, 100);
+        }
+    }, [location]);
+
+    return (
+        <main className="bg-white min-h-screen">
+            <NavBar />
+            <Hero />
+            <RoadmapsSection />
+            <ProjectsSection />
+            <CommunitySection />
+            <ContactSection />
+        </main>
+    );
+};
 
 const App: React.FC = () => {
     return (
