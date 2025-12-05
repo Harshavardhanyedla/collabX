@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { db, auth } from '../lib/firebase';
-import { collection, getDocs, addDoc, deleteDoc, doc, query, orderBy } from 'firebase/firestore';
-import { onAuthStateChanged, User } from 'firebase/auth';
+import { collection, getDocs, addDoc, deleteDoc, doc, query } from 'firebase/firestore';
+import { onAuthStateChanged, type User } from 'firebase/auth';
 
 interface Resource {
     id: string;
@@ -18,7 +18,6 @@ const ResourcesSection: React.FC = () => {
     const navigate = useNavigate();
     const [resources, setResources] = useState<Resource[]>([]);
     const [loading, setLoading] = useState(true);
-    const [user, setUser] = useState<User | null>(null);
     const [isAdmin, setIsAdmin] = useState(false); // Simplified admin check
 
     // Form state
@@ -28,7 +27,6 @@ const ResourcesSection: React.FC = () => {
     useEffect(() => {
         fetchResources();
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-            setUser(currentUser);
             // TODO: Implement proper admin check
             setIsAdmin(!!currentUser);
         });
