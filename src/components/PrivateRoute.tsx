@@ -1,32 +1,34 @@
 import React, { useEffect, useState } from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
-import type { User } from '@supabase/supabase-js';
+import { Navigate } from 'react-router-dom';
+import { auth } from '../lib/firebase';
+import { onAuthStateChanged } from 'firebase/auth';
 
-const PrivateRoute: React.FC = () => {
-    const [user, setUser] = useState<User | null | undefined>(undefined);
+interface PrivateRouteProps {
+    children: React.ReactNode;
+}
+
+const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
+    const [loading, setLoading] = useState(true);
+    const [authenticated, setAuthenticated] = useState(false);
 
     useEffect(() => {
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            setUser(session?.user ?? null);
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            setAuthenticated(!!user);
+            setLoading(false);
         });
 
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-            setUser(session?.user ?? null);
-        });
-
-        return () => subscription.unsubscribe();
+        return () => unsubscribe();
     }, []);
 
-    if (user === undefined) {
+    if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0066FF]"></div>
             </div>
         );
     }
 
-    return user ? <Outlet /> : <Navigate to="/login" replace />;
+    return authenticated ? <>{children}</> : <Navigate to="/login" />;
 };
 
 export default PrivateRoute;

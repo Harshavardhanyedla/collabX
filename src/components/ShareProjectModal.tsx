@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { supabase } from '../lib/supabase';
+import { db, auth } from '../lib/firebase';
+import { collection, addDoc, Timestamp } from 'firebase/firestore';
 
 interface ShareProjectModalProps {
     isOpen: boolean;
     onClose: () => void;
+    onSuccess?: () => void;
 }
 
-const ShareProjectModal: React.FC<ShareProjectModalProps> = ({ isOpen, onClose }) => {
+const ShareProjectModal: React.FC<ShareProjectModalProps> = ({ isOpen, onClose, onSuccess }) => {
     const [formData, setFormData] = useState({
         title: '',
         description: '',
@@ -21,16 +23,15 @@ const ShareProjectModal: React.FC<ShareProjectModalProps> = ({ isOpen, onClose }
     const [error, setError] = useState('');
     const [success, setSuccess] = useState(false);
 
-    React.useEffect(() => {
-        if (isOpen) {
-            supabase.auth.getUser().then(({ data: { user } }) => {
-                if (user?.email) {
-                    setFormData(prev => ({
-                        ...prev,
-                        author: user.email!.split('@')[0]
-                    }));
-                }
-            });
+    useEffect(() => {
+        if (isOpen && auth.currentUser) {
+            const user = auth.currentUser;
+            if (user.email) {
+                setFormData(prev => ({
+                    ...prev,
+                    author: user.email!.split('@')[0]
+                }));
+            }
         }
     }, [isOpen]);
 
@@ -40,24 +41,26 @@ const ShareProjectModal: React.FC<ShareProjectModalProps> = ({ isOpen, onClose }
         setError('');
 
         try {
-            const { error: supabaseError } = await supabase
-                .from('projects')
-                .insert([
-                    {
-                        title: formData.title,
-                        description: formData.description,
-                        github_url: formData.githubUrl,
-                        live_url: formData.liveUrl,
-                        tags: formData.tags.split(',').map(tag => tag.trim()),
-                        author: formData.author,
-                        language: formData.language,
-                        stars: 0
-                    }
-                ]);
-
-            if (supabaseError) throw supabaseError;
+            await addDoc(collection(db, 'projects'), {
+                title: formData.title,
+                description: formData.description,
+                github_url: formData.githubUrl,
+                live_url: formData.liveUrl,
+                tags: formData.tags.split(',').map(tag => tag.trim()),
+                author: formData.author,
+                author_avatar: auth.currentUser?.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${formData.author}`,
+                language: formData.language,
+                stars: 0,
+                likes: 0,
+                comments: 0,
+                category: 'Web Dev', // Default category for now
+                created_at: Timestamp.now().toDate().toISOString(),
+                user_id: auth.currentUser?.uid
+            });
 
             setSuccess(true);
+            if (onSuccess) onSuccess();
+
             setTimeout(() => {
                 onClose();
                 setSuccess(false);

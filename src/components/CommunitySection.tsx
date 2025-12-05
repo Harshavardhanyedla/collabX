@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { supabase } from '../lib/supabase';
+import { db } from '../lib/firebase';
+import { collection, getDocs, limit, query } from 'firebase/firestore';
 
 interface Profile {
   id: string;
@@ -16,15 +17,19 @@ const CommunitySection: React.FC = () => {
 
   useEffect(() => {
     const fetchProfiles = async () => {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .limit(8); // Limit to 8 profiles for the home page
+      try {
+        const usersRef = collection(db, 'users');
+        const q = query(usersRef, limit(8)); // Limit to 8 profiles for the home page
+        const querySnapshot = await getDocs(q);
 
-      if (error) {
+        const fetchedProfiles: Profile[] = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        } as Profile));
+
+        setStudents(fetchedProfiles);
+      } catch (error) {
         console.error('Error fetching profiles:', error);
-      } else {
-        setStudents(data || []);
       }
     };
 

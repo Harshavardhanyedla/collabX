@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { supabase } from '../lib/supabase';
+import { auth, googleProvider } from '../lib/firebase';
+import { signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
 
 interface AuthModalProps {
     isOpen: boolean;
@@ -24,19 +25,12 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialView = 'l
 
         try {
             if (isLogin) {
-                const { error } = await supabase.auth.signInWithPassword({
-                    email,
-                    password,
-                });
-                if (error) throw error;
+                await signInWithEmailAndPassword(auth, email, password);
                 onClose();
             } else {
-                const { error } = await supabase.auth.signUp({
-                    email,
-                    password,
-                });
-                if (error) throw error;
-                setMessage('Check your email for the confirmation link!');
+                await createUserWithEmailAndPassword(auth, email, password);
+                setMessage('Account created successfully! You can now sign in.');
+                setIsLogin(true);
             }
         } catch (err: unknown) {
             if (err instanceof Error) {
@@ -46,6 +40,19 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialView = 'l
             }
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleGoogleLogin = async () => {
+        try {
+            await signInWithPopup(auth, googleProvider);
+            onClose();
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError('An unexpected error occurred');
+            }
         }
     };
 
@@ -75,14 +82,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialView = 'l
                             <form onSubmit={handleAuth} className="space-y-4">
                                 <button
                                     type="button"
-                                    onClick={async () => {
-                                        await supabase.auth.signInWithOAuth({
-                                            provider: 'google',
-                                            options: {
-                                                redirectTo: `${window.location.origin}/`,
-                                            },
-                                        });
-                                    }}
+                                    onClick={handleGoogleLogin}
                                     className="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 text-gray-700 px-6 py-3 rounded-xl font-medium hover:bg-gray-50 hover:border-gray-400 transition-all duration-200"
                                 >
                                     <svg className="w-5 h-5" viewBox="0 0 24 24">

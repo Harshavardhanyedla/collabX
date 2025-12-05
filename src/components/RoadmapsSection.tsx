@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { supabase } from '../lib/supabase';
-import type { User } from '@supabase/supabase-js';
+import { db, auth } from '../lib/firebase';
+import { collection, getDocs, addDoc, deleteDoc, doc, query, orderBy, Timestamp } from 'firebase/firestore';
+import { onAuthStateChanged, User } from 'firebase/auth';
 
-interface Resource {
+interface Roadmap {
     id: string;
     title: string;
     description: string;
     category: string;
-    icon: string; // We'll store icon name or SVG string, for now simple text or default
+    icon: string;
     link: string;
     is_official: boolean;
     created_at: string;
@@ -17,13 +18,13 @@ interface Resource {
 
 const RoadmapsSection: React.FC = () => {
     const navigate = useNavigate();
-    const [resources, setResources] = useState<Resource[]>([]);
+    const [roadmaps, setRoadmaps] = useState<Roadmap[]>([]);
     const [user, setUser] = useState<User | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
 
     // Form state
-    const [newResource, setNewResource] = useState({
+    const [newRoadmap, setNewRoadmap] = useState({
         title: '',
         description: '',
         category: 'General',
@@ -31,81 +32,73 @@ const RoadmapsSection: React.FC = () => {
     });
 
     useEffect(() => {
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            setUser(session?.user ?? null);
+        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+            setUser(currentUser);
         });
-        fetchResources();
+        fetchRoadmaps();
+        return () => unsubscribe();
     }, []);
 
-    const fetchResources = async () => {
-        const { data, error } = await supabase
-            .from('resources')
-            .select('*')
-            .order('created_at', { ascending: false });
+    const fetchRoadmaps = async () => {
+        try {
+            const roadmapsRef = collection(db, 'roadmaps');
+            const q = query(roadmapsRef, orderBy('created_at', 'desc'));
+            const querySnapshot = await getDocs(q);
 
-        if (error) {
-            console.error('Error fetching resources:', error);
-        } else {
-            setResources(data || []);
+            const fetchedRoadmaps: Roadmap[] = querySnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            } as Roadmap));
+
+            setRoadmaps(fetchedRoadmaps);
+        } catch (error) {
+            console.error('Error fetching roadmaps:', error);
         }
     };
 
-    const handleAddResource = async (e: React.FormEvent) => {
+    const handleAddRoadmap = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!user) return;
 
-        const { error } = await supabase
-            .from('resources')
-            .insert([{
-                title: newResource.title,
-                description: newResource.description,
-                category: newResource.category,
-                link: newResource.link,
-                is_official: true // Default to official for admin added
-            }]);
-
-        if (error) {
-            console.error('Error adding resource:', error);
-            alert('Failed to add resource.');
-        } else {
+        try {
+            await addDoc(collection(db, 'roadmaps'), {
+                ...newRoadmap,
+                is_official: true,
+                created_at: Timestamp.now().toDate().toISOString()
+            });
             setIsModalOpen(false);
-            setNewResource({ title: '', description: '', category: 'General', link: '' });
-            fetchResources();
+            setNewRoadmap({ title: '', description: '', category: 'General', link: '' });
+            fetchRoadmaps();
+        } catch (error) {
+            console.error('Error adding roadmap:', error);
+            alert('Failed to add roadmap.');
         }
     };
 
-    const handleDeleteResource = async (id: string, e: React.MouseEvent) => {
-        e.stopPropagation(); // Prevent card click
+    const handleDeleteRoadmap = async (id: string, e: React.MouseEvent) => {
+        e.stopPropagation();
         if (!user) return;
-        if (!window.confirm('Are you sure you want to delete this resource?')) return;
+        if (!window.confirm('Are you sure you want to delete this roadmap?')) return;
 
-        const { error } = await supabase
-            .from('resources')
-            .delete()
-            .eq('id', id);
-
-        if (error) {
-            console.error('Error deleting resource:', error);
-            alert('Failed to delete resource.');
-        } else {
-            fetchResources();
+        try {
+            await deleteDoc(doc(db, 'roadmaps', id));
+            fetchRoadmaps();
+        } catch (error) {
+            console.error('Error deleting roadmap:', error);
+            alert('Failed to delete roadmap.');
         }
     };
 
-    const handleCardClick = (resource: Resource) => {
-        // If it's an internal route (roadmap), navigate. If external link, open new tab.
-        // For now, assuming internal routes or we can check the link format.
-        if (resource.link && (resource.link.startsWith('http') || resource.link.startsWith('https'))) {
-            window.open(resource.link, '_blank');
+    const handleCardClick = (roadmap: Roadmap) => {
+        if (roadmap.link && (roadmap.link.startsWith('http') || roadmap.link.startsWith('https'))) {
+            window.open(roadmap.link, '_blank');
         } else {
-            // Default behavior for now, maybe navigate to a detail page if needed
-            // Or if the link is a route like 'roadmap/cat'
-            navigate(`/roadmap/${resource.id}`);
+            navigate(`/roadmap/${roadmap.id}`);
             window.scrollTo(0, 0);
         }
     };
 
-    const filteredResources = resources.filter(r =>
+    const filteredRoadmaps = roadmaps.filter(r =>
         r.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         r.description.toLowerCase().includes(searchQuery.toLowerCase())
     );
@@ -114,7 +107,7 @@ const RoadmapsSection: React.FC = () => {
         <section id="roadmaps" className="py-24 bg-gray-50">
             <div className="container-custom mx-auto">
                 <div className="text-center mb-16">
-                    <h2 className="text-4xl font-bold text-[#0f172a] mb-4">Find Learning Resources</h2>
+                    <h2 className="text-4xl font-bold text-[#0f172a] mb-4">Find Learning Roadmaps</h2>
                     <p className="text-lg text-gray-500 max-w-2xl mx-auto">
                         Browse through our extensive library of free educational content, notes, and exam preparation materials.
                     </p>
@@ -128,7 +121,7 @@ const RoadmapsSection: React.FC = () => {
                         </div>
                         <input
                             type="text"
-                            placeholder="Search resources..."
+                            placeholder="Search roadmaps..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             className="w-full pl-12 pr-4 py-4 rounded-xl border border-gray-200 shadow-sm focus:ring-2 focus:ring-[#0066FF] focus:border-transparent outline-none bg-white"
@@ -140,35 +133,35 @@ const RoadmapsSection: React.FC = () => {
                         <div className="mt-8 flex justify-center">
                             <button
                                 onClick={() => setIsModalOpen(true)}
-                                className="btn-primary px-6 py-2 rounded-lg shadow-lg shadow-blue-500/20"
+                                className="bg-[#0066FF] text-white px-6 py-2 rounded-lg shadow-lg shadow-blue-500/20 hover:bg-blue-700 transition-colors"
                             >
-                                + Add Resource
+                                + Add Roadmap
                             </button>
                         </div>
                     )}
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {filteredResources.length === 0 ? (
+                    {filteredRoadmaps.length === 0 ? (
                         <div className="col-span-full text-center text-gray-500">
-                            No resources found.
+                            No roadmaps found.
                         </div>
                     ) : (
-                        filteredResources.map((resource, index) => (
+                        filteredRoadmaps.map((roadmap, index) => (
                             <motion.div
-                                key={resource.id}
+                                key={roadmap.id}
                                 initial={{ opacity: 0, y: 20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ delay: index * 0.1 }}
-                                onClick={() => handleCardClick(resource)}
+                                onClick={() => handleCardClick(roadmap)}
                                 className="bg-white rounded-2xl p-8 border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer group relative"
                             >
                                 {user && (
                                     <button
-                                        onClick={(e) => handleDeleteResource(resource.id, e)}
+                                        onClick={(e) => handleDeleteRoadmap(roadmap.id, e)}
                                         className="absolute top-4 right-4 text-gray-400 hover:text-red-500 p-2"
-                                        title="Delete Resource"
+                                        title="Delete Roadmap"
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
                                             <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
@@ -185,10 +178,10 @@ const RoadmapsSection: React.FC = () => {
                                 </div>
 
                                 <h3 className="text-xl font-bold text-[#0f172a] mb-3 group-hover:text-[#0066FF] transition-colors">
-                                    {resource.title}
+                                    {roadmap.title}
                                 </h3>
                                 <p className="text-gray-500 leading-relaxed text-sm">
-                                    {resource.description}
+                                    {roadmap.description}
                                 </p>
                             </motion.div>
                         ))
@@ -196,19 +189,19 @@ const RoadmapsSection: React.FC = () => {
                 </div>
             </div>
 
-            {/* Add Resource Modal */}
+            {/* Add Roadmap Modal */}
             {isModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
                     <div className="bg-white rounded-2xl w-full max-w-lg p-6">
-                        <h2 className="text-2xl font-bold mb-6">Add New Resource</h2>
-                        <form onSubmit={handleAddResource} className="space-y-4">
+                        <h2 className="text-2xl font-bold mb-6">Add New Roadmap</h2>
+                        <form onSubmit={handleAddRoadmap} className="space-y-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
                                 <input
                                     type="text"
                                     required
-                                    value={newResource.title}
-                                    onChange={(e) => setNewResource({ ...newResource, title: e.target.value })}
+                                    value={newRoadmap.title}
+                                    onChange={(e) => setNewRoadmap({ ...newRoadmap, title: e.target.value })}
                                     className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#0066FF] outline-none"
                                 />
                             </div>
@@ -216,8 +209,8 @@ const RoadmapsSection: React.FC = () => {
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
                                 <textarea
                                     required
-                                    value={newResource.description}
-                                    onChange={(e) => setNewResource({ ...newResource, description: e.target.value })}
+                                    value={newRoadmap.description}
+                                    onChange={(e) => setNewRoadmap({ ...newRoadmap, description: e.target.value })}
                                     className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#0066FF] outline-none"
                                     rows={3}
                                 />
@@ -227,8 +220,8 @@ const RoadmapsSection: React.FC = () => {
                                 <input
                                     type="text"
                                     placeholder="https://..."
-                                    value={newResource.link}
-                                    onChange={(e) => setNewResource({ ...newResource, link: e.target.value })}
+                                    value={newRoadmap.link}
+                                    onChange={(e) => setNewRoadmap({ ...newRoadmap, link: e.target.value })}
                                     className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#0066FF] outline-none"
                                 />
                             </div>
@@ -245,7 +238,7 @@ const RoadmapsSection: React.FC = () => {
                                     type="submit"
                                     className="flex-1 px-4 py-2 rounded-lg bg-[#0066FF] text-white font-medium hover:bg-blue-600"
                                 >
-                                    Add Resource
+                                    Add Roadmap
                                 </button>
                             </div>
                         </form>

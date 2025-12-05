@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { supabase } from '../lib/supabase';
 import { motion } from 'framer-motion';
+import { db } from '../lib/firebase';
+import { collection, addDoc, Timestamp } from 'firebase/firestore';
 
 const ContactSection: React.FC = () => {
   const [name, setName] = useState('');
@@ -13,11 +14,12 @@ const ContactSection: React.FC = () => {
     setStatus('submitting');
 
     try {
-      const { error } = await supabase
-        .from('feedback')
-        .insert([{ name, email, message }]);
-
-      if (error) throw error;
+      await addDoc(collection(db, 'feedback'), {
+        name,
+        email,
+        message,
+        created_at: Timestamp.now()
+      });
 
       setStatus('success');
       setName('');

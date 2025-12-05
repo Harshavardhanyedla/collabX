@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { supabase } from '../lib/supabase';
+import { auth, googleProvider } from '../lib/firebase';
+import { signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 
 const LoginPage: React.FC = () => {
@@ -14,13 +15,8 @@ const LoginPage: React.FC = () => {
 
     const handleGoogleLogin = async () => {
         try {
-            const { error } = await supabase.auth.signInWithOAuth({
-                provider: 'google',
-                options: {
-                    redirectTo: window.location.origin,
-                },
-            });
-            if (error) throw error;
+            await signInWithPopup(auth, googleProvider);
+            navigate('/');
         } catch (err: unknown) {
             if (err instanceof Error) {
                 setError(err.message);
@@ -38,19 +34,12 @@ const LoginPage: React.FC = () => {
 
         try {
             if (isLogin) {
-                const { error } = await supabase.auth.signInWithPassword({
-                    email,
-                    password,
-                });
-                if (error) throw error;
+                await signInWithEmailAndPassword(auth, email, password);
                 navigate('/');
             } else {
-                const { error } = await supabase.auth.signUp({
-                    email,
-                    password,
-                });
-                if (error) throw error;
-                setMessage('Check your email for the confirmation link!');
+                await createUserWithEmailAndPassword(auth, email, password);
+                setMessage('Account created successfully! You can now sign in.');
+                setIsLogin(true);
             }
         } catch (err: unknown) {
             if (err instanceof Error) {
@@ -159,7 +148,7 @@ const LoginPage: React.FC = () => {
                                 required
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#1e293b] border border-transparent text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#5865F2] transition-all"
+                                className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#1e293b] border border-transparent text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0066FF] transition-all"
                                 placeholder="••••••••"
                                 minLength={6}
                             />

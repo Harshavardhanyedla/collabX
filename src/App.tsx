@@ -11,6 +11,7 @@ import ResourceDetail from './pages/ResourceDetail';
 import LoginPage from './pages/LoginPage';
 import Footer from './components/Footer';
 import ContactSection from './components/ContactSection';
+import PrivateRoute from './components/PrivateRoute';
 
 const Home: React.FC = () => (
     <main className="bg-white min-h-screen">
@@ -29,7 +30,14 @@ const App: React.FC = () => {
             <NavBar />
             <Routes>
                 <Route path="/" element={<Home />} />
-                <Route path="/profile" element={<Profile />} />
+                <Route
+                    path="/profile"
+                    element={
+                        <PrivateRoute>
+                            <Profile />
+                        </PrivateRoute>
+                    }
+                />
                 <Route path="/roadmap/:roadmapId" element={<RoadmapDetail />} />
                 <Route path="/resource/:resourceId" element={<ResourceDetail />} />
                 <Route path="/login" element={<LoginPage />} />

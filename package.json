@@ -22,12 +22,12 @@
   "dependencies": {
     "@headlessui/react": "^2.2.9",
     "@heroicons/react": "^2.2.0",
-    "@supabase/supabase-js": "^2.86.0",
     "@types/aos": "^3.0.7",
     "@types/json-server": "^0.14.8",
     "@types/react-router-dom": "^5.3.3",
     "aos": "^2.3.4",
     "autoprefixer": "^10.4.21",
+    "firebase": "^12.6.0",
     "framer-motion": "^12.23.24",
     "json-server": "^1.0.0-beta.3",
     "postcss": "^8.5.6",
