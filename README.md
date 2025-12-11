@@ -1,297 +1,136 @@
-
-# CollabX
-
-> **For Students, From Students**
-
-A modern, accessible, production-ready React website that showcases learning roadmaps, open-source student projects, and a vibrant community area. Built with TypeScript, Tailwind CSS, and modern web technologies.
-
-## 🚀 Features
-
-### 🎯 Core Functionality
-- **Learning Roadmaps**: Structured learning paths with milestones and resources
-- **Project Showcase**: Discover and contribute to student-built projects
-- **Community Hub**: Discussion forums and team building tools
-- **Responsive Design**: Mobile-first approach with beautiful UI/UX
-- **Dark/Light Mode**: Theme switching with localStorage persistence
-
-### 🛠️ Technical Features
-- **TypeScript**: Full type safety throughout the application
-- **React Router v6**: Client-side routing with modern navigation
-- **Tailwind CSS**: Utility-first styling with custom design system
-- **Framer Motion**: Smooth animations and micro-interactions
-- **Accessibility**: WCAG AA compliant with semantic HTML
-- **Performance**: Optimized with lazy loading and code splitting
-
-## 🏗️ Tech Stack
-
-- **Frontend**: React 19 + TypeScript
-- **Styling**: Tailwind CSS 4.x
-- **Routing**: React Router v6
-- **Animations**: Framer Motion
-- **Icons**: Heroicons
-- **Build Tool**: Vite
-- **Testing**: Vitest + React Testing Library
-- **Linting**: ESLint + Prettier
-- **Git Hooks**: Husky + lint-staged
-
-## 📁 Project Structure
-
-```
-src/
-├── components/          # Reusable UI components
-│   ├── NavBar.tsx
-│   ├── Footer.tsx
-│   ├── RoadmapCard.tsx
-│   ├── ProjectCard.tsx
-│   └── __tests__/       # Component tests
-├── pages/              # Route components
-│   ├── Home.tsx
-│   ├── Roadmaps.tsx
-│   ├── Projects.tsx
-│   ├── Community.tsx
-│   └── Contact.tsx
-├── context/            # React Context providers
-│   └── ThemeContext.tsx
-├── hooks/             # Custom React hooks
-│   ├── useLocalStorage.ts
-│   └── useDebounce.ts
-├── utils/             # Utility functions
-│   └── index.ts
-├── types/             # TypeScript type definitions
-│   └── index.ts
-├── data/              # Sample data (JSON files)
-│   ├── roadmaps.json
-│   ├── projects.json
-│   └── community.json
-└── assets/            # Static assets
-    ├── images/
-    └── icons/
-```
-
-## 🚀 Getting Started
-
-### Prerequisites
-
-- Node.js 18+ 
-- npm or yarn
-
-### Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/yourusername/student-corner.git
-   cd student-corner
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Start development server**
-   ```bash
-   npm run dev
-   ```
-
-4. **Open your browser**
-   Navigate to `http://localhost:5173`
-
-### Available Scripts
-
-```bash
-# Development
-npm run dev              # Start development server
-npm run build           # Build for production
-npm run preview         # Preview production build
-
-# Testing
-npm run test            # Run tests
-npm run test:ui         # Run tests with UI
-npm run test:coverage   # Run tests with coverage
-
-# Code Quality
-npm run lint            # Run ESLint
-npm run format          # Format code with Prettier
-npm run format:check    # Check code formatting
-```
-
-## 🎨 Design System
-
-### Colors
-- **Primary**: Blue (#3b82f6)
-- **Accent**: Cyan (#0ea5e9)
-- **Success**: Green (#10b981)
-- **Warning**: Yellow (#f59e0b)
-- **Error**: Red (#ef4444)
-
-### Typography
-- **Font Family**: Inter (Google Fonts)
-- **Scale**: Fluid typography with responsive sizing
-
-### Components
-- **Cards**: Rounded corners (2xl), subtle shadows
-- **Buttons**: Primary, secondary, and ghost variants
-- **Forms**: Accessible inputs with validation states
-- **Navigation**: Sticky header with glass effect
-
-## 📱 Pages & Features
-
-### 🏠 Home Page
-- Hero section with animated elements
-- Feature highlights (4 main features)
-- Community statistics
-- Call-to-action sections
-
-### 🗺️ Roadmaps Page
-- Grid layout with roadmap cards
-- Advanced filtering (category, difficulty, tags)
-- Search functionality
-- Detailed roadmap modal with milestones
-- Resource links and estimated time
-
-### 💻 Projects Page
-- Project showcase with cards
-- Project submission form
-- Bookmarking functionality
-- GitHub integration
-- Contribution guidelines
-
-### 👥 Community Page
-- Discussion hub
-- Team builder tool
-- Category-based browsing
-- Community statistics
-
-### 📞 Contact Page
-- Accessible contact form
-- Form validation
-- Contact information
-- Success states
-
-## 🧪 Testing
-
-The project includes comprehensive testing setup:
-
-- **Unit Tests**: Component testing with React Testing Library
-- **Test Coverage**: Configurable coverage reporting
-- **Mock Data**: Realistic test data for all components
-
-### Running Tests
-
-```bash
-# Run all tests
-npm run test
-
-# Run tests in watch mode
-npm run test -- --watch
-
-# Run tests with coverage
-npm run test:coverage
-
-# Run tests with UI
-npm run test:ui
-```
-
-### Test Files
-- `NavBar.test.tsx` - Navigation component tests
-- `RoadmapCard.test.tsx` - Roadmap card component tests
-- `ProjectCard.test.tsx` - Project card component tests
-- `ContactForm.test.tsx` - Contact form validation tests
-
-## 🚀 Deployment
-
-### Vercel (Recommended)
-
-1. **Connect your GitHub repository to Vercel**
-2. **Configure build settings**:
-   - Build Command: `npm run build`
-   - Output Directory: `dist`
-   - Install Command: `npm install`
-
-3. **Deploy**: Vercel will automatically deploy on every push to main
-
-### Manual Deployment
-
-```bash
-# Build the project
-npm run build
-
-# The dist folder contains the production build
-# Upload to your hosting provider
-```
-
-### Environment Variables
-
-Create a `.env` file for environment-specific configuration:
-
-```env
-VITE_APP_TITLE=CollabX
-VITE_APP_DESCRIPTION=For Students, From Students
-VITE_API_URL=http://localhost:3001
-```
-
-## 🔧 Configuration
-
-### Tailwind CSS
-Custom configuration in `tailwind.config.js`:
-- Custom color palette
-- Extended animations
-- Component classes
-- Dark mode support
-
-### ESLint & Prettier
-- ESLint configuration for React + TypeScript
-- Prettier for code formatting
-- Husky for pre-commit hooks
-- lint-staged for staged file linting
-
-## 📊 Performance
-
-### Optimizations
-- **Code Splitting**: Route-based lazy loading
-- **Image Optimization**: Responsive images with proper sizing
-- **Bundle Analysis**: Optimized bundle size
-- **Caching**: Proper cache headers for static assets
-
-### Lighthouse Scores
-- **Performance**: 95+
-- **Accessibility**: 100
-- **Best Practices**: 100
-- **SEO**: 95+
-
-## 🤝 Contributing
-
-1. **Fork the repository**
-2. **Create a feature branch**: `git checkout -b feature/amazing-feature`
-3. **Commit your changes**: `git commit -m 'Add amazing feature'`
-4. **Push to the branch**: `git push origin feature/amazing-feature`
-5. **Open a Pull Request**
-
-### Development Guidelines
-- Follow TypeScript best practices
-- Write tests for new components
-- Use semantic commit messages
-- Ensure accessibility compliance
-- Follow the established design system
-
-## 📝 License
-
-## 📝 License
-
-Copyright (c) 2024 CollabX. All rights reserved.
-
-Unauthorized copying of this file, via any medium is strictly prohibited.
+SimpleFinder
+Professional Subdomain Enumeration Tool
+A powerful, accessible, production-ready subdomain enumeration utility built for cybersecurity researchers, ethical hackers, and bug bounty hunters. SimpleFinder provides multi-source scanning, DNS brute forcing, and high-performance parallel enumeration with clean CLI output. Works on PC and Termux.
+🚀 Features
+✨ Core Functionality
+Multi-Source Enumeration: crt.sh, Hackertarget, ThreatCrowd APIs
+DNS Brute Force: Smart wordlist-based scanning
+Parallel Processing: 50+ threads on PC, 15+ on Termux
+Beautiful CLI: Color-coded output with ASCII art
+Multiple Outputs: TXT and JSON formats
+Cross-Platform: Windows, Linux, macOS, Termux
+Auto-Save Results: Timestamped output files
+🛠️ Technical Features
+Python 3.7+ support
+Modular Codebase for easy extension
+Smart Timeout Management
+Optimized Network Requests
+Interactive CLI Flags for custom scanning
+📁 Project Structure
+SimpleFinder/
+├── simplefinder.py              # PC main script
+├── simplefinder-termux.py       # Termux optimized script
+├── wordlists/                   # Default brute-force wordlists
+├── results/                     # Auto-saved output files
+├── requirements.txt             # Dependencies
+└── README.md                    # Documentation
+🚀 Getting Started
+Prerequisites
+Python 3.7+
+pip package manager
+Git (optional but recommended)
+PC Installation
+git clone https://github.com/Cyber-Specterz/SimpleFinder.git
+cd SimpleFinder
+pip install -r requirements.txt
+python simplefinder.py instagram.com
+Termux Installation
+pkg update && pkg upgrade -y
+pkg install python git -y
+git clone https://github.com/Cyber-Specterz/SimpleFinder.git
+cd SimpleFinder
+python simplefinder-termux.py google.com
+🎯 Usage Guide
+Basic Command
+python simplefinder.py [DOMAIN] [OPTIONS]
+Examples
+# Simple domain scan
+python simplefinder.py instagram.com
+
+# Scan with custom wordlist
+python simplefinder.py google.com -w wordlists/custom.txt
+
+# Verbose mode
+python simplefinder.py facebook.com -v
+
+# JSON output
+python simplefinder.py test.com -o json
+Performance Tuning
+# High performance scan
+python simplefinder.py target.com -t 100 --timeout 5
+
+# Balanced scan
+python simplefinder.py target.com -t 50 --timeout 10
+
+# Mobile optimized (Termux)
+python simplefinder-termux.py target.com -t 15 --timeout 15
+Advanced Usage
+# Batch scanning
+for domain in $(cat domains.txt); do
+    python simplefinder.py $domain -o json
+done
+
+# Piping into other tools
+python simplefinder.py target.com | httpx -silent
+
+# Copy results in Termux
+cp results/*.txt ~/storage/shared/Download/
+Command Options
+Option	Short	Description	Default
+--wordlist	-w	Custom wordlist file	Built-in
+--threads	-t	Number of threads	50 (PC) / 15 (Termux)
+--timeout	—	Timeout in seconds	10 (PC) / 15 (Termux)
+--output	-o	Output format: txt, json	txt
+--verbose	-v	Enable verbose output	False
+--help	-h	Display help	—
+📊 Output Examples
+Console Output
+══════════════════════════════════════════════════════════════════════════════
+
+    ╔═══╗╔╗ ╔╗╔═══╗╔═══╗╔╗╔═══╗╔═══╗╔═══╗╔╗╔═══╗╔════╗
+    ║╔══╝║║ ║║║╔══╝║╔══╝║║║╔══╝║╔══╝║╔══╝║║║╔══╝║╔╗╔╗║
+    ║╚══╗║║ ║║║╚══╗║╚══╗║║║╚══╗║╚══╗║╚══╗║║║╚══╗╚╝║║╚╝
+    ║╔══╝║║ ║║║╔══╝║╔══╝║║║╔══╝║╔══╝║╔══╝║║║╔══╝  ║║  
+    ║╚══╗║╚═╝║║╚══╗║╚══╗║╚╝║╔══╝║╔══╝║╚══╗║╚╝║╔══╗ ║║  
+    ╚═══╝╚═══╝╚═══╝╚═══╝╚══╝╚═══╝╚═══╝╚═══╝╚══╝╚═══╝ ╚╝  
+
+══════════════════════════════════════════════════════════════════════════════
+
+[*] Target Domain: instagram.com
+[*] Threads: 50
+[*] Timeout: 10s
+
+[+] crt.sh: Found 24 subdomains
+[+] Hackertarget: Found 18 subdomains
+[+] Brute Force: Found 12 subdomains
+
+[✓] SCAN COMPLETED
+Total Subdomains Found: 42
+Results saved in results/simplefinder_instagram_xxxxx.txt
+⚙️ Performance Optimization
+PC: 50–100 threads recommended
+Termux: 10–15 threads for stability
+Timeout: Increase to 15–20s on slow networks
+Wordlists: Best performance with 100–200 entries
+🤝 Contributing
+Fork the repository
+Create a feature branch
+git checkout -b feature/your-feature
+Commit your changes
+git commit -m "Add new feature"
+Push the branch
+git push origin feature/your-feature
+Open a Pull Request
+Development Guidelines
+Follow Python best practices
+Write clean, modular code
+Maintain output format consistency
+Ensure compatibility with PC + Termux
+📝 License
+Copyright (c) 2024
+Unauthorized copying, modification, or distribution is strictly prohibited.
 Proprietary and confidential.
-
-## 📞 Support
-
-- **Email**: contact@studentcorner.com
-- **GitHub Issues**: [Report bugs or request features](https://github.com/yourusername/student-corner/issues)
-- **Discord**: [Join our community](https://discord.gg/studentcorner)
-
----
-
-**Built with ❤️ by the CollabX Team**
-
-*For Students, From Students*
-
+📞 Support
+Email: support@cyber-specterz.com
+GitHub Issues: https://github.com/Cyber-Specterz/SimpleFinder/issues
+Built with ❤️ by Cyber-Specterz Team
