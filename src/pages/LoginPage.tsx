@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { auth, googleProvider } from '../lib/firebase';
+import { auth, googleProvider, db } from '../lib/firebase';
 import { signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 
 const LoginPage: React.FC = () => {
@@ -15,8 +16,18 @@ const LoginPage: React.FC = () => {
 
     const handleGoogleLogin = async () => {
         try {
-            await signInWithPopup(auth, googleProvider);
-            navigate('/');
+            const result = await signInWithPopup(auth, googleProvider);
+            const user = result.user;
+
+            // Check if user profile exists
+            const docRef = doc(db, 'users', user.uid);
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                navigate('/');
+            } else {
+                navigate('/onboarding');
+            }
         } catch (err: unknown) {
             if (err instanceof Error) {
                 setError(err.message);
@@ -34,12 +45,21 @@ const LoginPage: React.FC = () => {
 
         try {
             if (isLogin) {
-                await signInWithEmailAndPassword(auth, email, password);
-                navigate('/');
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+
+                // Check if user profile exists
+                const docRef = doc(db, 'users', userCredential.user.uid);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    navigate('/');
+                } else {
+                    navigate('/onboarding');
+                }
             } else {
                 await createUserWithEmailAndPassword(auth, email, password);
-                setMessage('Account created successfully! You can now sign in.');
-                setIsLogin(true);
+                // Redirect to onboarding after successful signup
+                navigate('/onboarding');
             }
         } catch (err: unknown) {
             if (err instanceof Error) {
