@@ -2,13 +2,17 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 
 import { auth, db } from '../lib/firebase';
-import { doc, getDoc } from 'firebase/firestore';
-import { useNavigate } from 'react-router-dom';
+import { doc, getDoc, collection, addDoc, query, where, getDocs } from 'firebase/firestore';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const Profile: React.FC = () => {
     const navigate = useNavigate();
+    const { userId } = useParams();
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState<any>(null);
+    const [isOwnProfile, setIsOwnProfile] = useState(false);
+    const [connectionStatus, setConnectionStatus] = useState<'none' | 'pending' | 'connected'>('none');
+    const [actionLoading, setActionLoading] = useState(false);
 
     React.useEffect(() => {
         const fetchUserData = async () => {
@@ -19,14 +23,32 @@ const Profile: React.FC = () => {
                     return;
                 }
 
-                const docRef = doc(db, 'users', currentUser.uid);
+                const targetUserId = userId || currentUser.uid;
+                setIsOwnProfile(targetUserId === currentUser.uid);
+
+                const docRef = doc(db, 'users', targetUserId);
                 const docSnap = await getDoc(docRef);
 
                 if (docSnap.exists()) {
                     setUser(docSnap.data());
+
+                    // Check connection status if not own profile
+                    if (targetUserId !== currentUser.uid) {
+                        const connectionsRef = collection(db, 'connections');
+                        const q = query(
+                            connectionsRef,
+                            where('requesterId', '==', currentUser.uid),
+                            where('recipientId', '==', targetUserId)
+                        );
+                        const data = await getDocs(q);
+                        if (!data.empty) {
+                            setConnectionStatus('pending'); // Simplified for now
+                        }
+                    }
                 } else {
-                    // If no profile data, redirect to onboarding
-                    navigate('/onboarding');
+                    if (!userId) {
+                        navigate('/onboarding');
+                    }
                 }
             } catch (error) {
                 console.error("Error fetching user data:", error);
@@ -36,7 +58,25 @@ const Profile: React.FC = () => {
         };
 
         fetchUserData();
-    }, [navigate]);
+    }, [navigate, userId]);
+
+    const handleConnect = async () => {
+        if (!auth.currentUser || !userId) return;
+        setActionLoading(true);
+        try {
+            await addDoc(collection(db, 'connections'), {
+                requesterId: auth.currentUser.uid,
+                recipientId: userId,
+                status: 'pending',
+                createdAt: new Date().toISOString()
+            });
+            setConnectionStatus('pending');
+        } catch (error) {
+            console.error("Error sending connection request:", error);
+        } finally {
+            setActionLoading(false);
+        }
+    };
 
     const projects = [
         {
@@ -85,12 +125,25 @@ const Profile: React.FC = () => {
                             <h1 className="text-2xl font-bold text-[#0f172a] mb-2">{user.name}</h1>
                             <p className="text-[#5865F2] font-medium mb-4">{user.role}</p>
 
-                            <button
-                                onClick={() => navigate('/onboarding')}
-                                className="mb-6 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium rounded-lg transition-colors"
-                            >
-                                Edit Profile
-                            </button>
+                            {isOwnProfile ? (
+                                <button
+                                    onClick={() => navigate('/onboarding')}
+                                    className="mb-6 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium rounded-lg transition-colors"
+                                >
+                                    Edit Profile
+                                </button>
+                            ) : (
+                                <button
+                                    onClick={handleConnect}
+                                    disabled={connectionStatus !== 'none' || actionLoading}
+                                    className={`mb-6 px-6 py-2 rounded-lg text-sm font-bold transition-all ${connectionStatus === 'none'
+                                            ? 'bg-[#0066FF] text-white hover:bg-blue-700 shadow-lg shadow-blue-500/30'
+                                            : 'bg-gray-100 text-gray-500 cursor-not-allowed'
+                                        }`}
+                                >
+                                    {actionLoading ? 'Sending...' : (connectionStatus === 'pending' ? 'Request Sent' : 'Connect')}
+                                </button>
+                            )}
 
                             <div className="flex items-center justify-center gap-2 text-gray-500 text-sm mb-6">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">

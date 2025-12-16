@@ -10,6 +10,7 @@ import RoadmapDetail from './pages/RoadmapDetail';
 import ResourceDetail from './pages/ResourceDetail';
 import LoginPage from './pages/LoginPage';
 import Onboarding from './pages/Onboarding';
+import Students from './pages/Students';
 import Footer from './components/Footer';
 import ContactSection from './components/ContactSection';
 import PrivateRoute from './components/PrivateRoute';
@@ -52,6 +53,22 @@ const App: React.FC = () => {
                     element={
                         <PrivateRoute>
                             <Profile />
+                        </PrivateRoute>
+                    }
+                />
+                <Route
+                    path="/profile/:userId"
+                    element={
+                        <PrivateRoute>
+                            <Profile />
+                        </PrivateRoute>
+                    }
+                />
+                <Route
+                    path="/students"
+                    element={
+                        <PrivateRoute>
+                            <Students />
                         </PrivateRoute>
                     }
                 />
