@@ -67,26 +67,13 @@ const NavBar: React.FC = () => {
                     <div className="hidden md:flex items-center gap-8">
                         {navLinks.map((link) => (
                             link.isHash ? (
-                                <a
+                                <Link
                                     key={link.name}
-                                    href={link.path}
-                                    onClick={(e) => {
-                                        if (location.pathname !== '/') {
-                                            // Handle hash link from another page: standard navigation will happen
-                                        } else {
-                                            e.preventDefault();
-                                            const id = link.path.substring(2);
-                                            const element = document.getElementById(id);
-                                            if (element) {
-                                                element.scrollIntoView({ behavior: 'smooth' });
-                                                window.history.pushState(null, '', link.path);
-                                            }
-                                        }
-                                    }}
+                                    to={link.path}
                                     className={`text-sm font-medium transition-colors ${location.pathname === '/' && location.hash === link.path.substring(1) ? 'text-[#0066FF]' : 'text-gray-600 hover:text-[#0066FF]'}`}
                                 >
                                     {link.name}
-                                </a>
+                                </Link>
                             ) : (
                                 <Link
                                     key={link.name}
@@ -144,25 +131,14 @@ const NavBar: React.FC = () => {
                     <div className="md:hidden absolute top-full left-0 w-full bg-white border-t border-gray-100 shadow-xl p-4 flex flex-col gap-4">
                         {navLinks.map((link) => (
                             link.isHash ? (
-                                <a
+                                <Link
                                     key={link.name}
-                                    href={link.path}
+                                    to={link.path}
                                     className="text-gray-600 font-medium py-2"
-                                    onClick={(e) => {
-                                        setIsMobileMenuOpen(false);
-                                        if (location.pathname === '/') {
-                                            e.preventDefault();
-                                            const id = link.path.substring(2);
-                                            const element = document.getElementById(id);
-                                            if (element) {
-                                                element.scrollIntoView({ behavior: 'smooth' });
-                                                window.history.pushState(null, '', link.path);
-                                            }
-                                        }
-                                    }}
+                                    onClick={() => setIsMobileMenuOpen(false)}
                                 >
                                     {link.name}
-                                </a>
+                                </Link>
                             ) : (
                                 <Link
                                     key={link.name}

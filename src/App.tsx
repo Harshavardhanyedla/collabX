@@ -22,14 +22,22 @@ const Home: React.FC = () => {
     React.useEffect(() => {
         if (location.hash) {
             const id = location.hash.substring(1);
+            // Small delay to ensure the DOM is fully rendered
             setTimeout(() => {
                 const element = document.getElementById(id);
                 if (element) {
-                    element.scrollIntoView({ behavior: 'smooth' });
+                    const headerOffset = 100; // Account for fixed NavBar
+                    const elementPosition = element.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
                 }
             }, 100);
         }
-    }, [location]);
+    }, [location.hash]); // Only run when hash changes
 
     return (
         <main className="bg-white min-h-screen">
