@@ -4,6 +4,7 @@ import NavBar from './components/NavBar';
 import Hero from './components/Hero';
 import RoadmapsSection from './components/RoadmapsSection';
 import ProjectsSection from './components/ProjectsSection';
+import ResourcesSection from './components/ResourcesSection';
 import CommunitySection from './components/CommunitySection';
 import Profile from './pages/Profile';
 import RoadmapDetail from './pages/RoadmapDetail';
@@ -32,10 +33,10 @@ const Home: React.FC = () => {
 
     return (
         <main className="bg-white min-h-screen">
-            <NavBar />
             <Hero />
             <RoadmapsSection />
             <ProjectsSection />
+            <ResourcesSection />
             <CommunitySection />
             <ContactSection />
         </main>
