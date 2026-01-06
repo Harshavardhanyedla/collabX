@@ -397,7 +397,7 @@ const Profile: React.FC = () => {
                         <motion.div
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
-                            className="bg-white/70 backdrop-blur-sm rounded-3xl shadow-xl shadow-blue-900/5 border border-white p-8"
+                            className="bg-white rounded-3xl shadow-xl shadow-blue-900/5 border border-white/50 p-8"
                             style={{ willChange: 'transform' }}
                         >
                             <h3 className="font-black text-xl text-[#0f172a] mb-8 uppercase tracking-widest text-center">Social Links</h3>
@@ -501,7 +501,7 @@ const Profile: React.FC = () => {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={() => setIsProjectModalOpen(false)}
-                            className="absolute inset-0 bg-[#0f172a]/40 backdrop-blur-sm"
+                            className="absolute inset-0 bg-black/70"
                         />
                         <motion.div
                             initial={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -638,7 +638,7 @@ const Profile: React.FC = () => {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={() => setIsConnectModalOpen(false)}
-                            className="absolute inset-0 bg-[#0f172a]/40 backdrop-blur-sm"
+                            className="absolute inset-0 bg-[#0f172a]/60"
                         />
                         <motion.div
                             initial={{ opacity: 0, scale: 0.95, y: 20 }}
