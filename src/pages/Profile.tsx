@@ -25,6 +25,7 @@ const Profile: React.FC = () => {
     const [userProjects, setUserProjects] = useState<Project[]>([]);
     const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
     const [editingProject, setEditingProject] = useState<Partial<Project> | null>(null);
+    const [techStackInput, setTechStackInput] = useState<string>('');
     const [projectFormLoading, setProjectFormLoading] = useState(false);
     const [isConnectModalOpen, setIsConnectModalOpen] = useState(false);
     const [connectNote, setConnectNote] = useState('');
@@ -121,18 +122,26 @@ const Profile: React.FC = () => {
         e.preventDefault();
         if (!auth.currentUser || !editingProject) return;
 
+        // Parse tech stack input string into array
+        const techStackArray = techStackInput.split(',').map(s => s.trim()).filter(s => s !== '');
+
         // Final safety check for tech stack since it's an array
-        if (!editingProject.techStack || editingProject.techStack.length === 0) {
+        if (techStackArray.length === 0) {
             alert("Please add at least one technology to the Tech Stack.");
             return;
         }
 
+        const projectToSave = {
+            ...editingProject,
+            techStack: techStackArray
+        };
+
         setProjectFormLoading(true);
         try {
             if (editingProject.id) {
-                await updateProject(editingProject.id, editingProject);
+                await updateProject(editingProject.id, projectToSave as Project);
             } else {
-                await addProject(auth.currentUser.uid, editingProject as Omit<Project, 'id' | 'userId' | 'createdAt'>);
+                await addProject(auth.currentUser.uid, projectToSave as Omit<Project, 'id' | 'userId' | 'createdAt'>);
             }
             const projects = await fetchUserProjects(user?.uid || auth.currentUser.uid);
             setUserProjects(projects);
@@ -344,6 +353,7 @@ const Profile: React.FC = () => {
                                                     githubUrl: '',
                                                     liveUrl: ''
                                                 });
+                                                setTechStackInput('');
                                                 setIsProjectModalOpen(true);
                                             }}
                                             className="px-4 py-2 bg-blue-50 text-[#0066FF] text-sm font-bold rounded-xl hover:bg-blue-100 transition-all"
@@ -364,6 +374,7 @@ const Profile: React.FC = () => {
                                                         onClick={(e) => {
                                                             e.stopPropagation();
                                                             setEditingProject(project);
+                                                            setTechStackInput(project.techStack?.join(', ') || '');
                                                             setIsProjectModalOpen(true);
                                                         }}
                                                         className="p-2 bg-white rounded-lg shadow-sm border border-gray-100 text-gray-500 hover:text-blue-600"
@@ -595,8 +606,8 @@ const Profile: React.FC = () => {
                                         <input
                                             required
                                             type="text"
-                                            value={editingProject?.techStack?.join(', ') || ''}
-                                            onChange={(e) => setEditingProject(prev => ({ ...prev, techStack: e.target.value.split(',').map(s => s.trim()).filter(s => s !== '') }))}
+                                            value={techStackInput}
+                                            onChange={(e) => setTechStackInput(e.target.value)}
                                             className="w-full px-5 py-3 rounded-2xl bg-gray-50 border border-gray-100 focus:border-[#0066FF] focus:ring-4 focus:ring-blue-50 outline-none transition-all font-medium"
                                             placeholder="e.g. React, Firebase, Tailwind"
                                         />
