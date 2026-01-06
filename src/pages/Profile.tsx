@@ -2,16 +2,18 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 
 import { auth, db } from '../lib/firebase';
-import { doc, getDoc, collection, addDoc, query, where, getDocs } from 'firebase/firestore';
+import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { useNavigate, useParams } from 'react-router-dom';
+import type { UserProfile } from '../types';
+import { sendConnectionRequest } from '../lib/networking';
 
 const Profile: React.FC = () => {
     const navigate = useNavigate();
     const { userId } = useParams();
     const [loading, setLoading] = useState(true);
-    const [user, setUser] = useState<any>(null);
+    const [user, setUser] = useState<UserProfile | null>(null);
     const [isOwnProfile, setIsOwnProfile] = useState(false);
-    const [connectionStatus, setConnectionStatus] = useState<'none' | 'pending' | 'connected'>('none');
+    const [connectionStatus, setConnectionStatus] = useState<'none' | 'pending' | 'connected' | 'received'>('none');
     const [actionLoading, setActionLoading] = useState(false);
 
     React.useEffect(() => {
@@ -30,7 +32,7 @@ const Profile: React.FC = () => {
                 const docSnap = await getDoc(docRef);
 
                 if (docSnap.exists()) {
-                    setUser(docSnap.data());
+                    setUser(docSnap.data() as UserProfile);
 
                     // Check connection status if not own profile
                     if (targetUserId !== currentUser.uid) {
@@ -50,8 +52,9 @@ const Profile: React.FC = () => {
                         navigate('/onboarding');
                     }
                 }
-            } catch (error) {
-                console.error("Error fetching user data:", error);
+            } catch (error: unknown) {
+                const err = error as Error;
+                console.error("Error fetching user data:", err);
             } finally {
                 setLoading(false);
             }
@@ -64,15 +67,12 @@ const Profile: React.FC = () => {
         if (!auth.currentUser || !userId) return;
         setActionLoading(true);
         try {
-            await addDoc(collection(db, 'connections'), {
-                requesterId: auth.currentUser.uid,
-                recipientId: userId,
-                status: 'pending',
-                createdAt: new Date().toISOString()
-            });
+            await sendConnectionRequest(userId);
             setConnectionStatus('pending');
-        } catch (error) {
-            console.error("Error sending connection request:", error);
+        } catch (error: unknown) {
+            const err = error as Error;
+            console.error("Error sending connection request:", err);
+            alert(err.message);
         } finally {
             setActionLoading(false);
         }
@@ -249,11 +249,11 @@ const Profile: React.FC = () => {
                             <h3 className="font-bold text-[#0f172a] mb-6">Network</h3>
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="p-4 bg-gray-50 rounded-xl text-center">
-                                    <p className="font-bold text-2xl text-[#0066FF]">{user.stats.followers}</p>
+                                    <p className="font-bold text-2xl text-[#0066FF]">{user.stats?.followers || 0}</p>
                                     <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Founders</p>
                                 </div>
                                 <div className="p-4 bg-gray-50 rounded-xl text-center">
-                                    <p className="font-bold text-2xl text-[#0066FF]">{user.stats.projects}</p>
+                                    <p className="font-bold text-2xl text-[#0066FF]">{user.stats?.projects || 0}</p>
                                     <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Collabs</p>
                                 </div>
                             </div>

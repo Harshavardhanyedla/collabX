@@ -40,3 +40,29 @@ export interface ContactForm {
   subject: string;
   message: string;
 }
+
+export interface UserProfile {
+  uid: string;
+  name: string;
+  role: string;
+  headline?: string;
+  institution: string;
+  avatar: string;
+  skills: string[];
+  connectionCount?: number;
+  mutualConnectionsCount?: number;
+  privacySettings?: {
+    allowIncomingRequests: boolean;
+  };
+  lastActive?: string | number | { seconds: number; nanoseconds: number };
+  bio?: string;
+  socials?: {
+    linkedin?: string;
+    github?: string;
+    twitter?: string;
+  };
+  stats?: {
+    followers: number;
+    projects: number;
+  };
+}
