@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import Cropper from 'react-easy-crop';
 import { storage, db } from '../lib/firebase';
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { doc, updateDoc } from 'firebase/firestore';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -80,23 +80,35 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({ userId, currentAvatar, onUp
     const handleUpload = async () => {
         if (!image || !croppedAreaPixels) return;
         setLoading(true);
+        console.log('Starting upload process...');
         try {
+            console.log('Cropping image...');
             const croppedImage = await getCroppedImg(image, croppedAreaPixels);
-            const storageRef = ref(storage, `avatars/${userId}_${Date.now()}.jpg`);
-            const uploadTask = await uploadBytesResumable(storageRef, croppedImage);
-            const downloadURL = await getDownloadURL(uploadTask.ref);
+            console.log('Image cropped successfully');
+
+            const filename = `avatars/${userId}_${Date.now()}.jpg`;
+            const storageRef = ref(storage, filename);
+
+            console.log('Uploading to Storage:', filename);
+            const uploadResult = await uploadBytes(storageRef, croppedImage);
+            console.log('Upload complete');
+
+            const downloadURL = await getDownloadURL(uploadResult.ref);
+            console.log('Download URL obtained:', downloadURL);
 
             // Update Firestore
+            console.log('Updating Firestore...');
             await updateDoc(doc(db, 'users', userId), {
                 avatar: downloadURL
             });
+            console.log('Firestore updated');
 
             onUploadComplete(downloadURL);
             setIsModalOpen(false);
             setImage(null);
         } catch (error) {
-            console.error('Error uploading avatar:', error);
-            alert('Failed to upload image.');
+            console.error('Detailed upload error:', error);
+            alert('Failed to save image. Please check your internet connection or try again.');
         } finally {
             setLoading(false);
         }
