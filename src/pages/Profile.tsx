@@ -120,6 +120,13 @@ const Profile: React.FC = () => {
     const handleProjectSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!auth.currentUser || !editingProject) return;
+
+        // Final safety check for tech stack since it's an array
+        if (!editingProject.techStack || editingProject.techStack.length === 0) {
+            alert("Please add at least one technology to the Tech Stack.");
+            return;
+        }
+
         setProjectFormLoading(true);
         try {
             if (editingProject.id) {
@@ -586,6 +593,7 @@ const Profile: React.FC = () => {
                                     <div className="col-span-2">
                                         <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Tech Stack (Comma Separated)</label>
                                         <input
+                                            required
                                             type="text"
                                             value={editingProject?.techStack?.join(', ') || ''}
                                             onChange={(e) => setEditingProject(prev => ({ ...prev, techStack: e.target.value.split(',').map(s => s.trim()).filter(s => s !== '') }))}
@@ -597,6 +605,7 @@ const Profile: React.FC = () => {
                                     <div>
                                         <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2">GitHub URL</label>
                                         <input
+                                            required
                                             type="url"
                                             value={editingProject?.githubUrl || ''}
                                             onChange={(e) => setEditingProject(prev => ({ ...prev, githubUrl: e.target.value }))}
@@ -608,6 +617,7 @@ const Profile: React.FC = () => {
                                     <div>
                                         <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Live Demo URL</label>
                                         <input
+                                            required
                                             type="url"
                                             value={editingProject?.liveUrl || ''}
                                             onChange={(e) => setEditingProject(prev => ({ ...prev, liveUrl: e.target.value }))}
