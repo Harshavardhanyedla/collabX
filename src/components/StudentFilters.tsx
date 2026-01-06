@@ -43,10 +43,19 @@ const StudentFilters: React.FC<StudentFiltersProps> = ({
                         className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-[#0066FF]/20 focus:border-[#0066FF]"
                     >
                         <option value="">University (All)</option>
-                        <option value="Stanford University">Stanford</option>
-                        <option value="MIT">MIT</option>
-                        <option value="Harvard University">Harvard</option>
                         <option value="IIT Bombay">IIT Bombay</option>
+                    </select>
+
+                    <select
+                        onChange={(e) => onFilterChange('role', e.target.value)}
+                        className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-[#0066FF]/20 focus:border-[#0066FF]"
+                    >
+                        <option value="">Role (All)</option>
+                        <option value="Frontend">Frontend</option>
+                        <option value="Backend">Backend</option>
+                        <option value="Fullstack">Fullstack</option>
+                        <option value="Designer">Designer</option>
+                        <option value="Researcher">Researcher</option>
                     </select>
 
                     <select

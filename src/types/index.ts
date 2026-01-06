@@ -12,15 +12,18 @@ export interface Roadmap {
 
 export interface Project {
   id: string;
+  userId: string;
   title: string;
   description: string;
-  tags: string[];
-  githubUrl: string;
+  role: string;
+  techStack: string[];
+  duration: string;
+  githubUrl?: string;
   liveUrl?: string;
-  author: string;
-  image?: string;
-  stars: number;
-  language: string;
+  thumbnailUrl?: string;
+  createdAt: string | number | { seconds: number; nanoseconds: number };
+  stars?: number;
+  language?: string;
 }
 
 export interface CommunityPost {

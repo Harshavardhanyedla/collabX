@@ -4,8 +4,14 @@ import { motion } from 'framer-motion';
 import { auth, db } from '../lib/firebase';
 import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { useNavigate, useParams } from 'react-router-dom';
-import type { UserProfile } from '../types';
+import type { UserProfile, Project } from '../types';
 import { sendConnectionRequest } from '../lib/networking';
+import { fetchUserProjects, addProject, updateProject, deleteProject } from '../lib/projects';
+import { AnimatePresence } from 'framer-motion';
+import AvatarUpload from '../components/AvatarUpload';
+import SkillsManager from '../components/SkillsManager';
+import IncomingRequests from '../components/IncomingRequests';
+import { updateDoc } from 'firebase/firestore';
 
 const Profile: React.FC = () => {
     const navigate = useNavigate();
@@ -15,6 +21,12 @@ const Profile: React.FC = () => {
     const [isOwnProfile, setIsOwnProfile] = useState(false);
     const [connectionStatus, setConnectionStatus] = useState<'none' | 'pending' | 'connected' | 'received'>('none');
     const [actionLoading, setActionLoading] = useState(false);
+    const [userProjects, setUserProjects] = useState<Project[]>([]);
+    const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
+    const [editingProject, setEditingProject] = useState<Partial<Project> | null>(null);
+    const [projectFormLoading, setProjectFormLoading] = useState(false);
+    const [isConnectModalOpen, setIsConnectModalOpen] = useState(false);
+    const [connectNote, setConnectNote] = useState('');
 
     React.useEffect(() => {
         const fetchUserData = async () => {
@@ -61,6 +73,11 @@ const Profile: React.FC = () => {
                 } else if (!userId) {
                     navigate('/onboarding');
                 }
+
+                // Fetch real projects
+                const projects = await fetchUserProjects(targetUserId);
+                setUserProjects(projects);
+
             } catch (error) {
                 console.error("Error fetching user data:", error);
             } finally {
@@ -74,10 +91,18 @@ const Profile: React.FC = () => {
     const handleConnect = async () => {
         const targetUserId = userId || (user?.uid);
         if (!auth.currentUser || !targetUserId) return;
+
+        if (!isConnectModalOpen) {
+            setIsConnectModalOpen(true);
+            return;
+        }
+
         setActionLoading(true);
         try {
-            await sendConnectionRequest(targetUserId);
+            await sendConnectionRequest(targetUserId, connectNote);
             setConnectionStatus('pending');
+            setIsConnectModalOpen(false);
+            setConnectNote('');
         } catch (error: unknown) {
             const err = error as Error;
             console.error("Error sending connection request:", err);
@@ -87,22 +112,50 @@ const Profile: React.FC = () => {
         }
     };
 
-    const projects = [
-        {
-            id: 1,
-            title: 'CollabX',
-            description: 'A platform for students to collaborate on projects and find learning resources.',
-            stars: 124,
-            language: 'TypeScript'
-        },
-        {
-            id: 2,
-            title: 'AI Note Taker',
-            description: 'An AI-powered tool that summarizes lecture notes and generates quizzes.',
-            stars: 89,
-            language: 'Python'
+    const handleProjectSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!auth.currentUser || !editingProject) return;
+        setProjectFormLoading(true);
+        try {
+            if (editingProject.id) {
+                await updateProject(editingProject.id, editingProject);
+            } else {
+                await addProject(auth.currentUser.uid, editingProject as Omit<Project, 'id' | 'userId' | 'createdAt'>);
+            }
+            const projects = await fetchUserProjects(user?.uid || auth.currentUser.uid);
+            setUserProjects(projects);
+            setIsProjectModalOpen(false);
+            setEditingProject(null);
+        } catch (error) {
+            console.error("Error saving project:", error);
+            alert("Failed to save project.");
+        } finally {
+            setProjectFormLoading(false);
         }
-    ];
+    };
+
+    const handleDeleteProject = async (projectId: string) => {
+        if (!window.confirm("Are you sure you want to delete this project?")) return;
+        try {
+            await deleteProject(projectId);
+            setUserProjects(prev => prev.filter(p => p.id !== projectId));
+        } catch (error) {
+            console.error("Error deleting project:", error);
+            alert("Failed to delete project.");
+        }
+    };
+
+    const updateSkills = async (newSkills: string[]) => {
+        if (!auth.currentUser || !user) return;
+        try {
+            const userRef = doc(db, 'users', user.uid || auth.currentUser.uid);
+            await updateDoc(userRef, { skills: newSkills });
+            setUser(prev => prev ? { ...prev, skills: newSkills } : null);
+        } catch (error) {
+            console.error("Error updating skills:", error);
+            alert("Failed to update skills.");
+        }
+    };
 
     if (loading) {
         return (
@@ -120,20 +173,28 @@ const Profile: React.FC = () => {
     return (
         <div className="min-h-screen bg-[#F8FAFC] pb-20">
             {/* Dynamic Animated Header */}
-            <div className="relative h-64 md:h-80 w-full overflow-hidden">
+            <div className="relative h-64 md:h-80 w-full overflow-hidden" style={{ transform: 'translateZ(0)' }}>
                 <div className="absolute inset-0 bg-gradient-to-br from-[#0066FF] via-[#5865F2] to-[#7000FF] opacity-90"></div>
-                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20"></div>
+                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20" style={{ transform: 'translateZ(0)' }}></div>
 
                 {/* Decorative Elements */}
                 <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                    className="absolute top-[-10%] right-[-5%] w-64 h-64 bg-white/10 rounded-full blur-3xl"
+                    animate={{
+                        scale: [1, 1.1, 1],
+                        opacity: [0.1, 0.15, 0.1]
+                    }}
+                    transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+                    style={{ willChange: "transform, opacity", backfaceVisibility: "hidden" }}
+                    className="absolute top-[-10%] right-[-5%] w-64 h-64 bg-white/10 rounded-full blur-3xl pointer-events-none"
                 />
                 <motion.div
-                    animate={{ y: [0, 20, 0] }}
-                    transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-                    className="absolute bottom-[-5%] left-[5%] w-48 h-48 bg-blue-400/20 rounded-full blur-2xl"
+                    animate={{
+                        y: [0, 20, 0],
+                        opacity: [0.2, 0.25, 0.2]
+                    }}
+                    transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+                    style={{ willChange: "transform, opacity", backfaceVisibility: "hidden" }}
+                    className="absolute bottom-[-5%] left-[5%] w-48 h-48 bg-blue-400/20 rounded-full blur-2xl pointer-events-none"
                 />
             </div>
 
@@ -142,19 +203,31 @@ const Profile: React.FC = () => {
 
                     {/* Left & Center: Profile Details */}
                     <div className="lg:col-span-2 space-y-8">
+                        {isOwnProfile && <IncomingRequests onActionComplete={() => {
+                            // Optionally refresh stats or connection count
+                        }} />}
+
                         {/* Master Header Card */}
                         <motion.div
                             initial={{ opacity: 0, y: 30 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="bg-white rounded-3xl shadow-xl shadow-blue-900/5 border border-white/50 overflow-hidden backdrop-blur-sm"
+                            className="bg-white rounded-3xl shadow-xl shadow-blue-900/5 border border-white/50 overflow-hidden"
                         >
                             <div className="p-8 md:p-10">
                                 <div className="flex flex-col md:flex-row gap-8 items-center md:items-end text-center md:text-left">
                                     <div className="relative group">
                                         <div className="absolute inset-0 bg-gradient-to-tr from-[#0066FF] to-[#00E0FF] rounded-full blur-md opacity-20 group-hover:opacity-40 transition-opacity"></div>
-                                        <div className="relative w-36 h-36 md:w-44 md:h-44 rounded-full border-4 border-white shadow-2xl overflow-hidden bg-white">
-                                            <img src={user.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.name}`} alt={user.name} className="w-full h-full object-cover" />
-                                        </div>
+                                        {isOwnProfile ? (
+                                            <AvatarUpload
+                                                userId={auth.currentUser?.uid || ''}
+                                                currentAvatar={user.avatar}
+                                                onUploadComplete={(newUrl) => setUser(prev => prev ? { ...prev, avatar: newUrl } : null)}
+                                            />
+                                        ) : (
+                                            <div className="relative w-36 h-36 md:w-44 md:h-44 rounded-full border-4 border-white shadow-2xl overflow-hidden bg-white">
+                                                <img src={user.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.name}`} alt={user.name} className="w-full h-full object-cover" />
+                                            </div>
+                                        )}
                                     </div>
 
                                     <div className="flex-grow">
@@ -241,24 +314,79 @@ const Profile: React.FC = () => {
                                     <span className="w-1.5 h-8 bg-[#0066FF] rounded-full"></span>
                                     Featured Projects
                                 </h3>
-                                <button className="px-4 py-2 text-sm text-[#0066FF] font-bold hover:bg-blue-50 rounded-xl transition-all border border-transparent hover:border-blue-100">View All</button>
+                                <div className="flex gap-2">
+                                    {isOwnProfile && (
+                                        <button
+                                            onClick={() => {
+                                                setEditingProject({
+                                                    title: '',
+                                                    description: '',
+                                                    role: '',
+                                                    techStack: [],
+                                                    duration: '',
+                                                    githubUrl: '',
+                                                    liveUrl: ''
+                                                });
+                                                setIsProjectModalOpen(true);
+                                            }}
+                                            className="px-4 py-2 bg-blue-50 text-[#0066FF] text-sm font-bold rounded-xl hover:bg-blue-100 transition-all"
+                                        >
+                                            + Add Project
+                                        </button>
+                                    )}
+                                    <button className="px-4 py-2 text-sm text-[#0066FF] font-bold hover:bg-blue-50 rounded-xl transition-all border border-transparent hover:border-blue-100">View All</button>
+                                </div>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                {projects.map((project) => (
-                                    <div key={project.id} className="p-6 rounded-2xl border border-gray-100 hover:border-[#0066FF]/30 hover:bg-[#0066FF]/[0.02] transition-all cursor-pointer group flex flex-col h-full">
-                                        <h4 className="font-bold text-xl text-[#0f172a] group-hover:text-[#0066FF] mb-3 transition-colors">{project.title}</h4>
-                                        <p className="text-gray-500 text-sm mb-6 line-clamp-3 leading-relaxed flex-grow">{project.description}</p>
-                                        <div className="flex items-center justify-between">
-                                            <span className="px-3 py-1 bg-gray-50 text-gray-600 rounded-lg text-xs font-bold border border-gray-100 uppercase tracking-tighter">{project.language}</span>
-                                            <span className="flex items-center gap-1.5 text-sm text-gray-500">
-                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-yellow-400">
-                                                    <path fillRule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z" clipRule="evenodd" />
-                                                </svg>
-                                                <span className="font-bold">{project.stars}</span>
-                                            </span>
+                                {userProjects.length > 0 ? (
+                                    userProjects.map((project) => (
+                                        <div key={project.id} className="p-6 rounded-2xl border border-gray-100 hover:border-[#0066FF]/30 hover:bg-[#0066FF]/[0.02] transition-all cursor-pointer group flex flex-col h-full relative">
+                                            {isOwnProfile && (
+                                                <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    <button
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            setEditingProject(project);
+                                                            setIsProjectModalOpen(true);
+                                                        }}
+                                                        className="p-2 bg-white rounded-lg shadow-sm border border-gray-100 text-gray-500 hover:text-blue-600"
+                                                    >
+                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                                                        </svg>
+                                                    </button>
+                                                    <button
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleDeleteProject(project.id);
+                                                        }}
+                                                        className="p-2 bg-white rounded-lg shadow-sm border border-gray-100 text-gray-500 hover:text-red-600"
+                                                    >
+                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                            )}
+                                            <h4 className="font-bold text-xl text-[#0f172a] group-hover:text-[#0066FF] mb-1 transition-colors">{project.title}</h4>
+                                            <p className="text-blue-600 text-xs font-bold mb-3">{project.role}</p>
+                                            <p className="text-gray-500 text-sm mb-6 line-clamp-3 leading-relaxed flex-grow">{project.description}</p>
+                                            <div className="flex items-center justify-between">
+                                                <div className="flex flex-wrap gap-2">
+                                                    {project.techStack?.slice(0, 3).map(tech => (
+                                                        <span key={tech} className="px-2 py-0.5 bg-gray-50 text-gray-600 rounded text-[10px] font-bold border border-gray-100 uppercase">{tech}</span>
+                                                    ))}
+                                                </div>
+                                                <span className="text-[10px] text-gray-400 font-bold">{project.duration}</span>
+                                            </div>
                                         </div>
+                                    ))
+                                ) : (
+                                    <div className="col-span-full py-12 text-center bg-gray-50 rounded-2xl border-2 border-dashed border-gray-100">
+                                        <p className="text-gray-400 font-medium">No projects added yet.</p>
+                                        {isOwnProfile && <p className="text-sm text-blue-500 mt-2 cursor-pointer hover:underline" onClick={() => setIsProjectModalOpen(true)}>Add your first project</p>}
                                     </div>
-                                ))}
+                                )}
                             </div>
                         </motion.div>
                     </div>
@@ -269,7 +397,8 @@ const Profile: React.FC = () => {
                         <motion.div
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
-                            className="bg-white/70 backdrop-blur-md rounded-3xl shadow-xl shadow-blue-900/5 border border-white p-8"
+                            className="bg-white/70 backdrop-blur-sm rounded-3xl shadow-xl shadow-blue-900/5 border border-white p-8"
+                            style={{ willChange: 'transform' }}
                         >
                             <h3 className="font-black text-xl text-[#0f172a] mb-8 uppercase tracking-widest text-center">Social Links</h3>
                             <div className="space-y-4">
@@ -315,18 +444,11 @@ const Profile: React.FC = () => {
                             transition={{ delay: 0.1 }}
                             className="bg-white rounded-3xl shadow-xl shadow-blue-900/5 border border-white/50 p-8"
                         >
-                            <h3 className="font-black text-xl text-[#0f172a] mb-8 uppercase tracking-widest text-center">Tech Stack</h3>
-                            <div className="flex flex-wrap justify-center gap-3">
-                                {user.skills?.length > 0 ? (
-                                    user.skills.map((skill: string) => (
-                                        <span key={skill} className="px-5 py-2 bg-gradient-to-br from-gray-50 to-white text-gray-800 text-xs font-black rounded-xl border border-gray-100 hover:border-[#0066FF] hover:text-[#0066FF] transition-all cursor-default shadow-sm">
-                                            {skill}
-                                        </span>
-                                    ))
-                                ) : (
-                                    <div className="text-gray-300 font-bold italic text-sm py-4">Learning new skills...</div>
-                                )}
-                            </div>
+                            <SkillsManager
+                                skills={user.skills || []}
+                                isOwnProfile={isOwnProfile}
+                                onUpdate={updateSkills}
+                            />
                         </motion.div>
 
                         {/* Network Highlights */}
@@ -369,6 +491,202 @@ const Profile: React.FC = () => {
 
                 </div>
             </div>
+
+            {/* Project Modal */}
+            <AnimatePresence>
+                {isProjectModalOpen && (
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setIsProjectModalOpen(false)}
+                            className="absolute inset-0 bg-[#0f172a]/40 backdrop-blur-sm"
+                        />
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                            className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden"
+                        >
+                            <div className="p-8 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                                <h3 className="text-2xl font-black text-[#0f172a]">
+                                    {editingProject?.id ? 'Edit Project' : 'Add New Project'}
+                                </h3>
+                                <button
+                                    onClick={() => setIsProjectModalOpen(false)}
+                                    className="p-2 hover:bg-gray-200 rounded-xl transition-colors text-gray-400"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <form onSubmit={handleProjectSubmit} className="p-8 space-y-6 max-h-[70vh] overflow-y-auto">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="col-span-2">
+                                        <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Project Title</label>
+                                        <input
+                                            required
+                                            type="text"
+                                            value={editingProject?.title || ''}
+                                            onChange={(e) => setEditingProject(prev => ({ ...prev, title: e.target.value }))}
+                                            className="w-full px-5 py-3 rounded-2xl bg-gray-50 border border-gray-100 focus:border-[#0066FF] focus:ring-4 focus:ring-blue-50 outline-none transition-all font-medium"
+                                            placeholder="e.g. CollabX Networking Module"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Your Role</label>
+                                        <input
+                                            required
+                                            type="text"
+                                            value={editingProject?.role || ''}
+                                            onChange={(e) => setEditingProject(prev => ({ ...prev, role: e.target.value }))}
+                                            className="w-full px-5 py-3 rounded-2xl bg-gray-50 border border-gray-100 focus:border-[#0066FF] focus:ring-4 focus:ring-blue-50 outline-none transition-all font-medium"
+                                            placeholder="e.g. Lead Designer"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Duration</label>
+                                        <input
+                                            required
+                                            type="text"
+                                            value={editingProject?.duration || ''}
+                                            onChange={(e) => setEditingProject(prev => ({ ...prev, duration: e.target.value }))}
+                                            className="w-full px-5 py-3 rounded-2xl bg-gray-50 border border-gray-100 focus:border-[#0066FF] focus:ring-4 focus:ring-blue-50 outline-none transition-all font-medium"
+                                            placeholder="e.g. 3 Months"
+                                        />
+                                    </div>
+
+                                    <div className="col-span-2">
+                                        <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Description</label>
+                                        <textarea
+                                            required
+                                            rows={4}
+                                            value={editingProject?.description || ''}
+                                            onChange={(e) => setEditingProject(prev => ({ ...prev, description: e.target.value }))}
+                                            className="w-full px-5 py-3 rounded-2xl bg-gray-50 border border-gray-100 focus:border-[#0066FF] focus:ring-4 focus:ring-blue-50 outline-none transition-all font-medium resize-none"
+                                            placeholder="Tell us about the project goal and your impact..."
+                                        />
+                                    </div>
+
+                                    <div className="col-span-2">
+                                        <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Tech Stack (Comma Separated)</label>
+                                        <input
+                                            type="text"
+                                            value={editingProject?.techStack?.join(', ') || ''}
+                                            onChange={(e) => setEditingProject(prev => ({ ...prev, techStack: e.target.value.split(',').map(s => s.trim()).filter(s => s !== '') }))}
+                                            className="w-full px-5 py-3 rounded-2xl bg-gray-50 border border-gray-100 focus:border-[#0066FF] focus:ring-4 focus:ring-blue-50 outline-none transition-all font-medium"
+                                            placeholder="e.g. React, Firebase, Tailwind"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2">GitHub URL</label>
+                                        <input
+                                            type="url"
+                                            value={editingProject?.githubUrl || ''}
+                                            onChange={(e) => setEditingProject(prev => ({ ...prev, githubUrl: e.target.value }))}
+                                            className="w-full px-5 py-3 rounded-2xl bg-gray-50 border border-gray-100 focus:border-[#0066FF] focus:ring-4 focus:ring-blue-50 outline-none transition-all font-medium"
+                                            placeholder="https://github.com/..."
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Live Demo URL</label>
+                                        <input
+                                            type="url"
+                                            value={editingProject?.liveUrl || ''}
+                                            onChange={(e) => setEditingProject(prev => ({ ...prev, liveUrl: e.target.value }))}
+                                            className="w-full px-5 py-3 rounded-2xl bg-gray-50 border border-gray-100 focus:border-[#0066FF] focus:ring-4 focus:ring-blue-50 outline-none transition-all font-medium"
+                                            placeholder="https://collabx.app/..."
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="flex gap-4 pt-4">
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsProjectModalOpen(false)}
+                                        className="flex-1 px-8 py-4 rounded-2xl border-2 border-gray-100 font-bold text-gray-500 hover:bg-gray-50 transition-all"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        disabled={projectFormLoading}
+                                        className="flex-[2] px-8 py-4 rounded-2xl bg-[#0066FF] text-white font-bold shadow-xl shadow-blue-500/20 hover:bg-blue-700 transition-all disabled:opacity-50"
+                                    >
+                                        {projectFormLoading ? 'Saving...' : (editingProject?.id ? 'Update Project' : 'Add Project')}
+                                    </button>
+                                </div>
+                            </form>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
+
+            {/* Connection Note Modal */}
+            <AnimatePresence>
+                {isConnectModalOpen && (
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setIsConnectModalOpen(false)}
+                            className="absolute inset-0 bg-[#0f172a]/40 backdrop-blur-sm"
+                        />
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                            className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden"
+                        >
+                            <div className="p-8 border-b border-gray-100 bg-gray-50/50">
+                                <h3 className="text-xl font-black text-[#0f172a]">Send Connection Request</h3>
+                                <p className="text-sm text-gray-500 mt-1">LinkedIn-style personalized note (optional)</p>
+                            </div>
+
+                            <div className="p-8 space-y-6">
+                                <div>
+                                    <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Message (Max 300 chars)</label>
+                                    <textarea
+                                        rows={4}
+                                        maxLength={300}
+                                        value={connectNote}
+                                        onChange={(e) => setConnectNote(e.target.value)}
+                                        className="w-full px-5 py-3 rounded-2xl bg-gray-50 border border-gray-100 focus:border-[#0066FF] focus:ring-4 focus:ring-blue-50 outline-none transition-all font-medium resize-none"
+                                        placeholder="Hi! I saw your project and would love to connect..."
+                                    />
+                                    <div className="flex justify-end mt-2">
+                                        <span className="text-[10px] font-bold text-gray-400">{connectNote.length}/300</span>
+                                    </div>
+                                </div>
+
+                                <div className="flex gap-4">
+                                    <button
+                                        onClick={() => setIsConnectModalOpen(false)}
+                                        className="flex-1 px-6 py-3 rounded-2xl border-2 border-gray-100 font-bold text-gray-500 hover:bg-gray-50 transition-all"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        onClick={handleConnect}
+                                        disabled={actionLoading}
+                                        className="flex-[2] px-6 py-3 rounded-2xl bg-[#0066FF] text-white font-bold shadow-xl shadow-blue-500/20 hover:bg-blue-700 transition-all disabled:opacity-50"
+                                    >
+                                        {actionLoading ? 'Sending...' : 'Send Request'}
+                                    </button>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };

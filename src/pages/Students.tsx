@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { db } from '../lib/firebase';
-import { collection, getDocs } from 'firebase/firestore';
+import { auth, db } from '../lib/firebase';
+import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
 import type { UserProfile } from '../types';
 import StudentCard from '../components/StudentCard';
 import StudentFilters from '../components/StudentFilters';
@@ -12,16 +12,32 @@ const Students: React.FC = () => {
     const [students, setStudents] = useState<UserProfile[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
-    const [filters, setFilters] = useState({ institution: '' });
+    const [filters, setFilters] = useState({ institution: '', role: '' });
     const [sortBy, setSortBy] = useState('recent');
+    const [currentUserProfile, setCurrentUserProfile] = useState<UserProfile | null>(null);
 
     useEffect(() => {
         const fetchStudents = async () => {
             try {
+                // Fetch current user for context-based sorting
+                const user = auth.currentUser;
+                if (user) {
+                    const profileRef = doc(db, 'users', user.uid);
+                    const profileSnap = await getDoc(profileRef);
+                    if (profileSnap.exists()) {
+                        setCurrentUserProfile(profileSnap.data() as UserProfile);
+                    }
+                }
+
                 const querySnapshot = await getDocs(collection(db, 'users'));
                 const studentList: UserProfile[] = [];
                 querySnapshot.forEach((doc) => {
-                    studentList.push({ uid: doc.id, ...doc.data() } as UserProfile);
+                    const data = doc.data() as UserProfile;
+                    // Don't show current user in discovery
+                    if (doc.id !== user?.uid) {
+                        // Ensure uid is explicitly set from doc.id, overwriting if data already had one
+                        studentList.push({ ...data, uid: doc.id });
+                    }
                 });
                 setStudents(studentList);
             } catch (error) {
@@ -37,23 +53,31 @@ const Students: React.FC = () => {
     const filteredStudents = useMemo(() => {
         return students
             .filter(pc => {
+                const searchLower = searchQuery.toLowerCase();
                 const matchesSearch =
-                    pc.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                    pc.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                    (pc.headline && pc.headline.toLowerCase().includes(searchQuery.toLowerCase())) ||
-                    pc.skills.some(skill => skill.toLowerCase().includes(searchQuery.toLowerCase()));
+                    pc.name.toLowerCase().includes(searchLower) ||
+                    pc.role.toLowerCase().includes(searchLower) ||
+                    (pc.headline && pc.headline.toLowerCase().includes(searchLower)) ||
+                    pc.skills?.some(skill => skill.toLowerCase().includes(searchLower));
 
                 const matchesInstitution = !filters.institution || pc.institution === filters.institution;
+                const matchesRole = !filters.role || pc.role.toLowerCase().includes(filters.role.toLowerCase());
 
-                return matchesSearch && matchesInstitution;
+                return matchesSearch && matchesInstitution && matchesRole;
             })
             .sort((a, b) => {
                 if (sortBy === 'connections') {
                     return (b.connectionCount || 0) - (a.connectionCount || 0);
                 }
+                if (sortBy === 'university' && currentUserProfile?.institution) {
+                    const aSame = a.institution === currentUserProfile.institution ? 1 : 0;
+                    const bSame = b.institution === currentUserProfile.institution ? 1 : 0;
+                    return bSame - aSame;
+                }
+                // 'recent' fallback (mocking recent by UID for now, or createdAt if exists)
                 return 0;
             });
-    }, [students, searchQuery, filters, sortBy]);
+    }, [students, searchQuery, filters, sortBy, currentUserProfile]);
 
     const StudentSkeleton = () => (
         <div className="bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm p-4 h-[320px] animate-pulse">
