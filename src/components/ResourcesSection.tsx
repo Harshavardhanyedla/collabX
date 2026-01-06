@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { db, auth } from '../lib/firebase';
-import { collection, getDocs, addDoc, deleteDoc, doc, query } from 'firebase/firestore';
+import { collection, getDocs, addDoc, deleteDoc, doc, query, getDoc } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
 
 interface Resource {
@@ -26,9 +26,21 @@ const ResourcesSection: React.FC = () => {
 
     useEffect(() => {
         fetchResources();
-        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-            // TODO: Implement proper admin check
-            setIsAdmin(!!currentUser);
+        const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+            if (currentUser) {
+                // Fetch user document to check for admin status
+                try {
+                    const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+                    if (userDoc.exists()) {
+                        setIsAdmin(userDoc.data().role === 'admin' || userDoc.data().isAdmin === true);
+                    }
+                } catch (error) {
+                    console.error("Error checking admin status:", error);
+                    setIsAdmin(false);
+                }
+            } else {
+                setIsAdmin(false);
+            }
         });
         return () => unsubscribe();
     }, []);

@@ -45,6 +45,7 @@ export interface UserProfile {
   uid: string;
   name: string;
   role: string;
+  isAdmin?: boolean;
   headline?: string;
   institution: string;
   avatar: string;

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { db, auth } from '../lib/firebase';
-import { collection, getDocs, addDoc, deleteDoc, doc, query, orderBy, Timestamp } from 'firebase/firestore';
+import { collection, getDocs, addDoc, deleteDoc, doc, query, orderBy, Timestamp, getDoc } from 'firebase/firestore';
 import { onAuthStateChanged, type User } from 'firebase/auth';
 
 interface Roadmap {
@@ -20,6 +20,7 @@ const RoadmapsSection: React.FC = () => {
     const navigate = useNavigate();
     const [roadmaps, setRoadmaps] = useState<Roadmap[]>([]);
     const [user, setUser] = useState<User | null>(null);
+    const [isAdmin, setIsAdmin] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
 
@@ -32,8 +33,21 @@ const RoadmapsSection: React.FC = () => {
     });
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+        const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
             setUser(currentUser);
+            if (currentUser) {
+                try {
+                    const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+                    if (userDoc.exists()) {
+                        setIsAdmin(userDoc.data().role === 'admin' || userDoc.data().isAdmin === true);
+                    }
+                } catch (error) {
+                    console.error("Error checking admin status:", error);
+                    setIsAdmin(false);
+                }
+            } else {
+                setIsAdmin(false);
+            }
         });
         fetchRoadmaps();
         return () => unsubscribe();
@@ -129,7 +143,7 @@ const RoadmapsSection: React.FC = () => {
                     </div>
 
                     {/* Admin Add Button */}
-                    {user && (
+                    {isAdmin && (
                         <div className="mt-8 flex justify-center">
                             <button
                                 onClick={() => setIsModalOpen(true)}
@@ -157,7 +171,7 @@ const RoadmapsSection: React.FC = () => {
                                 onClick={() => handleCardClick(roadmap)}
                                 className="bg-white rounded-2xl p-8 border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer group relative"
                             >
-                                {user && (
+                                {isAdmin && (
                                     <button
                                         onClick={(e) => handleDeleteRoadmap(roadmap.id, e)}
                                         className="absolute top-4 right-4 text-gray-400 hover:text-red-500 p-2"
