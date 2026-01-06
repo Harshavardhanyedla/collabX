@@ -173,7 +173,7 @@ const Profile: React.FC = () => {
     return (
         <div className="min-h-screen bg-[#F8FAFC] pb-20">
             {/* Dynamic Animated Header */}
-            <div className="relative h-64 md:h-80 w-full overflow-hidden" style={{ transform: 'translateZ(0)' }}>
+            <div className="relative h-44 md:h-80 w-full overflow-hidden" style={{ transform: 'translateZ(0)' }}>
                 <div className="absolute inset-0 bg-gradient-to-br from-[#0066FF] via-[#5865F2] to-[#7000FF] opacity-90"></div>
                 <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20" style={{ transform: 'translateZ(0)' }}></div>
 
@@ -198,7 +198,7 @@ const Profile: React.FC = () => {
                 />
             </div>
 
-            <div className="container-custom mx-auto px-4 -mt-32 md:-mt-40 relative z-10">
+            <div className="container-custom mx-auto px-4 -mt-24 md:-mt-40 relative z-10">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
                     {/* Left & Center: Profile Details */}
