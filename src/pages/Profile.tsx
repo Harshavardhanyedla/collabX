@@ -5,7 +5,7 @@ import { auth, db } from '../lib/firebase';
 import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { useNavigate, useParams } from 'react-router-dom';
 import type { UserProfile, Project } from '../types';
-import { sendConnectionRequest } from '../lib/networking';
+import { sendConnectionRequest, fetchConnectionCount } from '../lib/networking';
 import { fetchUserProjects, addProject, updateProject, deleteProject } from '../lib/projects';
 import { AnimatePresence } from 'framer-motion';
 import AvatarUpload from '../components/AvatarUpload';
@@ -19,6 +19,7 @@ const Profile: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState<UserProfile | null>(null);
     const [isOwnProfile, setIsOwnProfile] = useState(false);
+    const [connectionCount, setConnectionCount] = useState<number>(0);
     const [connectionStatus, setConnectionStatus] = useState<'none' | 'pending' | 'connected' | 'received'>('none');
     const [actionLoading, setActionLoading] = useState(false);
     const [userProjects, setUserProjects] = useState<Project[]>([]);
@@ -77,6 +78,10 @@ const Profile: React.FC = () => {
                 // Fetch real projects
                 const projects = await fetchUserProjects(targetUserId);
                 setUserProjects(projects);
+
+                // Fetch real connection count
+                const count = await fetchConnectionCount(targetUserId);
+                setConnectionCount(count);
 
             } catch (error) {
                 console.error("Error fetching user data:", error);
@@ -203,8 +208,12 @@ const Profile: React.FC = () => {
 
                     {/* Left & Center: Profile Details */}
                     <div className="lg:col-span-2 space-y-8">
-                        {isOwnProfile && <IncomingRequests onActionComplete={() => {
-                            // Optionally refresh stats or connection count
+                        {isOwnProfile && <IncomingRequests onActionComplete={async () => {
+                            // Refresh connection count when a request is accepted/ignored
+                            if (user?.uid) {
+                                const count = await fetchConnectionCount(user.uid);
+                                setConnectionCount(count);
+                            }
                         }} />}
 
                         {/* Master Header Card */}
@@ -246,9 +255,10 @@ const Profile: React.FC = () => {
                                                 </svg>
                                                 {user.institution}
                                             </span>
-                                            <span className="text-[#0066FF] font-bold cursor-pointer hover:bg-blue-50 px-3 py-1.5 rounded-lg transition-colors border border-transparent hover:border-blue-100">
-                                                {user.connectionCount || 0} connections
-                                            </span>
+                                            <div className="flex items-center gap-2 text-[#0066FF] font-bold text-sm bg-blue-50 px-4 py-1.5 rounded-full">
+                                                <span className="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
+                                                {connectionCount} connections
+                                            </div>
                                         </div>
                                     </div>
 

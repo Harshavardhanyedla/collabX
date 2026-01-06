@@ -12,7 +12,8 @@ import {
     serverTimestamp,
     increment,
     Timestamp,
-    orderBy
+    orderBy,
+    getCountFromServer
 } from 'firebase/firestore';
 
 export interface ConnectionRequest {
@@ -194,4 +195,29 @@ export const fetchConnectionStatusData = async (targetId: string) => {
     }
 
     return { status: 'none', requestId: null };
+};
+
+export const fetchConnectionCount = async (userId: string) => {
+    const connectionsRef = collection(db, 'connections');
+
+    // Count where user is the requester
+    const q1 = query(
+        connectionsRef,
+        where('requesterId', '==', userId),
+        where('status', '==', 'accepted')
+    );
+
+    // Count where user is the recipient
+    const q2 = query(
+        connectionsRef,
+        where('recipientId', '==', userId),
+        where('status', '==', 'accepted')
+    );
+
+    const [sentSnap, receivedSnap] = await Promise.all([
+        getCountFromServer(q1),
+        getCountFromServer(q2)
+    ]);
+
+    return sentSnap.data().count + receivedSnap.data().count;
 };
