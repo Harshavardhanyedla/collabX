@@ -15,6 +15,7 @@ import Students from './pages/Students';
 import Footer from './components/Footer';
 import ContactSection from './components/ContactSection';
 import PrivateRoute from './components/PrivateRoute';
+import ScrollToTop from './components/ScrollToTop';
 
 const Home: React.FC = () => {
     const location = useLocation();
@@ -54,6 +55,7 @@ const Home: React.FC = () => {
 const App: React.FC = () => {
     return (
         <div className="min-h-screen bg-white text-[#0f172a] font-sans">
+            <ScrollToTop />
             <NavBar />
             <Routes>
                 <Route path="/" element={<Home />} />
