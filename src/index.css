@@ -20,8 +20,12 @@ body {
   padding: 0;
   min-width: 320px;
   min-height: 100vh;
-  background-color: #ffffff;
+  background-color: #f3f2ef;
   color: #0f172a;
+}
+
+.main-content {
+  @apply pt-20 pb-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto;
 }
 
 #root {

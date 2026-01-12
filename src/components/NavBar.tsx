@@ -3,183 +3,182 @@ import { Link, useLocation } from 'react-router-dom';
 import { auth } from '../lib/firebase';
 import { onAuthStateChanged, signOut, type User } from 'firebase/auth';
 import AuthModal from './AuthModal';
+import {
+    HomeIcon,
+    BriefcaseIcon,
+    UsersIcon,
+    BookOpenIcon,
+    MapIcon,
+    BellIcon,
+    MagnifyingGlassIcon,
+    ChatBubbleLeftEllipsisIcon,
+    Bars3Icon,
+    XMarkIcon
+} from '@heroicons/react/24/outline';
 
 const NavBar: React.FC = () => {
-    const [isScrolled, setIsScrolled] = useState(false);
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
     const [user, setUser] = useState<User | null>(null);
+    const [searchQuery, setSearchQuery] = useState('');
     const location = useLocation();
 
     useEffect(() => {
-        const handleScroll = () => {
-            setIsScrolled(window.scrollY > 20);
-        };
-        window.addEventListener('scroll', handleScroll);
-
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser);
         });
-
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-            unsubscribe();
-        };
+        return () => unsubscribe();
     }, []);
 
-    const handleSignOut = async () => {
-        await signOut(auth);
-        setIsMobileMenuOpen(false);
+    const handleLogout = async () => {
+        try {
+            await signOut(auth);
+        } catch (error) {
+            console.error('Error signing out:', error);
+        }
     };
 
     const navLinks = [
-        { name: 'Roadmaps', path: '/#roadmaps', isHash: true },
-        { name: 'Projects', path: '/#projects', isHash: true },
-        { name: 'Resources', path: '/#resources', isHash: true },
-        { name: 'Students', path: '/students', isHash: false },
+        { name: 'Home', path: '/', icon: HomeIcon },
+        { name: 'Projects', path: '/projects', icon: BriefcaseIcon },
+        { name: 'Students', path: '/students', icon: UsersIcon },
+        { name: 'Resources', path: '/resources', icon: BookOpenIcon },
+        { name: 'Roadmaps', path: '/roadmaps', icon: MapIcon },
     ];
+
+    const isActive = (path: string) => {
+        return location.pathname === path;
+    };
 
     return (
         <>
-            <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-white/80 backdrop-blur-md shadow-sm py-4' : 'bg-transparent py-6'}`}>
-                <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-                    <Link to="/" className="flex items-center gap-3" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-                        <div className="w-10 h-10 rounded-lg bg-[#0066FF] flex items-center justify-center text-white">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
-                                {/* Rays */}
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 3V5" />
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M18.5 5.5L17 7" />
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M21 12H19" />
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M18.5 18.5L17 17" />
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M5.5 18.5L7 17" />
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M3 12H5" />
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M5.5 5.5L7 7" />
-                                {/* Fist */}
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M9 21V10C9 8.34315 10.3431 7 12 7C13.6569 7 15 8.34315 15 10V21" />
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M11 7V10" />
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M13 7V10" />
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M15 10C17 10 18 11 18 12.5C18 14 17 15 15 15" />
-                            </svg>
-                        </div>
-                        <span className="text-xl font-bold text-[#0f172a] tracking-tight">CollabX</span>
-                    </Link>
+            <nav className="fixed top-0 left-0 w-full h-16 bg-white border-b border-gray-200 z-50 transition-all duration-300">
+                <div className="max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+                    {/* Brand & Search */}
+                    <div className="flex items-center gap-2 flex-1 max-w-md">
+                        <Link to="/" className="shrink-0 flex items-center gap-1">
+                            <div className="w-8 h-8 bg-[#0066FF] rounded-md flex items-center justify-center font-black text-white text-lg">
+                                C
+                            </div>
+                            <span className="text-xl font-black text-[#0066FF] tracking-tighter hidden sm:block">CollabX</span>
+                        </Link>
 
-                    <div className="hidden md:flex items-center gap-8">
-                        {navLinks.map((link) => (
-                            link.isHash ? (
-                                <Link
-                                    key={link.name}
-                                    to={link.path}
-                                    className={`text-sm font-medium transition-colors ${location.pathname === '/' && location.hash === link.path.substring(1) ? 'text-[#0066FF]' : 'text-gray-600 hover:text-[#0066FF]'}`}
-                                >
-                                    {link.name}
-                                </Link>
-                            ) : (
-                                <Link
-                                    key={link.name}
-                                    to={link.path}
-                                    className={`text-sm font-medium transition-colors ${location.pathname === link.path ? 'text-[#0066FF]' : 'text-gray-600 hover:text-[#0066FF]'}`}
-                                >
-                                    {link.name}
-                                </Link>
-                            )
-                        ))}
+                        <div className="relative flex-1 hidden md:block ml-4">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <MagnifyingGlassIcon className="h-4 w-4 text-gray-400" />
+                            </div>
+                            <input
+                                type="text"
+                                placeholder="Search"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="block w-full pl-9 pr-3 py-1.5 bg-[#edf3f8] border-transparent rounded-md text-sm transition-all focus:bg-white focus:ring-1 focus:ring-gray-300 focus:w-full border"
+                            />
+                        </div>
                     </div>
 
-                    <div className="hidden md:flex items-center gap-4">
+                    {/* Navigation Links - Desktop */}
+                    <div className="hidden lg:flex items-center h-full ml-auto">
+                        {navLinks.map((link) => (
+                            <Link
+                                key={link.name}
+                                to={link.path}
+                                className={`flex flex-col items-center justify-center w-20 h-full border-b-2 transition-all group ${isActive(link.path)
+                                        ? 'border-gray-900 text-gray-900'
+                                        : 'border-transparent text-gray-500 hover:text-gray-900'
+                                    }`}
+                            >
+                                <link.icon className={`h-6 w-6 ${isActive(link.path) ? 'text-gray-900' : 'text-gray-500 group-hover:text-gray-900'}`} />
+                                <span className="text-[10px] mt-0.5 font-medium">{link.name}</span>
+                            </Link>
+                        ))}
+
+                        <div className="h-8 w-[1px] bg-gray-200 mx-2"></div>
+
+                        <Link
+                            to="/messaging"
+                            className="flex flex-col items-center justify-center w-20 h-full text-gray-500 hover:text-gray-900 transition-all relative"
+                        >
+                            <ChatBubbleLeftEllipsisIcon className="h-6 w-6" />
+                            <span className="text-[10px] mt-0.5 font-medium">Messaging</span>
+                            <span className="absolute top-2 right-6 w-4 h-4 bg-red-500 rounded-full text-[10px] text-white flex items-center justify-center font-bold">2</span>
+                        </Link>
+
+                        <Link
+                            to="/notifications"
+                            className="flex flex-col items-center justify-center w-20 h-full text-gray-500 hover:text-gray-900 transition-all relative"
+                        >
+                            <BellIcon className="h-6 w-6" />
+                            <span className="text-[10px] mt-0.5 font-medium">Notifications</span>
+                            <span className="absolute top-2 right-5 w-4 h-4 bg-red-500 rounded-full text-[10px] text-white flex items-center justify-center font-bold">5</span>
+                        </Link>
+
                         {user ? (
-                            <div className="flex items-center gap-4">
-                                <Link to="/profile" className="flex items-center gap-2">
-                                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-[#0066FF] font-bold">
-                                        {user.email?.[0].toUpperCase()}
+                            <div className="relative group ml-4">
+                                <button className="flex flex-col items-center justify-center w-16 h-full text-gray-500 hover:text-gray-900 transition-all">
+                                    <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center text-xs font-bold text-[#0066FF]">
+                                        {user.displayName?.[0] || user.email?.[0] || 'U'}
                                     </div>
-                                </Link>
-                                <button
-                                    onClick={handleSignOut}
-                                    className="text-sm font-medium text-gray-600 hover:text-red-500 transition-colors"
-                                >
-                                    Sign Out
+                                    <span className="text-[10px] mt-0.5 font-medium flex items-center gap-0.5">Me</span>
                                 </button>
+                                <div className="absolute right-0 top-16 w-64 bg-white border border-gray-200 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all py-2 z-50">
+                                    <div className="px-4 py-3 border-b border-gray-100 mb-2">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center text-lg font-bold text-[#0066FF]">
+                                                {user.displayName?.[0] || user.email?.[0] || 'U'}
+                                            </div>
+                                            <div className="flex flex-col">
+                                                <span className="text-sm font-bold text-gray-900">{user.displayName || 'Contributor'}</span>
+                                                <span className="text-xs text-gray-500 line-clamp-1">{user.email}</span>
+                                            </div>
+                                        </div>
+                                        <Link to="/profile" className="mt-3 block w-full text-center py-1 border border-[#0066FF] text-[#0066FF] rounded-full text-sm font-bold hover:bg-blue-50 transition-all">
+                                            View Profile
+                                        </Link>
+                                    </div>
+                                    <button onClick={handleLogout} className="w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-gray-100">Sign Out</button>
+                                </div>
                             </div>
                         ) : (
-                            <>
-                                <Link to="/login" className="text-sm font-medium text-gray-600 hover:text-[#0066FF] transition-colors">
-                                    Log in
-                                </Link>
-                                <button
-                                    onClick={() => setIsAuthModalOpen(true)}
-                                    className="px-5 py-2.5 rounded-full bg-[#0f172a] text-white text-sm font-medium hover:bg-[#1e293b] transition-all shadow-lg shadow-gray-200/50"
-                                >
-                                    Join Now
-                                </button>
-                            </>
+                            <div className="flex items-center gap-2 ml-4">
+                                <button onClick={() => setIsAuthModalOpen(true)} className="px-4 py-2 text-[#0066FF] font-bold text-sm hover:bg-blue-50 rounded-full transition-all">Log in</button>
+                                <button onClick={() => setIsAuthModalOpen(true)} className="px-4 py-2 border border-[#0066FF] text-[#0066FF] font-bold text-sm hover:bg-blue-50 rounded-full transition-all">Join Now</button>
+                            </div>
                         )}
                     </div>
 
+                    {/* Mobile Menu Icon */}
                     <button
-                        className="md:hidden p-2 text-gray-600"
-                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                        className="lg:hidden p-2 text-gray-500 hover:bg-gray-100 rounded-full"
                     >
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-                        </svg>
+                        {mobileMenuOpen ? <XMarkIcon className="h-6 w-6" /> : <Bars3Icon className="h-6 w-6" />}
                     </button>
                 </div>
-
-                {/* Mobile Menu */}
-                {isMobileMenuOpen && (
-                    <div className="md:hidden absolute top-full left-0 w-full bg-white border-t border-gray-100 shadow-xl p-4 flex flex-col gap-4">
-                        {navLinks.map((link) => (
-                            link.isHash ? (
-                                <Link
-                                    key={link.name}
-                                    to={link.path}
-                                    className="text-gray-600 font-medium py-2"
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                >
-                                    {link.name}
-                                </Link>
-                            ) : (
-                                <Link
-                                    key={link.name}
-                                    to={link.path}
-                                    className="text-gray-600 font-medium py-2"
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                >
-                                    {link.name}
-                                </Link>
-                            )
-                        ))}
-                        <div className="border-t border-gray-100 pt-4 flex flex-col gap-3">
-                            {user ? (
-                                <>
-                                    <Link to="/profile" className="text-gray-600 font-medium py-2" onClick={() => setIsMobileMenuOpen(false)}>
-                                        Profile
-                                    </Link>
-                                    <button onClick={handleSignOut} className="text-left text-red-500 font-medium py-2">
-                                        Sign Out
-                                    </button>
-                                </>
-                            ) : (
-                                <>
-                                    <Link to="/login" className="text-center w-full py-3 rounded-xl border border-gray-200 text-gray-700 font-medium" onClick={() => setIsMobileMenuOpen(false)}>
-                                        Log in
-                                    </Link>
-                                    <button
-                                        onClick={() => {
-                                            setIsMobileMenuOpen(false);
-                                            setIsAuthModalOpen(true);
-                                        }}
-                                        className="w-full py-3 rounded-xl bg-[#0066FF] text-white font-medium shadow-lg shadow-blue-500/30"
-                                    >
-                                        Join Now
-                                    </button>
-                                </>
-                            )}
-                        </div>
-                    </div>
-                )}
             </nav>
+
+            {/* Mobile Navigation */}
+            <div className={`fixed inset-0 bg-white z-40 transition-transform duration-300 lg:hidden pt-16 ${mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+                <div className="p-4 space-y-4">
+                    {navLinks.map((link) => (
+                        <Link
+                            key={link.name}
+                            to={link.path}
+                            onClick={() => setMobileMenuOpen(false)}
+                            className="flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-gray-50 text-gray-900 font-medium border border-transparent hover:border-gray-100"
+                        >
+                            <link.icon className="h-6 w-6 text-gray-500" />
+                            <span>{link.name}</span>
+                        </Link>
+                    ))}
+                    {!user && (
+                        <div className="grid grid-cols-2 gap-4 pt-4 mt-4 border-t border-gray-100">
+                            <button onClick={() => { setIsAuthModalOpen(true); setMobileMenuOpen(false); }} className="px-4 py-3 border border-[#0066FF] text-[#0066FF] font-bold rounded-full">Log in</button>
+                            <button onClick={() => { setIsAuthModalOpen(true); setMobileMenuOpen(false); }} className="px-4 py-3 bg-[#0066FF] text-white font-bold rounded-full">Sign Up</button>
+                        </div>
+                    )}
+                </div>
+            </div>
 
             <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
         </>

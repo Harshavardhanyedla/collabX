@@ -12,10 +12,14 @@ import ResourceDetail from './pages/ResourceDetail';
 import LoginPage from './pages/LoginPage';
 import Onboarding from './pages/Onboarding';
 import Students from './pages/Students';
-import Footer from './components/Footer';
 import ContactSection from './components/ContactSection';
 import PrivateRoute from './components/PrivateRoute';
 import ScrollToTop from './components/ScrollToTop';
+import MainLayout from './components/MainLayout';
+import HomeFeed from './components/HomeFeed';
+import Projects from './pages/Projects';
+import Resources from './pages/Resources';
+import Roadmaps from './pages/Roadmaps';
 
 const Home: React.FC = () => {
     const location = useLocation();
@@ -40,21 +44,31 @@ const Home: React.FC = () => {
         }
     }, [location.hash]); // Only run when hash changes
 
+    // If there's a hash, show the traditional landing page sections
+    // Otherwise, show the new feed experience
+    if (location.hash) {
+        return (
+            <main className="bg-white min-h-screen">
+                <Hero />
+                <div id="roadmaps"><RoadmapsSection /></div>
+                <div id="projects"><ProjectsSection /></div>
+                <div id="resources"><ResourcesSection /></div>
+                <CommunitySection />
+                <ContactSection />
+            </main>
+        );
+    }
+
     return (
-        <main className="bg-white min-h-screen">
-            <Hero />
-            <RoadmapsSection />
-            <ProjectsSection />
-            <ResourcesSection />
-            <CommunitySection />
-            <ContactSection />
-        </main>
+        <MainLayout>
+            <HomeFeed />
+        </MainLayout>
     );
 };
 
 const App: React.FC = () => {
     return (
-        <div className="min-h-screen bg-white text-[#0f172a] font-sans">
+        <div className="min-h-screen bg-[#f3f2ef] text-[#0f172a] font-sans">
             <ScrollToTop />
             <NavBar />
             <Routes>
@@ -84,6 +98,30 @@ const App: React.FC = () => {
                     }
                 />
                 <Route
+                    path="/projects"
+                    element={
+                        <PrivateRoute>
+                            <Projects />
+                        </PrivateRoute>
+                    }
+                />
+                <Route
+                    path="/resources"
+                    element={
+                        <PrivateRoute>
+                            <Resources />
+                        </PrivateRoute>
+                    }
+                />
+                <Route
+                    path="/roadmaps"
+                    element={
+                        <PrivateRoute>
+                            <Roadmaps />
+                        </PrivateRoute>
+                    }
+                />
+                <Route
                     path="/onboarding"
                     element={
                         <PrivateRoute>
@@ -95,7 +133,8 @@ const App: React.FC = () => {
                 <Route path="/resource/:resourceId" element={<ResourceDetail />} />
                 <Route path="/login" element={<LoginPage />} />
             </Routes>
-            <Footer />
+            {/* Footer is typically not shown on the main feed in LinkedIn-style apps, 
+                but let's keep it for now or move it to sidebars */}
         </div>
     );
 };
