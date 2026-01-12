@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { db, auth } from '../lib/firebase';
-import { collection, getDocs, query, orderBy } from 'firebase/firestore';
+import { auth } from '../lib/firebase';
 import { onAuthStateChanged, type User } from 'firebase/auth';
 import AuthModal from '../components/AuthModal';
 import ShareProjectModal from '../components/ShareProjectModal';
@@ -10,26 +9,11 @@ import {
     BriefcaseIcon,
     MagnifyingGlassIcon,
     PlusIcon,
-    FunnelIcon,
-    ArrowUpRightIcon,
-    HeartIcon,
-    ChatBubbleLeftRightIcon
+    FunnelIcon
 } from '@heroicons/react/24/outline';
 
-interface Project {
-    id: string;
-    title: string;
-    description: string;
-    tags: string[];
-    image_url: string;
-    author: string;
-    author_avatar: string;
-    likes: number;
-    comments: number;
-    category: string;
-    created_at: string;
-    link?: string;
-}
+import type { Project } from '../types';
+import { fetchAllProjects, requestToJoinProject } from '../lib/projects';
 
 const Projects: React.FC = () => {
     const [activeCategory, setActiveCategory] = useState('All');
@@ -39,31 +23,37 @@ const Projects: React.FC = () => {
     const [user, setUser] = useState<User | null>(null);
     const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+    const [joiningId, setJoiningId] = useState<string | null>(null);
 
     useEffect(() => {
-        fetchProjects();
+        loadProjects();
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser);
         });
         return () => unsubscribe();
     }, []);
 
-    const fetchProjects = async () => {
+    const loadProjects = async () => {
+        setLoading(true);
+        const fetched = await fetchAllProjects();
+        setProjects(fetched);
+        setLoading(false);
+    };
+
+    const handleJoinRequest = async (projectId: string) => {
+        if (!user) {
+            setIsAuthModalOpen(true);
+            return;
+        }
+        setJoiningId(projectId);
         try {
-            const projectsRef = collection(db, 'projects');
-            const q = query(projectsRef, orderBy('created_at', 'desc'));
-            const querySnapshot = await getDocs(q);
-
-            const fetchedProjects: Project[] = querySnapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data()
-            } as Project));
-
-            setProjects(fetchedProjects);
+            await requestToJoinProject(projectId);
+            // Refresh projects
+            await loadProjects();
         } catch (error) {
-            console.error('Error fetching projects:', error);
+            console.error("Failed to join project:", error);
         } finally {
-            setLoading(false);
+            setJoiningId(null);
         }
     };
 
@@ -81,7 +71,7 @@ const Projects: React.FC = () => {
         const matchesCategory = activeCategory === 'All' || project.category === activeCategory;
         const matchesSearch = project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
             project.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            project.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+            project.techStack?.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
         return matchesCategory && matchesSearch;
     });
 
@@ -178,7 +168,7 @@ const Projects: React.FC = () => {
                                     >
                                         <div className="h-40 overflow-hidden relative">
                                             <img
-                                                src={project.image_url || `https://source.unsplash.com/random/800x600?tech,${project.category}`}
+                                                src={project.thumbnailUrl || `https://source.unsplash.com/random/800x600?tech,${project.category}`}
                                                 alt={project.title}
                                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                             />
@@ -191,19 +181,21 @@ const Projects: React.FC = () => {
 
                                         <div className="p-4 flex flex-col flex-1">
                                             <div className="flex items-center gap-2 mb-3">
-                                                <img
-                                                    src={project.author_avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${project.author}`}
-                                                    alt={project.author}
-                                                    className="w-6 h-6 rounded-full border border-gray-100"
-                                                />
-                                                <span className="text-xs text-gray-500 font-medium">{project.author}</span>
+                                                <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center text-[#0066FF] font-bold text-[10px] overflow-hidden shrink-0">
+                                                    {project.ownerAvatar ? (
+                                                        <img src={project.ownerAvatar} alt={project.ownerName} className="w-full h-full object-cover" />
+                                                    ) : (
+                                                        project.ownerName[0]
+                                                    )}
+                                                </div>
+                                                <span className="text-xs text-gray-500 font-medium">{project.ownerName}</span>
                                             </div>
 
                                             <h3 className="text-lg font-bold text-[#0f172a] group-hover:text-[#0066FF] transition-colors mb-1 line-clamp-1">{project.title}</h3>
                                             <p className="text-xs text-gray-600 line-clamp-2 mb-4 h-8">{project.description}</p>
 
                                             <div className="flex flex-wrap gap-1 mb-4 h-6 overflow-hidden">
-                                                {project.tags.map(tag => (
+                                                {project.techStack?.map(tag => (
                                                     <span key={tag} className="text-[10px] font-bold text-[#0066FF] bg-blue-50 px-2 py-0.5 rounded">
                                                         #{tag}
                                                     </span>
@@ -211,25 +203,33 @@ const Projects: React.FC = () => {
                                             </div>
 
                                             <div className="mt-auto pt-3 border-t border-gray-50 flex items-center justify-between">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="flex items-center gap-1 text-gray-400 group/item hover:text-red-500 transition-colors">
-                                                        <HeartIcon className="h-4 w-4" />
-                                                        <span className="text-[11px] font-bold">{project.likes}</span>
-                                                    </div>
-                                                    <div className="flex items-center gap-1 text-gray-400 group/item hover:text-[#0066FF] transition-colors">
-                                                        <ChatBubbleLeftRightIcon className="h-4 w-4" />
-                                                        <span className="text-[11px] font-bold">{project.comments}</span>
-                                                    </div>
+                                                <div className="flex items-center gap-2 text-gray-500">
+                                                    <BriefcaseIcon className="h-4 w-4" />
+                                                    <span className="text-[11px] font-medium">{project.members?.length || 0} members</span>
                                                 </div>
 
-                                                <a
-                                                    href={project.link || "#"}
-                                                    onClick={(e) => e.stopPropagation()}
-                                                    className="flex items-center gap-1 text-[11px] font-bold text-[#0066FF] hover:underline"
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        if (project.members?.includes(user?.uid || '')) return;
+                                                        if (project.pendingRequests?.includes(user?.uid || '')) return;
+                                                        handleJoinRequest(project.id);
+                                                    }}
+                                                    disabled={joiningId === project.id || project.members?.includes(user?.uid || '') || project.pendingRequests?.includes(user?.uid || '')}
+                                                    className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${project.members?.includes(user?.uid || '')
+                                                        ? 'bg-green-50 text-green-600 border border-green-100 cursor-default'
+                                                        : project.pendingRequests?.includes(user?.uid || '')
+                                                            ? 'bg-yellow-50 text-yellow-600 border border-yellow-100 cursor-default'
+                                                            : 'bg-[#0066FF] text-white hover:bg-blue-600'
+                                                        }`}
                                                 >
-                                                    DETAILS
-                                                    <ArrowUpRightIcon className="h-3 w-3" />
-                                                </a>
+                                                    {project.members?.includes(user?.uid || '')
+                                                        ? 'Joined'
+                                                        : project.pendingRequests?.includes(user?.uid || '')
+                                                            ? 'Pending'
+                                                            : joiningId === project.id ? 'Joining...' : 'Join'
+                                                    }
+                                                </button>
                                             </div>
                                         </div>
                                     </motion.div>
@@ -249,7 +249,7 @@ const Projects: React.FC = () => {
             </div>
 
             <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
-            <ShareProjectModal isOpen={isShareModalOpen} onClose={() => setIsShareModalOpen(false)} onSuccess={fetchProjects} />
+            <ShareProjectModal isOpen={isShareModalOpen} onClose={() => setIsShareModalOpen(false)} onSuccess={loadProjects} />
         </MainLayout>
     );
 };

@@ -59,18 +59,19 @@ const Students: React.FC = () => {
                     (pc.headline && pc.headline.toLowerCase().includes(searchLower)) ||
                     pc.skills?.some(skill => skill.toLowerCase().includes(searchLower));
 
-                const matchesInstitution = !filters.institution || pc.institution === filters.institution;
+                const matchesInstitution = !filters.institution || (pc.college === filters.institution || pc.institution === filters.institution);
                 const matchesRole = !filters.role || pc.role.toLowerCase().includes(filters.role.toLowerCase());
 
                 return matchesSearch && matchesInstitution && matchesRole;
             })
             .sort((a, b) => {
                 if (sortBy === 'connections') {
-                    return (b.connectionCount || 0) - (a.connectionCount || 0);
+                    return (b.stats?.connections || 0) - (a.stats?.connections || 0);
                 }
-                if (sortBy === 'university' && currentUserProfile?.institution) {
-                    const aSame = a.institution === currentUserProfile.institution ? 1 : 0;
-                    const bSame = b.institution === currentUserProfile.institution ? 1 : 0;
+                if (sortBy === 'university' && (currentUserProfile?.college || currentUserProfile?.institution)) {
+                    const myCollege = currentUserProfile?.college || currentUserProfile?.institution;
+                    const aSame = (a.college === myCollege || a.institution === myCollege) ? 1 : 0;
+                    const bSame = (b.college === myCollege || b.institution === myCollege) ? 1 : 0;
                     return bSame - aSame;
                 }
                 return 0;

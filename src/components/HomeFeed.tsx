@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     PhotoIcon,
     CalendarIcon,
@@ -11,53 +11,101 @@ import {
     GlobeAltIcon
 } from '@heroicons/react/24/outline';
 import { HandThumbUpIcon as HandThumbUpSolidIcon } from '@heroicons/react/24/solid';
+import { auth } from '../lib/firebase';
+import { createPost, listenToFeed, toggleLike } from '../lib/posts';
+import type { Post } from '../types';
 
 const HomeFeed: React.FC = () => {
-    const feedItems = [
-        {
-            id: 1,
-            author: {
-                name: "Rahul Sharma",
-                role: "Full Stack Developer | React Enthusiast",
-                avatar: "R",
-                time: "2h ago"
-            },
-            content: "Just finished building a real-time collaborative code editor with CollabX features! 🚀 Check it out and let me know your thoughts. We're looking for a UI/UX designer to join the team!",
-            tags: ["#react", "#webdev", "#collaboration"],
-            projects: [
-                { title: "CodeSync Pro", status: "Looking for Designer", color: "bg-blue-500" }
-            ],
-            likes: 24,
-            comments: 5
-        },
-        {
-            id: 2,
-            author: {
-                name: "Priya Patel",
-                role: "UX Researcher @ Stanford",
-                avatar: "P",
-                time: "5h ago"
-            },
-            content: "Successfully completed the 'Modern Design Systems' roadmap on CollabX! Highly recommend it to anyone starting their design journey. The practical projects at the end are gold. 🎨",
-            image: "https://images.unsplash.com/photo-1586717791821-3f44a563eb4c?q=80&w=1000&auto=format&fit=crop",
-            likes: 89,
-            comments: 12
+    const [posts, setPosts] = useState<Post[]>([]);
+    const [newPostContent, setNewPostContent] = useState('');
+    const [isPosting, setIsPosting] = useState(false);
+    const user = auth.currentUser;
+
+    useEffect(() => {
+        const unsubscribe = listenToFeed((fetchedPosts) => {
+            setPosts(fetchedPosts);
+        });
+        return () => unsubscribe();
+    }, []);
+
+    const handleCreatePost = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!user || !newPostContent.trim() || isPosting) return;
+
+        setIsPosting(true);
+        try {
+            await createPost({
+                userId: user.uid,
+                authorName: user.displayName || 'Anonymous User',
+                authorAvatar: user.photoURL || '',
+                authorRole: 'Student', // Default for now
+                content: newPostContent,
+                type: 'post',
+                tags: (newPostContent.match(/#\w+/g) || [])
+            });
+            setNewPostContent('');
+        } catch (error) {
+            console.error("Failed to create post:", error);
+        } finally {
+            setIsPosting(false);
         }
-    ];
+    };
+
+    const handleLike = async (postId: string) => {
+        if (!user) return;
+        try {
+            await toggleLike(postId, user.uid);
+        } catch (error) {
+            console.error("Failed to toggle like:", error);
+        }
+    };
+
+    const formatTime = (timestamp: any) => {
+        if (!timestamp) return 'Just now';
+        const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+        const now = new Date();
+        const diffSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+        if (diffSeconds < 60) return `${diffSeconds}s ago`;
+        if (diffSeconds < 3600) return `${Math.floor(diffSeconds / 60)}m ago`;
+        if (diffSeconds < 86400) return `${Math.floor(diffSeconds / 3600)}h ago`;
+        return `${Math.floor(diffSeconds / 86400)}d ago`;
+    };
 
     return (
         <div className="flex flex-col gap-2">
             {/* Create Post Card */}
             <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
                 <div className="flex gap-3">
-                    <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-[#0066FF] font-bold text-lg shrink-0">
-                        H
+                    <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-[#0066FF] font-bold text-lg shrink-0 overflow-hidden">
+                        {user?.photoURL ? (
+                            <img src={user.photoURL} alt="Me" className="w-full h-full object-cover" />
+                        ) : (
+                            user?.displayName?.[0] || user?.email?.[0] || 'U'
+                        )}
                     </div>
-                    <button className="flex-1 text-left px-4 py-3 border border-gray-300 rounded-full text-gray-400 hover:bg-gray-100 transition-colors text-sm font-medium">
-                        Start a project or share an update...
-                    </button>
+                    <form onSubmit={handleCreatePost} className="flex-1">
+                        <textarea
+                            value={newPostContent}
+                            onChange={(e) => setNewPostContent(e.target.value)}
+                            placeholder="Start a project or share an update..."
+                            className="w-full text-left px-4 py-3 border border-gray-200 rounded-2xl text-gray-800 hover:bg-gray-50 transition-colors text-sm font-medium resize-none focus:outline-none focus:ring-1 focus:ring-blue-100"
+                            rows={2}
+                        />
+                        {newPostContent.trim() && (
+                            <div className="flex justify-end mt-2">
+                                <button
+                                    type="submit"
+                                    disabled={isPosting}
+                                    className="bg-[#0066FF] text-white px-4 py-1.5 rounded-full text-sm font-bold disabled:opacity-50 hover:bg-blue-600 transition-colors"
+                                >
+                                    {isPosting ? 'Posting...' : 'Post'}
+                                </button>
+                            </div>
+                        )}
+                    </form>
                 </div>
-                <div className="flex justify-between mt-3 px-2">
+                <div className="flex justify-between mt-3 px-2 border-t border-gray-50 pt-2">
                     <button className="flex items-center gap-2 text-gray-500 hover:bg-gray-100 p-2 rounded transition-colors group">
                         <PhotoIcon className="h-5 w-5 text-blue-400" />
                         <span className="text-sm font-medium group-hover:text-gray-700">Media</span>
@@ -74,22 +122,26 @@ const HomeFeed: React.FC = () => {
             </div>
 
             {/* Feed Items */}
-            {feedItems.map((item) => (
+            {posts.map((item) => (
                 <div key={item.id} className="bg-white rounded-xl border border-gray-200 py-3 shadow-sm">
                     {/* Item Header */}
                     <div className="flex justify-between px-4 mb-2">
                         <div className="flex gap-2">
-                            <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-[#0066FF] font-bold text-lg">
-                                {item.author.avatar}
+                            <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-[#0066FF] font-bold text-lg overflow-hidden shrink-0">
+                                {item.authorAvatar ? (
+                                    <img src={item.authorAvatar} alt={item.authorName} className="w-full h-full object-cover" />
+                                ) : (
+                                    item.authorName[0]
+                                )}
                             </div>
                             <div className="flex flex-col">
                                 <span className="text-sm font-bold text-gray-900 flex items-center gap-1 hover:text-[#0066FF] hover:underline cursor-pointer">
-                                    {item.author.name}
+                                    {item.authorName}
                                     <span className="text-xs font-normal text-gray-400">• 1st</span>
                                 </span>
-                                <span className="text-[11px] text-gray-500 truncate w-48 sm:w-80">{item.author.role}</span>
+                                <span className="text-[11px] text-gray-500 truncate w-48 sm:w-80">{item.authorRole || 'Student'}</span>
                                 <span className="text-[11px] text-gray-400 flex items-center gap-1">
-                                    {item.author.time} • <GlobeAltIcon className="h-3 w-3" />
+                                    {formatTime(item.createdAt)} • <GlobeAltIcon className="h-3 w-3" />
                                 </span>
                             </div>
                         </div>
@@ -100,8 +152,8 @@ const HomeFeed: React.FC = () => {
 
                     {/* Item Content */}
                     <div className="px-4 mb-3">
-                        <p className="text-sm text-gray-800 leading-normal">{item.content}</p>
-                        {item.tags && (
+                        <p className="text-sm text-gray-800 leading-normal whitespace-pre-wrap">{item.content}</p>
+                        {item.tags && item.tags.length > 0 && (
                             <div className="flex flex-wrap gap-1 mt-2">
                                 {item.tags.map(tag => (
                                     <span key={tag} className="text-sm font-bold text-[#0066FF] hover:underline cursor-pointer">{tag}</span>
@@ -111,31 +163,9 @@ const HomeFeed: React.FC = () => {
                     </div>
 
                     {/* Image if exists */}
-                    {item.image && (
+                    {item.imageUrl && (
                         <div className="mb-3">
-                            <img src={item.image} alt="Post content" className="w-full h-auto max-h-[512px] object-cover" />
-                        </div>
-                    )}
-
-                    {/* Project card if exists */}
-                    {item.projects && (
-                        <div className="px-4 mb-3">
-                            {item.projects.map((proj, idx) => (
-                                <div key={idx} className="bg-gray-50 border border-gray-100 rounded-lg p-3 flex justify-between items-center group cursor-pointer hover:bg-blue-50/50 transition-colors">
-                                    <div className="flex items-center gap-3">
-                                        <div className={`w-10 h-10 rounded ${proj.color || 'bg-blue-500'} flex items-center justify-center text-white font-bold`}>
-                                            {proj.title[0]}
-                                        </div>
-                                        <div>
-                                            <h4 className="text-sm font-bold text-gray-900 group-hover:text-[#0066FF]">{proj.title}</h4>
-                                            <p className="text-xs text-gray-500">{proj.status}</p>
-                                        </div>
-                                    </div>
-                                    <button className="px-3 py-1 bg-white border border-[#0066FF] text-[#0066FF] text-xs font-bold rounded-full hover:bg-blue-50 transition-colors">
-                                        Join
-                                    </button>
-                                </div>
-                            ))}
+                            <img src={item.imageUrl} alt="Post content" className="w-full h-auto max-h-[512px] object-cover" />
                         </div>
                     )}
 
@@ -147,18 +177,21 @@ const HomeFeed: React.FC = () => {
                                     <HandThumbUpSolidIcon className="h-2.5 w-2.5" />
                                 </div>
                             </div>
-                            <span>{item.likes}</span>
+                            <span>{item.likesCount || 0}</span>
                         </div>
                         <div className="flex gap-2 text-[11px] text-gray-500">
-                            <span className="hover:text-[#0066FF] hover:underline cursor-pointer">{item.comments} comments</span>
+                            <span className="hover:text-[#0066FF] hover:underline cursor-pointer">{item.commentsCount || 0} comments</span>
                             <span>•</span>
-                            <span className="hover:text-[#0066FF] hover:underline cursor-pointer">2 shares</span>
+                            <span className="hover:text-[#0066FF] hover:underline cursor-pointer">{item.repostsCount || 0} shares</span>
                         </div>
                     </div>
 
                     {/* Interaction Buttons */}
                     <div className="flex px-2 pt-1">
-                        <button className="flex-1 flex items-center justify-center gap-2 py-2.5 text-gray-500 hover:bg-gray-100 rounded transition-colors group">
+                        <button
+                            onClick={() => handleLike(item.id)}
+                            className="flex-1 flex items-center justify-center gap-2 py-2.5 text-gray-500 hover:bg-gray-100 rounded transition-colors group"
+                        >
                             <HandThumbUpIcon className="h-5 w-5 group-hover:scale-110" />
                             <span className="text-sm font-bold">Like</span>
                         </button>
@@ -177,6 +210,13 @@ const HomeFeed: React.FC = () => {
                     </div>
                 </div>
             ))}
+
+            {posts.length === 0 && (
+                <div className="bg-white rounded-xl border border-gray-200 p-8 text-center text-gray-500">
+                    <GlobeAltIcon className="h-12 w-12 mx-auto mb-2 text-gray-300" />
+                    <p>No posts yet. Be the first to share something!</p>
+                </div>
+            )}
         </div>
     );
 };

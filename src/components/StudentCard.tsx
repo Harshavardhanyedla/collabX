@@ -92,19 +92,6 @@ const StudentCard: React.FC<StudentCardProps> = ({ student, onClick }) => {
                     {student.institution || 'University'}
                 </div>
 
-                {student.mutualConnectionsCount !== undefined && student.mutualConnectionsCount > 0 && (
-                    <div className="text-[10px] text-gray-400 mb-4 flex items-center gap-1">
-                        <div className="flex -space-x-2">
-                            {[1, 2, 3].map(i => (
-                                <div key={i} className="w-4 h-4 rounded-full border border-white bg-gray-200 overflow-hidden">
-                                    <img src={`https://i.pravatar.cc/150?u=${student.uid}${i}`} alt="" className="w-full h-full" />
-                                </div>
-                            ))}
-                        </div>
-                        <span>{student.mutualConnectionsCount} mutual connections</span>
-                    </div>
-                )}
-
                 <div className="flex flex-wrap justify-center gap-1 mb-5 h-10 overflow-hidden items-start w-full">
                     {student.skills?.slice(0, 3).map((skill, index) => (
                         <span key={index} className="px-2 py-0.5 bg-gray-50 text-gray-400 text-[9px] font-bold rounded-md border border-gray-100 uppercase">

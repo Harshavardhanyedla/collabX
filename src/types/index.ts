@@ -2,64 +2,93 @@ export interface Roadmap {
   id: string;
   title: string;
   description: string;
-  difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
+  category: string;
+  icon: string;
+  link: string;
+  is_official: boolean;
+  created_at: string;
+}
+
+export interface Post {
+  id: string;
+  userId: string;
+  authorName: string;
+  authorAvatar?: string;
+  authorRole?: string;
+  content: string;
+  imageUrl?: string;
+  type: 'post' | 'project_update' | 'resource_share' | 'roadmap_completion';
   tags: string[];
-  duration: string;
-  author: string;
-  image?: string;
-  youtubeUrl: string;
+  likesCount: number;
+  commentsCount: number;
+  repostsCount: number;
+  createdAt: any; // Firestore Timestamp
+  updatedAt?: any;
+}
+
+export interface Like {
+  id: string;
+  postId: string;
+  userId: string;
+  createdAt: any;
+}
+
+export interface Comment {
+  id: string;
+  postId: string;
+  userId: string;
+  userName: string;
+  userAvatar?: string;
+  text: string;
+  createdAt: any;
 }
 
 export interface Project {
   id: string;
-  userId: string;
+  ownerId: string;
+  ownerName: string;
+  ownerAvatar?: string;
+  category: string;
   title: string;
   description: string;
-  role: string;
   techStack: string[];
-  duration: string;
+  rolesNeeded: string[];
+  status: 'Open' | 'In Progress' | 'Closed';
+  members: string[]; // Array of UIDs
+  pendingRequests: string[]; // Array of UIDs
   githubUrl?: string;
   liveUrl?: string;
   thumbnailUrl?: string;
-  createdAt: string | number | { seconds: number; nanoseconds: number };
-  stars?: number;
-  language?: string;
+  createdAt: any;
+  updatedAt?: any;
 }
 
-export interface CommunityPost {
+export interface Notification {
   id: string;
-  title: string;
-  content: string;
-  author: string;
-  timestamp: string;
-  likes: number;
-  comments: number;
-  tags: string[];
-}
-
-export interface ContactForm {
-  name: string;
-  email: string;
-  subject: string;
-  message: string;
+  recipientId: string;
+  senderId: string;
+  senderName: string;
+  senderAvatar?: string;
+  type: 'like' | 'comment' | 'repost' | 'project_invite' | 'project_request' | 'project_approved' | 'connection_request' | 'connection_accepted';
+  postId?: string;
+  projectId?: string;
+  message?: string;
+  read: boolean;
+  createdAt: any;
 }
 
 export interface UserProfile {
   uid: string;
   name: string;
+  email: string;
   role: string;
   isAdmin?: boolean;
+  avatar?: string;
   headline?: string;
-  institution: string;
-  avatar: string;
-  skills: string[];
-  connectionCount?: number;
-  mutualConnectionsCount?: number;
-  privacySettings?: {
-    allowIncomingRequests: boolean;
-  };
-  lastActive?: string | number | { seconds: number; nanoseconds: number };
+  college?: string;
+  institution?: string;
   bio?: string;
+  skills: string[];
   socials?: {
     linkedin?: string;
     github?: string;
@@ -68,5 +97,7 @@ export interface UserProfile {
   stats?: {
     followers: number;
     projects: number;
+    connections: number;
   };
+  lastActive?: any;
 }

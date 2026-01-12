@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { db, auth } from '../lib/firebase';
-import { collection, addDoc, Timestamp } from 'firebase/firestore';
+import { auth } from '../lib/firebase';
+import { addProject } from '../lib/projects';
 
 interface ShareProjectModalProps {
     isOpen: boolean;
@@ -16,46 +16,34 @@ const ShareProjectModal: React.FC<ShareProjectModalProps> = ({ isOpen, onClose, 
         githubUrl: '',
         liveUrl: '',
         tags: '',
-        author: '',
-        language: 'JavaScript'
+        rolesNeeded: '',
+        category: 'Web Dev'
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState(false);
 
-    useEffect(() => {
-        if (isOpen && auth.currentUser) {
-            const user = auth.currentUser;
-            if (user.email) {
-                setFormData(prev => ({
-                    ...prev,
-                    author: user.email!.split('@')[0]
-                }));
-            }
-        }
-    }, [isOpen]);
-
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!auth.currentUser) return;
+
         setIsSubmitting(true);
         setError('');
 
         try {
-            await addDoc(collection(db, 'projects'), {
+            await addProject(auth.currentUser.uid, {
                 title: formData.title,
                 description: formData.description,
-                github_url: formData.githubUrl,
-                live_url: formData.liveUrl,
-                tags: formData.tags.split(',').map(tag => tag.trim()),
-                author: formData.author,
-                author_avatar: auth.currentUser?.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${formData.author}`,
-                language: formData.language,
-                stars: 0,
-                likes: 0,
-                comments: 0,
-                category: 'Web Dev', // Default category for now
-                created_at: Timestamp.now().toDate().toISOString(),
-                user_id: auth.currentUser?.uid
+                category: formData.category,
+                ownerName: auth.currentUser.displayName || 'Anonymous',
+                ownerAvatar: auth.currentUser.photoURL || '',
+                githubUrl: formData.githubUrl,
+                liveUrl: formData.liveUrl,
+                techStack: formData.tags.split(',').map(tag => tag.trim()),
+                rolesNeeded: formData.rolesNeeded.split(',').map(role => role.trim()),
+                status: 'Open',
+                thumbnailUrl: `https://source.unsplash.com/random/800x600?tech,${formData.category}`,
+                updatedAt: null // Will be set by serverTimestamp if needed
             });
 
             setSuccess(true);
@@ -70,8 +58,8 @@ const ShareProjectModal: React.FC<ShareProjectModalProps> = ({ isOpen, onClose, 
                     githubUrl: '',
                     liveUrl: '',
                     tags: '',
-                    author: '',
-                    language: 'JavaScript'
+                    rolesNeeded: '',
+                    category: 'Web Dev'
                 });
             }, 2000);
         } catch (err) {
@@ -162,44 +150,39 @@ const ShareProjectModal: React.FC<ShareProjectModalProps> = ({ isOpen, onClose, 
 
                                     <div className="grid grid-cols-2 gap-4">
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">Author Name</label>
-                                            <input
-                                                type="text"
-                                                required
-                                                value={formData.author}
-                                                onChange={e => setFormData({ ...formData, author: e.target.value })}
-                                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                                placeholder="Your Name"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">Primary Language</label>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
                                             <select
-                                                value={formData.language}
-                                                onChange={e => setFormData({ ...formData, language: e.target.value })}
+                                                value={formData.category}
+                                                onChange={e => setFormData({ ...formData, category: e.target.value })}
                                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                             >
-                                                <option>JavaScript</option>
-                                                <option>TypeScript</option>
-                                                <option>Python</option>
-                                                <option>Java</option>
-                                                <option>C++</option>
-                                                <option>Rust</option>
-                                                <option>Go</option>
-                                                <option>Swift</option>
-                                                <option>Other</option>
+                                                <option>AI/ML</option>
+                                                <option>Web Dev</option>
+                                                <option>Mobile</option>
+                                                <option>Blockchain</option>
+                                                <option>Design</option>
                                             </select>
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Roles Needed</label>
+                                            <input
+                                                type="text"
+                                                value={formData.rolesNeeded}
+                                                onChange={e => setFormData({ ...formData, rolesNeeded: e.target.value })}
+                                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                placeholder="Frontend, Designer"
+                                            />
                                         </div>
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Tags (comma separated)</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Tech Stack (comma separated)</label>
                                         <input
                                             type="text"
                                             value={formData.tags}
                                             onChange={e => setFormData({ ...formData, tags: e.target.value })}
                                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                            placeholder="react, ai, machine-learning"
+                                            placeholder="react, tailwind, firebase"
                                         />
                                     </div>
 
