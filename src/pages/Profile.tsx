@@ -5,6 +5,7 @@ import { doc, collection, query, where, getDocs, updateDoc } from 'firebase/fire
 import { useNavigate, useParams } from 'react-router-dom';
 import type { UserProfile, Project } from '../types';
 import { sendConnectionRequest, fetchConnectionCount } from '../lib/networking';
+import { getOrCreateConversation } from '../lib/messaging';
 import { fetchUserProjects, addProject, updateProject, deleteProject } from '../lib/projects';
 import AvatarUpload from '../components/AvatarUpload';
 import SkillsManager from '../components/SkillsManager';
@@ -183,6 +184,16 @@ const Profile: React.FC = () => {
         }
     };
 
+    const handleMessage = async () => {
+        if (!user?.uid) return;
+        try {
+            const conversationId = await getOrCreateConversation(user.uid);
+            navigate(`/messages?conversationId=${conversationId}`);
+        } catch (error) {
+            console.error("Error starting conversation:", error);
+        }
+    };
+
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-[#F8FAFC]">
@@ -274,7 +285,10 @@ const Profile: React.FC = () => {
                                                                 connectionStatus === 'received' ? 'Accept Request' : 'Connect'
                                                     )}
                                                 </button>
-                                                <button className="flex-1 md:flex-none px-6 py-3 border-2 border-gray-100 text-[#0f172a] rounded-2xl font-bold text-sm hover:bg-gray-50">
+                                                <button
+                                                    onClick={handleMessage}
+                                                    className="flex-1 md:flex-none px-6 py-3 border-2 border-gray-100 text-[#0f172a] rounded-2xl font-bold text-sm hover:bg-gray-50"
+                                                >
                                                     Message
                                                 </button>
                                             </>

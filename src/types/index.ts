@@ -100,4 +100,37 @@ export interface UserProfile {
     connections: number;
   };
   lastActive?: any;
+  mutualConnectionsCount?: number;
+}
+
+export interface Conversation {
+  id: string;
+  participants: string[];
+  lastMessage?: {
+    content: string;
+    senderId: string;
+    createdAt: any;
+    type: 'text' | 'image' | 'file';
+    read: boolean;
+  };
+  updatedAt: any;
+  createdBy: string;
+  isTyping?: { [uid: string]: boolean };
+}
+
+export interface Message {
+  id: string;
+  conversationId: string;
+  senderId: string;
+  content: string;
+  type: 'text' | 'image' | 'file';
+  createdAt: any;
+  readAt?: any;
+  read: boolean;
+  attachments?: {
+    name: string;
+    url: string;
+    type: string;
+    size: number;
+  }[];
 }

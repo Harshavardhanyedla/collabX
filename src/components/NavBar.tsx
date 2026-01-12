@@ -13,7 +13,8 @@ import {
     MagnifyingGlassIcon,
     ChatBubbleLeftEllipsisIcon,
     Bars3Icon,
-    XMarkIcon
+    XMarkIcon,
+    ChatBubbleLeftRightIcon
 } from '@heroicons/react/24/outline';
 
 const NavBar: React.FC = () => {
@@ -41,6 +42,7 @@ const NavBar: React.FC = () => {
     const navLinks = [
         { name: 'Home', path: '/', icon: HomeIcon },
         { name: 'Projects', path: '/projects', icon: BriefcaseIcon },
+        { name: 'Messages', path: '/messages', icon: ChatBubbleLeftRightIcon },
         { name: 'Students', path: '/students', icon: UsersIcon },
         { name: 'Resources', path: '/resources', icon: BookOpenIcon },
         { name: 'Roadmaps', path: '/roadmaps', icon: MapIcon },
@@ -84,8 +86,8 @@ const NavBar: React.FC = () => {
                                 key={link.name}
                                 to={link.path}
                                 className={`flex flex-col items-center justify-center w-20 h-full border-b-2 transition-all group ${isActive(link.path)
-                                        ? 'border-gray-900 text-gray-900'
-                                        : 'border-transparent text-gray-500 hover:text-gray-900'
+                                    ? 'border-gray-900 text-gray-900'
+                                    : 'border-transparent text-gray-500 hover:text-gray-900'
                                     }`}
                             >
                                 <link.icon className={`h-6 w-6 ${isActive(link.path) ? 'text-gray-900' : 'text-gray-500 group-hover:text-gray-900'}`} />

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import type { UserProfile } from '../types';
+import { useNavigate } from 'react-router-dom';
+import { getOrCreateConversation } from '../lib/messaging';
 import { fetchConnectionStatus, sendConnectionRequest } from '../lib/networking';
 import { auth } from '../lib/firebase';
 
@@ -13,6 +15,20 @@ const StudentCard: React.FC<StudentCardProps> = ({ student, onClick }) => {
     const [status, setStatus] = useState<'none' | 'pending' | 'received' | 'connected'>('none');
     const [loading, setLoading] = useState(false);
     const currentUser = auth.currentUser;
+    const navigate = useNavigate();
+
+    const handleMessage = async (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (!currentUser) return;
+
+        try {
+            // Prevent navigating to profile when clicking message
+            const conversationId = await getOrCreateConversation(student.uid);
+            navigate(`/messages?conversationId=${conversationId}`);
+        } catch (error) {
+            console.error("Error starting conversation:", error);
+        }
+    };
 
     useEffect(() => {
         const getStatus = async () => {
@@ -118,8 +134,11 @@ const StudentCard: React.FC<StudentCardProps> = ({ student, onClick }) => {
                     >
                         {getButtonText()}
                     </button>
-                    <button className="flex-1 py-1.5 rounded-full border border-gray-200 text-gray-600 font-bold text-xs hover:bg-gray-50 transition-colors">
-                        View Profile
+                    <button
+                        onClick={handleMessage}
+                        className="flex-1 py-1.5 rounded-full border border-gray-200 text-gray-600 font-bold text-xs hover:bg-gray-50 transition-colors"
+                    >
+                        Message
                     </button>
                 </div>
             </div>
