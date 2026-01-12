@@ -15,6 +15,7 @@ import {
     orderBy,
     getCountFromServer
 } from 'firebase/firestore';
+import { createNotification } from './notifications';
 
 export interface ConnectionRequest {
     id?: string;
@@ -71,6 +72,16 @@ export const sendConnectionRequest = async (recipientId: string, note?: string) 
         updatedAt: serverTimestamp()
     });
 
+    // Notify Recipient
+    await createNotification({
+        recipientId: recipientId,
+        senderId: user.uid,
+        senderName: user.displayName || 'User',
+        senderAvatar: user.photoURL || undefined,
+        type: 'connection_request',
+        message: 'sent you a connection request.'
+    });
+
     // 5. Update activity
     await setDoc(activityRef, {
         userId: user.uid,
@@ -79,12 +90,25 @@ export const sendConnectionRequest = async (recipientId: string, note?: string) 
     }, { merge: true });
 };
 
-export const acceptConnectionRequest = async (requestId: string) => {
+export const acceptConnectionRequest = async (requestId: string, requesterId: string) => {
     const requestRef = doc(db, 'connections', requestId);
     await updateDoc(requestRef, {
         status: 'accepted',
         updatedAt: serverTimestamp()
     });
+
+    // Notify Requester
+    const user = auth.currentUser;
+    if (user) {
+        await createNotification({
+            recipientId: requesterId,
+            senderId: user.uid,
+            senderName: user.displayName || 'User',
+            senderAvatar: user.photoURL || undefined,
+            type: 'connection_accepted',
+            message: 'accepted your connection request.'
+        });
+    }
 };
 
 export const ignoreConnectionRequest = async (requestId: string) => {

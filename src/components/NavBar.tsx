@@ -16,12 +16,16 @@ import {
     XMarkIcon,
     ChatBubbleLeftRightIcon
 } from '@heroicons/react/24/outline';
+import { collection, query, where, onSnapshot } from 'firebase/firestore';
+import { db } from '../lib/firebase';
 
 const NavBar: React.FC = () => {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
     const [user, setUser] = useState<User | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
+    const [unreadNotifications, setUnreadNotifications] = useState(0);
+    const [unreadMessages, setUnreadMessages] = useState(0);
     const location = useLocation();
 
     useEffect(() => {
@@ -30,6 +34,51 @@ const NavBar: React.FC = () => {
         });
         return () => unsubscribe();
     }, []);
+
+    // Listen to Unread Notifications
+    useEffect(() => {
+        if (!user) {
+            setUnreadNotifications(0);
+            return;
+        }
+        const q = query(
+            collection(db, 'notifications'),
+            where('recipientId', '==', user.uid),
+            where('read', '==', false)
+        );
+        const unsubscribe = onSnapshot(q, (snap) => {
+            setUnreadNotifications(snap.size);
+        });
+        return () => unsubscribe();
+    }, [user]);
+
+    // Listen to Unread Messages (Simple approach: check conversations with unread lastMessage)
+    // For a more accurate count of *all* unread messages, we'd need a collection group query or counter.
+    // Here we check conversations where lastMessage.read is false AND lastMessage.senderId != me
+    useEffect(() => {
+        if (!user) {
+            setUnreadMessages(0);
+            return;
+        }
+        // Note: Firestore doesn't support inequality on different fields easily without composite index.
+        // We will just query conversations I'm in, then filter client side for badge (or add 'hasUnread' field to conversation)
+        // A better schema would be a subcollection 'unread_counts/{userId}'
+        const q = query(
+            collection(db, 'conversations'),
+            where('participants', 'array-contains', user.uid)
+        );
+        const unsubscribe = onSnapshot(q, (snap) => {
+            let count = 0;
+            snap.docs.forEach(doc => {
+                const data = doc.data();
+                if (data.lastMessage && data.lastMessage.senderId !== user.uid && data.lastMessage.read === false) {
+                    count++;
+                }
+            });
+            setUnreadMessages(count);
+        });
+        return () => unsubscribe();
+    }, [user]);
 
     const handleLogout = async () => {
         try {
@@ -98,12 +147,16 @@ const NavBar: React.FC = () => {
                         <div className="h-8 w-[1px] bg-gray-200 mx-2"></div>
 
                         <Link
-                            to="/messaging"
+                            to="/messages"
                             className="flex flex-col items-center justify-center w-20 h-full text-gray-500 hover:text-gray-900 transition-all relative"
                         >
                             <ChatBubbleLeftEllipsisIcon className="h-6 w-6" />
                             <span className="text-[10px] mt-0.5 font-medium">Messaging</span>
-                            <span className="absolute top-2 right-6 w-4 h-4 bg-red-500 rounded-full text-[10px] text-white flex items-center justify-center font-bold">2</span>
+                            {unreadMessages > 0 && (
+                                <span className="absolute top-2 right-6 w-4 h-4 bg-red-500 rounded-full text-[10px] text-white flex items-center justify-center font-bold">
+                                    {unreadMessages}
+                                </span>
+                            )}
                         </Link>
 
                         <Link
@@ -112,7 +165,11 @@ const NavBar: React.FC = () => {
                         >
                             <BellIcon className="h-6 w-6" />
                             <span className="text-[10px] mt-0.5 font-medium">Notifications</span>
-                            <span className="absolute top-2 right-5 w-4 h-4 bg-red-500 rounded-full text-[10px] text-white flex items-center justify-center font-bold">5</span>
+                            {unreadNotifications > 0 && (
+                                <span className="absolute top-2 right-5 w-4 h-4 bg-red-500 rounded-full text-[10px] text-white flex items-center justify-center font-bold">
+                                    {unreadNotifications}
+                                </span>
+                            )}
                         </Link>
 
                         {user ? (

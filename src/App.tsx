@@ -7,7 +7,8 @@ import ProjectsSection from './components/ProjectsSection';
 import ResourcesSection from './components/ResourcesSection';
 import CommunitySection from './components/CommunitySection';
 import Profile from './pages/Profile';
-import Messages from './pages/Messages';
+const Messages = React.lazy(() => import('./pages/Messages'));
+const Notifications = React.lazy(() => import('./pages/Notifications'));
 import RoadmapDetail from './pages/RoadmapDetail';
 import ResourceDetail from './pages/ResourceDetail';
 import LoginPage from './pages/LoginPage';
@@ -131,6 +132,7 @@ const App: React.FC = () => {
                     }
                 />
                 <Route path="/messages" element={<PrivateRoute><Messages /></PrivateRoute>} />
+                <Route path="/notifications" element={<PrivateRoute><Notifications /></PrivateRoute>} />
                 <Route path="/roadmap/:roadmapId" element={<RoadmapDetail />} />
                 <Route path="/resource/:resourceId" element={<ResourceDetail />} />
                 <Route path="/login" element={<LoginPage />} />

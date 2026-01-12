@@ -11,6 +11,7 @@ interface IncomingRequestsProps {
 const IncomingRequests: React.FC<IncomingRequestsProps> = ({ onActionComplete }) => {
     const [requests, setRequests] = useState<(ConnectionRequest & { requesterName?: string, requesterAvatar?: string })[]>([]);
     const [loading, setLoading] = useState(true);
+    const [processing, setProcessing] = useState<string | null>(null);
 
     const loadRequests = async () => {
         setLoading(true);
@@ -36,17 +37,21 @@ const IncomingRequests: React.FC<IncomingRequestsProps> = ({ onActionComplete })
         loadRequests();
     }, []);
 
-    const handleAccept = async (id: string) => {
+    const handleAccept = async (requestId: string, requesterId: string) => {
+        setProcessing(requestId);
         try {
-            await acceptConnectionRequest(id);
-            setRequests(prev => prev.filter(r => r.id !== id));
+            await acceptConnectionRequest(requestId, requesterId);
+            setRequests(prev => prev.filter(r => r.id !== requestId));
             onActionComplete();
         } catch (error) {
-            console.error("Error accepting request:", error);
+            console.error(error);
+        } finally {
+            setProcessing(null);
         }
     };
 
     const handleIgnore = async (id: string) => {
+        setProcessing(id); // Also set processing for ignore
         try {
             await ignoreConnectionRequest(id);
             setRequests(prev => prev.filter(r => r.id !== id));
@@ -90,10 +95,10 @@ const IncomingRequests: React.FC<IncomingRequestsProps> = ({ onActionComplete })
                                 Ignore
                             </button>
                             <button
-                                onClick={() => handleAccept(req.id!)}
-                                className="px-6 py-2 text-xs font-bold bg-[#0066FF] text-white rounded-xl shadow-lg shadow-blue-500/20 hover:bg-blue-700 transition-all"
-                            >
-                                Accept
+                                onClick={() => handleAccept(req.id!, req.requesterId)}
+                                disabled={processing === req.id}
+                                className="p-2 bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100 disabled:opacity-50"
+                            >                          Accept
                             </button>
                         </div>
                     </div>
