@@ -2,6 +2,7 @@ import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import NavBar from '../components/NavBar';
+import { languagesData } from '../data/languages';
 
 
 interface ResourceItem {
@@ -19,21 +20,13 @@ const ResourceDetail: React.FC = () => {
     // Mock data - replace with actual Google Drive links later
     const getResources = (): ResourceItem[] => {
         if (resourceId === 'programming-languages') {
-            return [
-                { id: 'pl-1', title: 'Java Masterclass', type: 'Video', url: '#', description: 'Complete Java course from basics to advanced multithreading.' },
-                { id: 'pl-2', title: 'Python for Data Science', type: 'Book', url: '#', description: 'Essential Python guide for data analysis and ML.' },
-                { id: 'pl-3', title: 'C++ Programming Basics', type: 'PDF', url: '#', description: 'Standard C++ syntax and STL overview.' },
-                { id: 'pl-4', title: 'C Language Fundamentals', type: 'PDF', url: '#', description: 'Core Concepts of C programming.' },
-                { id: 'pl-5', title: 'JavaScript (ES6+) Guide', type: 'Link', url: '#', description: 'Modern JavaScript features and DOM manipulation.' },
-                { id: 'pl-6', title: 'TypeScript Deep Dive', type: 'Book', url: '#', description: 'Mastering types and interfaces in TS.' },
-                { id: 'pl-7', title: 'Go Programming (Golang)', type: 'Video', url: '#', description: 'Building concurrent applications with Go.' },
-                { id: 'pl-8', title: 'Rust Ecosystem', type: 'PDF', url: '#', description: 'Memory safety and performance with Rust.' },
-                { id: 'pl-9', title: 'Swift for iOS Development', type: 'Link', url: '#', description: 'Learn Swift UI and mobile development.' },
-                { id: 'pl-10', title: 'Kotlin for Android', type: 'Video', url: '#', description: 'Modern Android development with Kotlin.' },
-                { id: 'pl-11', title: 'PHP & Laravel', type: 'PDF', url: '#', description: 'Server-side scripting and web frameworks.' },
-                { id: 'pl-12', title: 'Ruby on Rails', type: 'Link', url: '#', description: 'Elegant web development with Ruby.' },
-                { id: 'pl-13', title: 'SQL & Database Design', type: 'PDF', url: '#', description: 'Learn relational databases and complex queries.' },
-            ];
+            return Object.values(languagesData).map(lang => ({
+                id: lang.id,
+                title: lang.name,
+                type: 'PDF' as any, // We will override the display logic below
+                url: `/resource/programming-languages/${lang.id}`,
+                description: lang.description
+            }));
         }
 
         if (resourceId === 'roadmaps-merged') {
@@ -100,38 +93,39 @@ const ResourceDetail: React.FC = () => {
                         {resources.map((resource, index) => (
                             <motion.div
                                 key={resource.id}
-                                className="bg-white p-6 rounded-2xl border border-gray-100 hover:border-purple-100 hover:shadow-xl hover:shadow-purple-500/5 transition-all duration-300 group"
+                                onClick={() => navigate(resource.url)}
+                                className="bg-white p-6 rounded-2xl border border-gray-100 hover:border-blue-100 hover:shadow-xl hover:shadow-blue-500/5 transition-all duration-300 group cursor-pointer"
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: index * 0.1 }}
+                                transition={{ delay: index * 0.05 }}
                             >
                                 <div className="flex justify-between items-start mb-4">
-                                    <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide ${resource.type === 'PDF' ? 'bg-red-50 text-red-600' :
-                                        resource.type === 'Video' ? 'bg-blue-50 text-blue-600' :
-                                            resource.type === 'Book' ? 'bg-yellow-50 text-yellow-600' :
-                                                'bg-green-50 text-green-600'
+                                    <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide ${resourceId === 'programming-languages'
+                                            ? 'bg-blue-50 text-blue-600'
+                                            : resource.type === 'PDF' ? 'bg-red-50 text-red-600' :
+                                                resource.type === 'Video' ? 'bg-blue-50 text-blue-600' :
+                                                    resource.type === 'Book' ? 'bg-yellow-50 text-yellow-600' :
+                                                        'bg-green-50 text-green-600'
                                         }`}>
-                                        {resource.type}
+                                        {resourceId === 'programming-languages' ? 'Full Course' : resource.type}
                                     </span>
                                     <span className="text-2xl group-hover:scale-110 transition-transform duration-300">
-                                        {resource.type === 'PDF' ? '📄' :
-                                            resource.type === 'Video' ? '🎥' :
-                                                resource.type === 'Book' ? '📚' : '🔗'}
+                                        {resourceId === 'programming-languages'
+                                            ? (languagesData[resource.id]?.icon || '💻')
+                                            : resource.type === 'PDF' ? '📄' :
+                                                resource.type === 'Video' ? '🎥' :
+                                                    resource.type === 'Book' ? '📚' : '🔗'}
                                     </span>
                                 </div>
 
-                                <h3 className="text-xl font-bold text-[#0f172a] mb-2 group-hover:text-[#5865F2] transition-colors">{resource.title}</h3>
-                                <p className="text-gray-500 text-sm mb-6 leading-relaxed">
+                                <h3 className="text-xl font-bold text-[#0f172a] mb-2 group-hover:text-[#0066FF] transition-colors">{resource.title}</h3>
+                                <p className="text-gray-500 text-sm mb-6 leading-relaxed line-clamp-2">
                                     {resource.description}
                                 </p>
 
-                                <a
-                                    href={resource.url}
-                                    className="inline-flex items-center text-[#5865F2] font-bold hover:text-[#4752c4] transition-colors text-sm"
-                                    onClick={(e) => e.preventDefault()} // Prevent navigation for mock links
-                                >
-                                    Access Resource <span className="ml-1 group-hover:translate-x-1 transition-transform">→</span>
-                                </a>
+                                <div className="inline-flex items-center text-[#0066FF] font-bold group-hover:translate-x-1 transition-transform text-sm">
+                                    Access Resource <span className="ml-1">→</span>
+                                </div>
                             </motion.div>
                         ))}
                     </div>

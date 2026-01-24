@@ -12,6 +12,7 @@ import RoadmapDetail from './pages/RoadmapDetail';
 import ResourceDetail from './pages/ResourceDetail';
 import LoginPage from './pages/LoginPage';
 import Onboarding from './pages/Onboarding';
+import LanguageDetail from './pages/LanguageDetail';
 import Students from './pages/Students';
 import ContactSection from './components/ContactSection';
 import PrivateRoute from './components/PrivateRoute';
@@ -124,6 +125,7 @@ const App: React.FC = () => {
                 <Route path="/notifications" element={<PrivateRoute><Notifications /></PrivateRoute>} />
                 <Route path="/roadmap/:roadmapId" element={<RoadmapDetail />} />
                 <Route path="/resource/:resourceId" element={<ResourceDetail />} />
+                <Route path="/resource/programming-languages/:languageId" element={<LanguageDetail />} />
                 <Route path="/login" element={<LoginPage />} />
             </Routes>
             {/* Footer is typically not shown on the main feed in LinkedIn-style apps, 
