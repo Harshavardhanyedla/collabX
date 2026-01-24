@@ -8,13 +8,11 @@ import {
     BriefcaseIcon,
     UsersIcon,
     BookOpenIcon,
-    MapIcon,
     BellIcon,
     MagnifyingGlassIcon,
     ChatBubbleLeftEllipsisIcon,
     Bars3Icon,
-    XMarkIcon,
-    ChatBubbleLeftRightIcon
+    XMarkIcon
 } from '@heroicons/react/24/outline';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import { db } from '../lib/firebase';
@@ -91,10 +89,8 @@ const NavBar: React.FC = () => {
     const navLinks = [
         { name: 'Home', path: '/', icon: HomeIcon },
         { name: 'Projects', path: '/projects', icon: BriefcaseIcon },
-        { name: 'Messages', path: '/messages', icon: ChatBubbleLeftRightIcon },
         { name: 'Students', path: '/students', icon: UsersIcon },
         { name: 'Resources', path: '/resources', icon: BookOpenIcon },
-        { name: 'Roadmaps', path: '/roadmaps', icon: MapIcon },
     ];
 
     const isActive = (path: string) => {

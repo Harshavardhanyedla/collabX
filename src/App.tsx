@@ -2,7 +2,6 @@ import React from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import NavBar from './components/NavBar';
 import Hero from './components/Hero';
-import RoadmapsSection from './components/RoadmapsSection';
 import ProjectsSection from './components/ProjectsSection';
 import ResourcesSection from './components/ResourcesSection';
 import CommunitySection from './components/CommunitySection';
@@ -21,7 +20,6 @@ import MainLayout from './components/MainLayout';
 import HomeFeed from './components/HomeFeed';
 import Projects from './pages/Projects';
 import Resources from './pages/Resources';
-import Roadmaps from './pages/Roadmaps';
 
 const Home: React.FC = () => {
     const location = useLocation();
@@ -52,7 +50,6 @@ const Home: React.FC = () => {
         return (
             <main className="bg-white min-h-screen">
                 <Hero />
-                <div id="roadmaps"><RoadmapsSection /></div>
                 <div id="projects"><ProjectsSection /></div>
                 <div id="resources"><ResourcesSection /></div>
                 <CommunitySection />
@@ -112,14 +109,6 @@ const App: React.FC = () => {
                     element={
                         <PrivateRoute>
                             <Resources />
-                        </PrivateRoute>
-                    }
-                />
-                <Route
-                    path="/roadmaps"
-                    element={
-                        <PrivateRoute>
-                            <Roadmaps />
                         </PrivateRoute>
                     }
                 />

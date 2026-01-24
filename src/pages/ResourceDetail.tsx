@@ -18,6 +18,33 @@ const ResourceDetail: React.FC = () => {
 
     // Mock data - replace with actual Google Drive links later
     const getResources = (): ResourceItem[] => {
+        if (resourceId === 'programming-languages') {
+            return [
+                { id: 'pl-1', title: 'Java Masterclass', type: 'Video', url: '#', description: 'Complete Java course from basics to advanced multithreading.' },
+                { id: 'pl-2', title: 'Python for Data Science', type: 'Book', url: '#', description: 'Essential Python guide for data analysis and ML.' },
+                { id: 'pl-3', title: 'C++ Programming Basics', type: 'PDF', url: '#', description: 'Standard C++ syntax and STL overview.' },
+                { id: 'pl-4', title: 'C Language Fundamentals', type: 'PDF', url: '#', description: 'Core Concepts of C programming.' },
+                { id: 'pl-5', title: 'JavaScript (ES6+) Guide', type: 'Link', url: '#', description: 'Modern JavaScript features and DOM manipulation.' },
+                { id: 'pl-6', title: 'TypeScript Deep Dive', type: 'Book', url: '#', description: 'Mastering types and interfaces in TS.' },
+                { id: 'pl-7', title: 'Go Programming (Golang)', type: 'Video', url: '#', description: 'Building concurrent applications with Go.' },
+                { id: 'pl-8', title: 'Rust Ecosystem', type: 'PDF', url: '#', description: 'Memory safety and performance with Rust.' },
+                { id: 'pl-9', title: 'Swift for iOS Development', type: 'Link', url: '#', description: 'Learn Swift UI and mobile development.' },
+                { id: 'pl-10', title: 'Kotlin for Android', type: 'Video', url: '#', description: 'Modern Android development with Kotlin.' },
+                { id: 'pl-11', title: 'PHP & Laravel', type: 'PDF', url: '#', description: 'Server-side scripting and web frameworks.' },
+                { id: 'pl-12', title: 'Ruby on Rails', type: 'Link', url: '#', description: 'Elegant web development with Ruby.' },
+                { id: 'pl-13', title: 'SQL & Database Design', type: 'PDF', url: '#', description: 'Learn relational databases and complex queries.' },
+            ];
+        }
+
+        if (resourceId === 'roadmaps-merged') {
+            return [
+                { id: 'rm-1', title: 'Frontend Developer Roadmap', type: 'Link', url: 'https://roadmap.sh/frontend', description: 'Step-by-step path to becoming a frontend engineer.' },
+                { id: 'rm-2', title: 'Backend Developer Roadmap', type: 'Link', url: 'https://roadmap.sh/backend', description: 'Server-side technologies and architecture path.' },
+                { id: 'rm-3', title: 'DevOps Roadmap', type: 'Link', url: 'https://roadmap.sh/devops', description: 'Infrastructure and automation learning path.' },
+                { id: 'rm-4', title: 'AI/ML Roadmap', type: 'Link', url: 'https://roadmap.sh/ai-data-scientist', description: 'Data science and artificial intelligence path.' },
+            ];
+        }
+
         const commonResources: ResourceItem[] = [
             { id: '1', title: 'Syllabus & Exam Pattern', type: 'PDF', url: '#', description: 'Official syllabus and detailed exam pattern breakdown.' },
             { id: '2', title: 'Previous Year Questions (2020-2024)', type: 'PDF', url: '#', description: 'Solved papers from the last 5 years.' },
@@ -30,6 +57,8 @@ const ResourceDetail: React.FC = () => {
 
     const getExamTitle = (id: string) => {
         switch (id) {
+            case 'programming-languages': return 'Programming Languages';
+            case 'roadmaps-merged': return 'Learning Roadmaps';
             case 'cat': return 'CAT Study Materials';
             case 'upsc': return 'UPSC Study Materials';
             case 'gate': return 'GATE Study Materials';

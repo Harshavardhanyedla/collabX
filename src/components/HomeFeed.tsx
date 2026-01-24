@@ -12,21 +12,31 @@ import {
 } from '@heroicons/react/24/outline';
 import { HandThumbUpIcon as HandThumbUpSolidIcon } from '@heroicons/react/24/solid';
 import { auth } from '../lib/firebase';
-import { createPost, listenToFeed, toggleLike } from '../lib/posts';
+import { createPost, listenToFeed, toggleLike, getUserLikes } from '../lib/posts';
 import type { Post } from '../types';
 
 const HomeFeed: React.FC = () => {
     const [posts, setPosts] = useState<Post[]>([]);
     const [newPostContent, setNewPostContent] = useState('');
     const [isPosting, setIsPosting] = useState(false);
+    const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set());
+    const [loadingLikes, setLoadingLikes] = useState<{ [key: string]: boolean }>({});
     const user = auth.currentUser;
 
     useEffect(() => {
         const unsubscribe = listenToFeed((fetchedPosts) => {
             setPosts(fetchedPosts);
         });
+
+        // Fetch user's likes
+        if (user) {
+            getUserLikes(user.uid).then(likedIds => {
+                setLikedPosts(new Set(likedIds));
+            });
+        }
+
         return () => unsubscribe();
-    }, []);
+    }, [user]);
 
     const handleCreatePost = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -52,11 +62,43 @@ const HomeFeed: React.FC = () => {
     };
 
     const handleLike = async (postId: string) => {
-        if (!user) return;
+        if (!user || loadingLikes[postId]) return;
+
+        const isLiked = likedPosts.has(postId);
+
+        // Optimistic UI update
+        const originalPosts = [...posts];
+        const originalLikedPosts = new Set(likedPosts);
+
+        setLikedPosts(prev => {
+            const next = new Set(prev);
+            if (isLiked) next.delete(postId);
+            else next.add(postId);
+            return next;
+        });
+
+        setPosts(prevPosts => prevPosts.map(post => {
+            if (post.id === postId) {
+                const count = post.likesCount || 0;
+                return {
+                    ...post,
+                    likesCount: isLiked ? Math.max(0, count - 1) : count + 1
+                };
+            }
+            return post;
+        }));
+
+        setLoadingLikes(prev => ({ ...prev, [postId]: true }));
+
         try {
             await toggleLike(postId, user.uid);
         } catch (error) {
             console.error("Failed to toggle like:", error);
+            // Rollback on error
+            setPosts(originalPosts);
+            setLikedPosts(originalLikedPosts);
+        } finally {
+            setLoadingLikes(prev => ({ ...prev, [postId]: false }));
         }
     };
 
@@ -173,11 +215,13 @@ const HomeFeed: React.FC = () => {
                     <div className="px-4 flex justify-between items-center pb-2 border-b border-gray-50">
                         <div className="flex items-center gap-1 text-[11px] text-gray-500 hover:text-[#0066FF] cursor-pointer">
                             <div className="flex -space-x-1">
-                                <div className="w-4 h-4 rounded-full bg-blue-500 flex items-center justify-center text-white">
+                                <div className={`w-4 h-4 rounded-full flex items-center justify-center text-white ${likedPosts.has(item.id) ? 'bg-[#0066FF]' : 'bg-gray-400'}`}>
                                     <HandThumbUpSolidIcon className="h-2.5 w-2.5" />
                                 </div>
                             </div>
-                            <span>{item.likesCount || 0}</span>
+                            <span className={likedPosts.has(item.id) ? 'text-[#0066FF] font-bold' : ''}>
+                                {item.likesCount || 0}
+                            </span>
                         </div>
                         <div className="flex gap-2 text-[11px] text-gray-500">
                             <span className="hover:text-[#0066FF] hover:underline cursor-pointer">{item.commentsCount || 0} comments</span>
@@ -190,10 +234,18 @@ const HomeFeed: React.FC = () => {
                     <div className="flex px-2 pt-1">
                         <button
                             onClick={() => handleLike(item.id)}
-                            className="flex-1 flex items-center justify-center gap-2 py-2.5 text-gray-500 hover:bg-gray-100 rounded transition-colors group"
+                            disabled={loadingLikes[item.id]}
+                            className={`flex_1 flex items-center justify-center gap-2 py-2.5 rounded transition-colors group ${likedPosts.has(item.id)
+                                    ? 'text-[#0066FF] bg-blue-50/50'
+                                    : 'text-gray-500 hover:bg-gray-100'
+                                }`}
                         >
-                            <HandThumbUpIcon className="h-5 w-5 group-hover:scale-110" />
-                            <span className="text-sm font-bold">Like</span>
+                            {likedPosts.has(item.id) ? (
+                                <HandThumbUpSolidIcon className={`h-5 w-5 ${loadingLikes[item.id] ? 'animate-pulse' : 'group-hover:scale-110'}`} />
+                            ) : (
+                                <HandThumbUpIcon className={`h-5 w-5 ${loadingLikes[item.id] ? 'animate-pulse' : 'group-hover:scale-110'}`} />
+                            )}
+                            <span className="text-sm font-bold">{likedPosts.has(item.id) ? 'Liked' : 'Like'}</span>
                         </button>
                         <button className="flex-1 flex items-center justify-center gap-2 py-2.5 text-gray-500 hover:bg-gray-100 rounded transition-colors group">
                             <ChatBubbleLeftIcon className="h-5 w-5 group-hover:scale-110" />

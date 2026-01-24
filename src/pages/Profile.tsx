@@ -48,7 +48,11 @@ const Profile: React.FC = () => {
             if (userData) {
                 setUser(userData);
 
+                // Increment views if viewing someone else
                 if (currentUser && targetUserId !== currentUser.uid) {
+                    const { incrementProfileViews } = await import('../lib/profiles');
+                    incrementProfileViews(targetUserId);
+
                     const connectionsRef = collection(db, 'connections');
                     const q1 = query(
                         connectionsRef,

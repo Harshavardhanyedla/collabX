@@ -3,7 +3,9 @@ import {
     doc,
     getDoc,
     setDoc,
-    serverTimestamp
+    serverTimestamp,
+    updateDoc,
+    increment
 } from 'firebase/firestore';
 import type { UserProfile } from '../types';
 
@@ -18,6 +20,17 @@ export const getUserProfile = async (uid: string): Promise<UserProfile | null> =
     } catch (error) {
         console.error("Error fetching profile:", error);
         return null;
+    }
+};
+
+export const incrementProfileViews = async (uid: string) => {
+    try {
+        const userRef = doc(db, 'users', uid);
+        await updateDoc(userRef, {
+            'stats.profileViews': increment(1)
+        });
+    } catch (error) {
+        console.error("Error incrementing profile views:", error);
     }
 };
 
@@ -49,7 +62,9 @@ export const initializeProfile = async (uid: string, email: string, name: string
                 stats: {
                     followers: 0,
                     projects: 0,
-                    connections: 0
+                    connections: 0,
+                    profileViews: 0,
+                    projectViews: 0
                 },
                 createdAt: serverTimestamp()
             });

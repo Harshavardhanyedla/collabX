@@ -10,8 +10,8 @@ import {
     serverTimestamp,
     increment,
     where,
-    deleteDoc,
-    getDocs
+    getDocs,
+    runTransaction
 } from 'firebase/firestore';
 import type { Post, Comment } from '../types';
 
@@ -43,32 +43,53 @@ export const listenToFeed = (callback: (posts: Post[]) => void) => {
 };
 
 export const toggleLike = async (postId: string, userId: string) => {
+    const postRef = doc(db, 'posts', postId);
+    const likeId = `${userId}_${postId}`;
+    const likeRef = doc(db, 'likes', likeId);
+
     try {
-        const postRef = doc(db, 'posts', postId);
+        await runTransaction(db, async (transaction) => {
+            const likeDoc = await transaction.get(likeRef);
+            const postDoc = await transaction.get(postRef);
 
-        // Using setDoc with composite ID for easy checking
-        const existingLike = await getDocs(query(collection(db, 'likes'), where('postId', '==', postId), where('userId', '==', userId)));
+            if (!postDoc.exists()) {
+                throw new Error("Post does not exist!");
+            }
 
-        if (!existingLike.empty) {
-            // Unlike
-            await deleteDoc(doc(db, 'likes', existingLike.docs[0].id));
-            await updateDoc(postRef, {
-                likesCount: increment(-1)
-            });
-        } else {
-            // Like
-            await addDoc(collection(db, 'likes'), {
-                postId,
-                userId,
-                createdAt: serverTimestamp()
-            });
-            await updateDoc(postRef, {
-                likesCount: increment(1)
-            });
-        }
+            const currentLikes = postDoc.data().likesCount || 0;
+
+            if (likeDoc.exists()) {
+                // Unlike
+                transaction.delete(likeRef);
+                transaction.update(postRef, {
+                    likesCount: Math.max(0, currentLikes - 1)
+                });
+            } else {
+                // Like
+                transaction.set(likeRef, {
+                    postId,
+                    userId,
+                    createdAt: serverTimestamp()
+                });
+                transaction.update(postRef, {
+                    likesCount: currentLikes + 1
+                });
+            }
+        });
     } catch (error) {
         console.error("Error toggling like:", error);
         throw error;
+    }
+};
+
+export const getUserLikes = async (userId: string) => {
+    try {
+        const q = query(collection(db, 'likes'), where('userId', '==', userId));
+        const snapshot = await getDocs(q);
+        return snapshot.docs.map(doc => doc.data().postId);
+    } catch (error) {
+        console.error("Error fetching user likes:", error);
+        return [];
     }
 };
 

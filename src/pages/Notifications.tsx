@@ -12,13 +12,27 @@ import {
 } from '@heroicons/react/24/outline';
 
 const Notifications: React.FC = () => {
+    const [user, setUser] = useState(auth.currentUser);
+    const [authLoading, setAuthLoading] = useState(true);
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
-    const user = auth.currentUser;
+
+    useEffect(() => {
+        const unsubscribeAuth = auth.onAuthStateChanged((currentUser) => {
+            setUser(currentUser);
+            setAuthLoading(false);
+            if (!currentUser) {
+                setLoading(false); // Stop loading if no user, so we don't hang
+                navigate('/login');
+            }
+        });
+        return () => unsubscribeAuth();
+    }, [navigate]);
 
     useEffect(() => {
         if (!user) return;
+        setLoading(true); // Start loading notifications when user is found
         const unsubscribe = listenToNotifications(user.uid, (data) => {
             setNotifications(data);
             setLoading(false);
@@ -84,7 +98,7 @@ const Notifications: React.FC = () => {
         }
     };
 
-    if (loading) {
+    if (authLoading || (loading && user)) {
         return <div className="flex justify-center items-center h-screen">Loading...</div>;
     }
 

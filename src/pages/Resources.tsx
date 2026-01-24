@@ -44,6 +44,20 @@ const Resources: React.FC = () => {
             if (fetchedResources.length === 0) {
                 setResources([
                     {
+                        id: 'programming-languages',
+                        title: 'Programming Languages',
+                        description: 'Detailed guides and resources for Java, Python, C++, JavaScript, and more.',
+                        icon: '💻',
+                        color: 'badge-purple'
+                    },
+                    {
+                        id: 'roadmaps-merged',
+                        title: 'Learning Roadmaps',
+                        description: 'Structured paths to help you master new skills and prepare for career goals.',
+                        icon: '🗺️',
+                        color: 'badge-red'
+                    },
+                    {
                         id: 'cat',
                         title: 'CAT Resources',
                         description: 'Comprehensive study materials, mock tests, and guides for Common Admission Test preparation.',
@@ -66,7 +80,31 @@ const Resources: React.FC = () => {
                     }
                 ]);
             } else {
-                setResources(fetchedResources);
+                // If there are resources in DB, we still want to ensure Programming Languages and Roadmaps are handled or added if missing
+                // For now, let's assume we want to always have these two at the top if they aren't already there
+                const hasProg = fetchedResources.some(r => r.id === 'programming-languages');
+                const hasRoadmaps = fetchedResources.some(r => r.id === 'roadmaps-merged');
+
+                let combined = [...fetchedResources];
+                if (!hasRoadmaps) {
+                    combined.unshift({
+                        id: 'roadmaps-merged',
+                        title: 'Learning Roadmaps',
+                        description: 'Structured paths to help you master new skills and prepare for career goals.',
+                        icon: '🗺️',
+                        color: 'badge-red'
+                    });
+                }
+                if (!hasProg) {
+                    combined.unshift({
+                        id: 'programming-languages',
+                        title: 'Programming Languages',
+                        description: 'Detailed guides and resources for Java, Python, C++, JavaScript, and more.',
+                        icon: '💻',
+                        color: 'badge-purple'
+                    });
+                }
+                setResources(combined);
             }
         } catch (error) {
             console.error('Error fetching resources:', error);

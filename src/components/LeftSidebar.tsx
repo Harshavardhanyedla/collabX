@@ -52,7 +52,7 @@ const LeftSidebar: React.FC = () => {
                         <Link to="/profile" className="font-bold text-gray-900 hover:underline">
                             {user.displayName || user.email?.split('@')[0]}
                         </Link>
-                        <p className="text-xs text-gray-500 mt-1 line-clamp-2">Student & Aspiring Developer at CollabX</p>
+                        <p className="text-xs text-gray-500 mt-1 line-clamp-2">{user.role || 'Student & Aspiring Developer at CollabX'}</p>
                     </div>
                 </div>
 
@@ -60,22 +60,14 @@ const LeftSidebar: React.FC = () => {
                     <div className="px-4 py-1 hover:bg-gray-100 cursor-pointer transition-colors group">
                         <div className="flex justify-between items-center text-xs">
                             <span className="text-gray-500 group-hover:text-gray-700">Profile viewers</span>
-                            <span className="text-[#0066FF] font-bold">42</span>
+                            <span className="text-[#0066FF] font-bold">{(user as any).stats?.profileViews || 0}</span>
                         </div>
                     </div>
                     <div className="px-4 py-1 hover:bg-gray-100 cursor-pointer transition-colors group">
                         <div className="flex justify-between items-center text-xs">
                             <span className="text-gray-500 group-hover:text-gray-700">Project views</span>
-                            <span className="text-[#0066FF] font-bold">156</span>
+                            <span className="text-[#0066FF] font-bold">{(user as any).stats?.projectViews || 0}</span>
                         </div>
-                    </div>
-                </div>
-
-                <div className="px-4 py-3 border-t border-gray-100 hover:bg-gray-100 cursor-pointer transition-colors group">
-                    <p className="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Access exclusive tools</p>
-                    <div className="flex items-center gap-1 mt-1">
-                        <div className="w-3 h-3 bg-yellow-400 rounded-sm"></div>
-                        <span className="text-xs font-bold text-gray-800 group-hover:text-[#0066FF]">Try Premium for Free</span>
                     </div>
                 </div>
 
@@ -92,14 +84,14 @@ const LeftSidebar: React.FC = () => {
                         <span className="text-xs font-medium text-gray-900">Recent</span>
                     </div>
                     <div className="flex flex-col gap-2">
-                        <div className="flex items-center gap-2 text-xs text-gray-500 hover:bg-gray-100 p-1 rounded cursor-pointer group">
-                            <UserGroupIcon className="h-4 w-4" />
-                            <span className="group-hover:text-gray-800 truncate">React Developers Hub</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-xs text-gray-500 hover:bg-gray-100 p-1 rounded cursor-pointer group">
+                        <Link to="/projects" className="flex items-center gap-2 text-xs text-gray-500 hover:bg-gray-100 p-1 rounded cursor-pointer group">
                             <BriefcaseIcon className="h-4 w-4" />
-                            <span className="group-hover:text-gray-800 truncate">UI/UX Design Projects</span>
-                        </div>
+                            <span className="group-hover:text-gray-800 truncate">Popular Projects</span>
+                        </Link>
+                        <Link to="/students" className="flex items-center gap-2 text-xs text-gray-500 hover:bg-gray-100 p-1 rounded cursor-pointer group">
+                            <UserGroupIcon className="h-4 w-4" />
+                            <span className="group-hover:text-gray-800 truncate">Student Network</span>
+                        </Link>
                     </div>
 
                     <div className="mt-4 mb-2">
