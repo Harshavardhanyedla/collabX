@@ -52,7 +52,7 @@ const LeftSidebar: React.FC = () => {
                         <Link to="/profile" className="font-bold text-gray-900 hover:underline">
                             {user.displayName || user.email?.split('@')[0]}
                         </Link>
-                        <p className="text-xs text-gray-500 mt-1 line-clamp-2">{user.role || 'Student & Aspiring Developer at CollabX'}</p>
+                        <p className="text-xs text-gray-500 mt-1 line-clamp-2">{(user as any).role || 'Student & Aspiring Developer at CollabX'}</p>
                     </div>
                 </div>
 

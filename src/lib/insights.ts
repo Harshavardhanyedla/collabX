@@ -7,7 +7,7 @@ import {
     limit,
     orderBy
 } from 'firebase/firestore';
-import type { UserProfile, Project } from '../types';
+import type { UserProfile } from '../types';
 
 export const getRealUserRecommendations = async (limitCount = 3): Promise<UserProfile[]> => {
     const user = auth.currentUser;
