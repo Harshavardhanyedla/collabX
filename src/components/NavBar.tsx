@@ -214,18 +214,78 @@ const NavBar: React.FC = () => {
 
             {/* Mobile Navigation */}
             <div className={`fixed inset-0 bg-white z-40 transition-transform duration-300 lg:hidden pt-16 ${mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-                <div className="p-4 space-y-4">
+                <div className="p-4 space-y-2">
                     {navLinks.map((link) => (
                         <Link
                             key={link.name}
                             to={link.path}
                             onClick={() => setMobileMenuOpen(false)}
-                            className="flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-gray-50 text-gray-900 font-medium border border-transparent hover:border-gray-100"
+                            className={`flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-gray-50 font-medium border border-transparent hover:border-gray-100 ${isActive(link.path) ? 'text-[#0066FF] bg-blue-50' : 'text-gray-900'}`}
                         >
-                            <link.icon className="h-6 w-6 text-gray-500" />
+                            <link.icon className={`h-6 w-6 ${isActive(link.path) ? 'text-[#0066FF]' : 'text-gray-500'}`} />
                             <span>{link.name}</span>
                         </Link>
                     ))}
+
+                    {/* Messaging Link - Mobile */}
+                    {user && (
+                        <Link
+                            to="/messages"
+                            onClick={() => setMobileMenuOpen(false)}
+                            className={`flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-gray-50 font-medium border border-transparent hover:border-gray-100 ${isActive('/messages') ? 'text-[#0066FF] bg-blue-50' : 'text-gray-900'}`}
+                        >
+                            <ChatBubbleLeftEllipsisIcon className={`h-6 w-6 ${isActive('/messages') ? 'text-[#0066FF]' : 'text-gray-500'}`} />
+                            <span>Messaging</span>
+                            {unreadMessages > 0 && (
+                                <span className="ml-auto px-2 py-0.5 bg-red-500 rounded-full text-xs text-white font-bold">
+                                    {unreadMessages}
+                                </span>
+                            )}
+                        </Link>
+                    )}
+
+                    {/* Notifications Link - Mobile */}
+                    {user && (
+                        <Link
+                            to="/notifications"
+                            onClick={() => setMobileMenuOpen(false)}
+                            className={`flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-gray-50 font-medium border border-transparent hover:border-gray-100 ${isActive('/notifications') ? 'text-[#0066FF] bg-blue-50' : 'text-gray-900'}`}
+                        >
+                            <BellIcon className={`h-6 w-6 ${isActive('/notifications') ? 'text-[#0066FF]' : 'text-gray-500'}`} />
+                            <span>Notifications</span>
+                            {unreadNotifications > 0 && (
+                                <span className="ml-auto px-2 py-0.5 bg-red-500 rounded-full text-xs text-white font-bold">
+                                    {unreadNotifications}
+                                </span>
+                            )}
+                        </Link>
+                    )}
+
+                    {/* Profile Section - Mobile */}
+                    {user && (
+                        <div className="pt-4 mt-4 border-t border-gray-100">
+                            <Link
+                                to="/profile"
+                                onClick={() => setMobileMenuOpen(false)}
+                                className="flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-gray-50 font-medium"
+                            >
+                                <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-sm font-bold text-[#0066FF]">
+                                    {user.displayName?.[0] || user.email?.[0] || 'U'}
+                                </div>
+                                <div className="flex flex-col">
+                                    <span className="font-semibold text-gray-900">{user.displayName || 'User'}</span>
+                                    <span className="text-xs text-gray-500">View Profile</span>
+                                </div>
+                            </Link>
+                            <button
+                                onClick={() => { handleLogout(); setMobileMenuOpen(false); }}
+                                className="w-full mt-2 px-4 py-3 text-left text-red-500 font-medium hover:bg-red-50 rounded-lg"
+                            >
+                                Sign Out
+                            </button>
+                        </div>
+                    )}
+
                     {!user && (
                         <div className="grid grid-cols-2 gap-4 pt-4 mt-4 border-t border-gray-100">
                             <button onClick={() => { setIsAuthModalOpen(true); setMobileMenuOpen(false); }} className="px-4 py-3 border border-[#0066FF] text-[#0066FF] font-bold rounded-full">Log in</button>
