@@ -13,12 +13,14 @@ import {
 import { HandThumbUpIcon as HandThumbUpSolidIcon } from '@heroicons/react/24/solid';
 import { auth } from '../lib/firebase';
 import { createPost, listenToFeed, toggleLike, getUserLikes } from '../lib/posts';
+import { containsProfanity, getProfanityErrorMessage, filterProfanity } from '../utils/profanityFilter';
 import type { Post } from '../types';
 
 const HomeFeed: React.FC = () => {
     const [posts, setPosts] = useState<Post[]>([]);
     const [newPostContent, setNewPostContent] = useState('');
     const [isPosting, setIsPosting] = useState(false);
+    const [profanityError, setProfanityError] = useState('');
     const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set());
     const [loadingLikes, setLoadingLikes] = useState<{ [key: string]: boolean }>({});
     const user = auth.currentUser;
@@ -41,6 +43,14 @@ const HomeFeed: React.FC = () => {
     const handleCreatePost = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!user || !newPostContent.trim() || isPosting) return;
+
+        // Check for profanity before posting
+        const profanityCheck = containsProfanity(newPostContent);
+        if (profanityCheck.hasProfanity) {
+            setProfanityError(getProfanityErrorMessage(profanityCheck.foundWords));
+            return;
+        }
+        setProfanityError('');
 
         setIsPosting(true);
         try {
@@ -127,9 +137,17 @@ const HomeFeed: React.FC = () => {
                         )}
                     </div>
                     <form onSubmit={handleCreatePost} className="flex-1">
+                        {profanityError && (
+                            <div className="mb-2 p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm">
+                                {profanityError}
+                            </div>
+                        )}
                         <textarea
                             value={newPostContent}
-                            onChange={(e) => setNewPostContent(e.target.value)}
+                            onChange={(e) => {
+                                setNewPostContent(e.target.value);
+                                if (profanityError) setProfanityError('');
+                            }}
                             placeholder="Start a project or share an update..."
                             className="w-full text-left px-4 py-3 border border-gray-200 rounded-2xl text-gray-800 hover:bg-gray-50 transition-colors text-sm font-medium resize-none focus:outline-none focus:ring-1 focus:ring-blue-100"
                             rows={2}
@@ -171,14 +189,14 @@ const HomeFeed: React.FC = () => {
                         <div className="flex gap-2">
                             <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-[#0066FF] font-bold text-lg overflow-hidden shrink-0">
                                 {item.authorAvatar ? (
-                                    <img src={item.authorAvatar} alt={item.authorName} className="w-full h-full object-cover" />
+                                    <img src={item.authorAvatar} alt={filterProfanity(item.authorName)} className="w-full h-full object-cover" />
                                 ) : (
-                                    item.authorName[0]
+                                    filterProfanity(item.authorName)[0]
                                 )}
                             </div>
                             <div className="flex flex-col">
                                 <span className="text-sm font-bold text-gray-900 flex items-center gap-1 hover:text-[#0066FF] hover:underline cursor-pointer">
-                                    {item.authorName}
+                                    {filterProfanity(item.authorName)}
                                     <span className="text-xs font-normal text-gray-400">• 1st</span>
                                 </span>
                                 <span className="text-[11px] text-gray-500 truncate w-48 sm:w-80">{item.authorRole || 'Student'}</span>
@@ -194,7 +212,7 @@ const HomeFeed: React.FC = () => {
 
                     {/* Item Content */}
                     <div className="px-4 mb-3">
-                        <p className="text-sm text-gray-800 leading-normal whitespace-pre-wrap">{item.content}</p>
+                        <p className="text-sm text-gray-800 leading-normal whitespace-pre-wrap">{filterProfanity(item.content)}</p>
                         {item.tags && item.tags.length > 0 && (
                             <div className="flex flex-wrap gap-1 mt-2">
                                 {item.tags.map(tag => (
@@ -236,8 +254,8 @@ const HomeFeed: React.FC = () => {
                             onClick={() => handleLike(item.id)}
                             disabled={loadingLikes[item.id]}
                             className={`flex_1 flex items-center justify-center gap-2 py-2.5 rounded transition-colors group ${likedPosts.has(item.id)
-                                    ? 'text-[#0066FF] bg-blue-50/50'
-                                    : 'text-gray-500 hover:bg-gray-100'
+                                ? 'text-[#0066FF] bg-blue-50/50'
+                                : 'text-gray-500 hover:bg-gray-100'
                                 }`}
                         >
                             {likedPosts.has(item.id) ? (

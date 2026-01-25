@@ -212,118 +212,152 @@ const Profile: React.FC = () => {
     if (!user) return null;
 
     return (
-        <div className="min-h-screen bg-[#F8FAFC] pb-20">
-            <div className="relative h-44 md:h-80 w-full overflow-hidden">
+        <div className="min-h-screen bg-[#F4F6F8] pb-20">
+            {/* Gradient Banner */}
+            <div className="relative h-32 md:h-48 w-full overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-br from-[#0066FF] via-[#5865F2] to-[#7000FF] opacity-90"></div>
                 <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20"></div>
             </div>
 
-            <div className="container-custom mx-auto px-4 -mt-24 md:-mt-40 relative z-10">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <div className="lg:col-span-2 space-y-8">
-                        {isOwnProfile && <IncomingRequests onActionComplete={fetchUserData} />}
+            <div className="container mx-auto px-4 -mt-16 md:-mt-24 relative z-10 max-w-6xl">
+                {isOwnProfile && <IncomingRequests onActionComplete={fetchUserData} />}
 
-                        <motion.div
-                            initial={{ opacity: 0, y: 30 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="bg-white rounded-3xl shadow-xl shadow-blue-900/5 border border-white/50 overflow-hidden"
-                        >
-                            <div className="p-8 md:p-10">
-                                <div className="flex flex-col md:flex-row gap-8 items-center md:items-end text-center md:text-left">
-                                    <div className="relative group">
-                                        <div className="absolute inset-0 bg-gradient-to-tr from-[#0066FF] to-[#00E0FF] rounded-full blur-md opacity-20"></div>
-                                        {isOwnProfile ? (
-                                            <AvatarUpload
-                                                userId={auth.currentUser?.uid || ''}
-                                                currentAvatar={user.avatar}
-                                                onUploadComplete={(newUrl) => setUser(prev => prev ? { ...prev, avatar: newUrl } : null)}
-                                            />
-                                        ) : (
-                                            <div className="relative w-36 h-36 md:w-44 md:h-44 rounded-full border-4 border-white shadow-2xl overflow-hidden bg-white">
-                                                <img src={user.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.name}`} alt={user.name} className="w-full h-full object-cover" />
-                                            </div>
-                                        )}
-                                    </div>
+                {/* Two-Column Layout */}
+                <div className="flex flex-col lg:flex-row gap-6">
 
-                                    <div className="flex-grow">
-                                        <div className="flex items-center justify-center md:justify-start gap-3 mb-2">
-                                            <h1 className="text-3xl md:text-4xl font-extrabold text-[#0f172a] tracking-tight">{user.name}</h1>
-                                            {user.isAdmin && (
-                                                <span className="px-2 py-0.5 bg-blue-100 text-[#0066FF] text-[10px] font-black uppercase rounded-md border border-blue-200">Admin</span>
-                                            )}
-                                        </div>
-                                        <p className="text-blue-600 font-semibold text-xl mb-4">{user.role}</p>
-
-                                        <div className="flex flex-wrap items-center justify-center md:justify-start gap-y-3 gap-x-6 text-sm text-gray-500 font-medium">
-                                            <span className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-lg border border-gray-100">
-                                                {user.college || user.institution || "Student"}
-                                            </span>
-                                            <div className="flex items-center gap-2 text-[#0066FF] font-bold text-sm bg-blue-50 px-4 py-1.5 rounded-full">
-                                                <span className="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
-                                                {connectionCount} connections
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex gap-3 w-full md:w-auto mt-6 md:mt-0">
-                                        {isOwnProfile ? (
-                                            <button
-                                                onClick={() => setIsEditModalOpen(true)}
-                                                className="flex-1 md:flex-none px-8 py-3 bg-[#0066FF] text-white rounded-2xl font-bold text-sm hover:bg-blue-700 transition-all shadow-xl shadow-blue-500/20"
-                                            >
-                                                Edit Profile
-                                            </button>
-                                        ) : (
-                                            <>
-                                                <button
-                                                    onClick={handleConnect}
-                                                    disabled={connectionStatus !== 'none' || actionLoading}
-                                                    className={`flex-1 md:flex-none px-8 py-3 rounded-2xl font-bold text-sm transition-all shadow-xl ${connectionStatus === 'none'
-                                                        ? 'bg-[#0066FF] text-white hover:bg-blue-700 shadow-blue-500/20'
-                                                        : 'bg-gray-100 text-gray-500 cursor-not-allowed'
-                                                        }`}
-                                                >
-                                                    {actionLoading ? '...' : (
-                                                        connectionStatus === 'pending' ? 'Pending' :
-                                                            connectionStatus === 'connected' ? 'Connected' :
-                                                                connectionStatus === 'received' ? 'Accept Request' : 'Connect'
-                                                    )}
-                                                </button>
-                                                <button
-                                                    onClick={handleMessage}
-                                                    className="flex-1 md:flex-none px-6 py-3 border-2 border-gray-100 text-[#0f172a] rounded-2xl font-bold text-sm hover:bg-gray-50"
-                                                >
-                                                    Message
-                                                </button>
-                                            </>
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
-                        </motion.div>
-
+                    {/* LEFT SIDEBAR - Identity Rail */}
+                    <div className="lg:w-80 flex-shrink-0">
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="bg-white rounded-3xl shadow-xl shadow-blue-900/5 border border-white/50 p-8 md:p-10"
+                            className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden"
                         >
-                            <h3 className="text-2xl font-black text-[#0f172a] mb-6 flex items-center gap-3">
-                                <span className="w-1.5 h-8 bg-[#0066FF] rounded-full"></span>
+                            {/* Profile Photo & Basic Info */}
+                            <div className="p-6 text-center border-b border-gray-100">
+                                <div className="relative inline-block mb-4">
+                                    {isOwnProfile ? (
+                                        <AvatarUpload
+                                            userId={auth.currentUser?.uid || ''}
+                                            currentAvatar={user.avatar}
+                                            onUploadComplete={(newUrl) => setUser(prev => prev ? { ...prev, avatar: newUrl } : null)}
+                                        />
+                                    ) : (
+                                        <div className="w-28 h-28 rounded-full border-4 border-white shadow-lg overflow-hidden bg-white mx-auto">
+                                            <img src={user.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.name}`} alt={user.name} className="w-full h-full object-cover" />
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="flex items-center justify-center gap-2 mb-1">
+                                    <h1 className="text-xl font-bold text-[#0f172a]">{user.name}</h1>
+                                    {user.isAdmin && (
+                                        <span className="px-2 py-0.5 bg-blue-100 text-[#0066FF] text-[9px] font-bold uppercase rounded">Admin</span>
+                                    )}
+                                </div>
+                                <p className="text-[#0066FF] font-medium text-sm mb-2">{user.role}</p>
+                                <p className="text-gray-500 text-xs mb-3">{user.college || user.institution || "Student"}</p>
+
+                                <div className="flex items-center justify-center gap-1 text-[#0066FF] font-semibold text-sm">
+                                    <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                                    {connectionCount} connections
+                                </div>
+                            </div>
+
+                            {/* Action Buttons - Always visible including mobile */}
+                            <div className="p-4 space-y-3">
+                                {isOwnProfile ? (
+                                    <button
+                                        onClick={() => setIsEditModalOpen(true)}
+                                        className="w-full py-3 bg-[#0066FF] text-white rounded-xl font-semibold text-sm hover:bg-blue-700 transition-all shadow-sm"
+                                    >
+                                        Edit Profile
+                                    </button>
+                                ) : (
+                                    <>
+                                        <button
+                                            onClick={handleConnect}
+                                            disabled={connectionStatus !== 'none' || actionLoading}
+                                            className={`w-full py-3 rounded-xl font-semibold text-sm transition-all ${connectionStatus === 'none'
+                                                ? 'bg-[#0066FF] text-white hover:bg-blue-700'
+                                                : 'bg-gray-100 text-gray-500 cursor-not-allowed'
+                                                }`}
+                                        >
+                                            {actionLoading ? '...' : (
+                                                connectionStatus === 'pending' ? 'Pending' :
+                                                    connectionStatus === 'connected' ? 'Connected' :
+                                                        connectionStatus === 'received' ? 'Accept Request' : 'Connect'
+                                            )}
+                                        </button>
+                                        <button
+                                            onClick={handleMessage}
+                                            className="w-full py-3 border-2 border-gray-200 text-[#0f172a] rounded-xl font-semibold text-sm hover:bg-gray-50 transition-all"
+                                        >
+                                            Message
+                                        </button>
+                                    </>
+                                )}
+                            </div>
+
+                            {/* Social Links */}
+                            {(user.socials?.github || user.socials?.linkedin) && (
+                                <div className="px-4 pb-4">
+                                    <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Social Links</h3>
+                                    <div className="space-y-2">
+                                        {user.socials?.github && (
+                                            <a href={user.socials.github} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
+                                                <svg className="w-5 h-5 text-gray-700" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" /></svg>
+                                                <span className="text-sm font-medium text-gray-700">GitHub</span>
+                                            </a>
+                                        )}
+                                        {user.socials?.linkedin && (
+                                            <a href={user.socials.linkedin} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors">
+                                                <svg className="w-5 h-5 text-[#0066FF]" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" /></svg>
+                                                <span className="text-sm font-medium text-[#0066FF]">LinkedIn</span>
+                                            </a>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Skills / Tech Stack */}
+                            <div className="px-4 pb-6">
+                                <SkillsManager
+                                    skills={user.skills || []}
+                                    isOwnProfile={isOwnProfile}
+                                    onUpdate={updateSkills}
+                                />
+                            </div>
+                        </motion.div>
+                    </div>
+
+                    {/* RIGHT COLUMN - Content Area */}
+                    <div className="flex-1 space-y-6">
+                        {/* About Section */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.1 }}
+                            className="bg-white rounded-xl shadow-sm border border-gray-100 p-6"
+                        >
+                            <h3 className="text-lg font-bold text-[#0f172a] mb-4 flex items-center gap-2">
+                                <span className="w-1 h-5 bg-[#0066FF] rounded-full"></span>
                                 About
                             </h3>
-                            <p className="text-gray-600 leading-relaxed text-lg whitespace-pre-wrap">
+                            <p className="text-gray-600 leading-relaxed whitespace-pre-wrap">
                                 {user.bio || "Building Scalable Products that solve modern problems."}
                             </p>
                         </motion.div>
 
+                        {/* Projects Section */}
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="bg-white rounded-3xl shadow-xl shadow-blue-900/5 border border-white/50 p-8 md:p-10"
+                            transition={{ delay: 0.2 }}
+                            className="bg-white rounded-xl shadow-sm border border-gray-100 p-6"
                         >
-                            <div className="flex justify-between items-center mb-10">
-                                <h3 className="text-2xl font-black text-[#0f172a] flex items-center gap-3">
-                                    <span className="w-1.5 h-8 bg-[#0066FF] rounded-full"></span>
+                            <div className="flex justify-between items-center mb-6">
+                                <h3 className="text-lg font-bold text-[#0f172a] flex items-center gap-2">
+                                    <span className="w-1 h-5 bg-[#0066FF] rounded-full"></span>
                                     Featured Projects
                                 </h3>
                                 {isOwnProfile && (
@@ -339,18 +373,18 @@ const Profile: React.FC = () => {
                                             setTechStackInput('');
                                             setIsProjectModalOpen(true);
                                         }}
-                                        className="px-4 py-2 bg-blue-50 text-[#0066FF] text-sm font-bold rounded-xl hover:bg-blue-100 transition-all"
+                                        className="px-4 py-2 bg-blue-50 text-[#0066FF] text-sm font-semibold rounded-lg hover:bg-blue-100 transition-all"
                                     >
                                         + Add Project
                                     </button>
                                 )}
                             </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {userProjects.length > 0 ? (
                                     userProjects.map((project) => (
-                                        <div key={project.id} className="p-6 rounded-2xl border border-gray-100 hover:border-[#0066FF]/30 hover:bg-[#0066FF]/0.02 transition-all flex flex-col h-full relative group">
+                                        <div key={project.id} className="p-5 rounded-xl border border-gray-100 hover:border-[#0066FF]/30 hover:shadow-sm transition-all flex flex-col h-full relative group">
                                             {isOwnProfile && (
-                                                <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                                     <button
                                                         onClick={(e) => {
                                                             e.stopPropagation();
@@ -358,7 +392,7 @@ const Profile: React.FC = () => {
                                                             setTechStackInput(project.techStack?.join(', ') || '');
                                                             setIsProjectModalOpen(true);
                                                         }}
-                                                        className="p-2 bg-white rounded-lg shadow-sm border border-gray-100 text-gray-500 hover:text-blue-600"
+                                                        className="p-1.5 bg-white rounded-md shadow-sm border border-gray-100 text-gray-400 hover:text-blue-600 text-xs"
                                                     >
                                                         Edit
                                                     </button>
@@ -367,79 +401,49 @@ const Profile: React.FC = () => {
                                                             e.stopPropagation();
                                                             handleDeleteProject(project.id);
                                                         }}
-                                                        className="p-2 bg-white rounded-lg shadow-sm border border-gray-100 text-gray-500 hover:text-red-600"
+                                                        className="p-1.5 bg-white rounded-md shadow-sm border border-gray-100 text-gray-400 hover:text-red-600 text-xs"
                                                     >
                                                         Del
                                                     </button>
                                                 </div>
                                             )}
-                                            <h4 className="font-bold text-xl text-[#0f172a] group-hover:text-[#0066FF] mb-1">{project.title}</h4>
-                                            <p className="text-gray-500 text-sm mb-6 line-clamp-3">{project.description}</p>
-                                            <div className="mt-auto flex flex-wrap gap-2">
-                                                {project.techStack?.map(tech => (
-                                                    <span key={tech} className="px-2 py-0.5 bg-gray-50 text-gray-600 rounded text-[10px] font-bold border border-gray-100 uppercase">{tech}</span>
+                                            <h4 className="font-semibold text-[#0f172a] group-hover:text-[#0066FF] mb-2">{project.title}</h4>
+                                            <p className="text-gray-500 text-sm mb-4 line-clamp-2 flex-grow">{project.description}</p>
+                                            <div className="flex flex-wrap gap-1.5 mt-auto">
+                                                {project.techStack?.slice(0, 4).map(tech => (
+                                                    <span key={tech} className="px-2 py-0.5 bg-gray-50 text-gray-500 rounded text-[10px] font-medium border border-gray-100">{tech}</span>
                                                 ))}
+                                                {project.techStack && project.techStack.length > 4 && (
+                                                    <span className="px-2 py-0.5 text-gray-400 text-[10px] font-medium">+{project.techStack.length - 4}</span>
+                                                )}
                                             </div>
                                         </div>
                                     ))
                                 ) : (
-                                    <div className="col-span-full py-12 text-center bg-gray-50 rounded-2xl border-2 border-dashed border-gray-100">
+                                    <div className="col-span-full py-12 text-center bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
                                         <p className="text-gray-400 font-medium">No projects added yet.</p>
                                     </div>
                                 )}
                             </div>
                         </motion.div>
                     </div>
-
-                    <div className="lg:col-span-1 space-y-8">
-                        <motion.div
-                            initial={{ opacity: 0, x: 20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            className="bg-white rounded-3xl shadow-xl shadow-blue-900/5 border border-white/50 p-8"
-                        >
-                            <h3 className="font-black text-xl text-[#0f172a] mb-8 uppercase tracking-widest text-center">Social Links</h3>
-                            <div className="space-y-4">
-                                {user.socials?.github && (
-                                    <a href={user.socials.github} target="_blank" className="flex items-center gap-4 p-4 rounded-2xl bg-gray-50">
-                                        <span className="font-bold text-sm">GitHub</span>
-                                    </a>
-                                )}
-                                {user.socials?.linkedin && (
-                                    <a href={user.socials.linkedin} target="_blank" className="flex items-center gap-4 p-4 rounded-2xl bg-blue-50 text-blue-600">
-                                        <span className="font-bold text-sm">LinkedIn</span>
-                                    </a>
-                                )}
-                            </div>
-                        </motion.div>
-
-                        <motion.div
-                            initial={{ opacity: 0, x: 20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            className="bg-white rounded-3xl shadow-xl shadow-blue-900/5 border border-white/50 p-8"
-                        >
-                            <SkillsManager
-                                skills={user.skills || []}
-                                isOwnProfile={isOwnProfile}
-                                onUpdate={updateSkills}
-                            />
-                        </motion.div>
-                    </div>
                 </div>
             </div>
 
+            {/* Project Modal */}
             <AnimatePresence>
                 {isProjectModalOpen && (
                     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsProjectModalOpen(false)} className="absolute inset-0 bg-black/70" />
-                        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="relative w-full max-w-2xl bg-white rounded-3xl p-8 overflow-hidden">
-                            <h3 className="text-2xl font-black mb-6">{editingProject?.id ? 'Edit Project' : 'Add Project'}</h3>
-                            <form onSubmit={handleProjectSubmit} className="space-y-6">
-                                <input required placeholder="Project Title" value={editingProject?.title || ''} onChange={e => setEditingProject(prev => ({ ...prev, title: e.target.value }))} className="w-full px-5 py-3 rounded-2xl bg-gray-50 border border-gray-100 outline-none focus:border-[#0066FF]" />
-                                <textarea required rows={4} placeholder="Description" value={editingProject?.description || ''} onChange={e => setEditingProject(prev => ({ ...prev, description: e.target.value }))} className="w-full px-5 py-3 rounded-2xl bg-gray-50 border border-gray-100 outline-none focus:border-[#0066FF] resize-none" />
-                                <input required placeholder="Tech Stack (comma separated)" value={techStackInput} onChange={e => setTechStackInput(e.target.value)} className="w-full px-5 py-3 rounded-2xl bg-gray-50 border border-gray-100 outline-none focus:border-[#0066FF]" />
-                                <div className="flex gap-4">
-                                    <button type="button" onClick={() => setIsProjectModalOpen(false)} className="flex-1 py-4 font-bold text-gray-400">Cancel</button>
-                                    <button type="submit" disabled={projectFormLoading} className="flex-[2] py-4 bg-[#0066FF] text-white font-bold rounded-2xl shadow-lg">Save Project</button>
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsProjectModalOpen(false)} className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+                        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="relative w-full max-w-lg bg-white rounded-2xl p-6 overflow-hidden">
+                            <h3 className="text-xl font-bold mb-5">{editingProject?.id ? 'Edit Project' : 'Add Project'}</h3>
+                            <form onSubmit={handleProjectSubmit} className="space-y-4">
+                                <input required placeholder="Project Title" value={editingProject?.title || ''} onChange={e => setEditingProject(prev => ({ ...prev, title: e.target.value }))} className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 outline-none focus:border-[#0066FF] text-sm" />
+                                <textarea required rows={3} placeholder="Description" value={editingProject?.description || ''} onChange={e => setEditingProject(prev => ({ ...prev, description: e.target.value }))} className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 outline-none focus:border-[#0066FF] resize-none text-sm" />
+                                <input required placeholder="Tech Stack (comma separated)" value={techStackInput} onChange={e => setTechStackInput(e.target.value)} className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 outline-none focus:border-[#0066FF] text-sm" />
+                                <div className="flex gap-3 pt-2">
+                                    <button type="button" onClick={() => setIsProjectModalOpen(false)} className="flex-1 py-3 font-semibold text-gray-400 hover:text-gray-600">Cancel</button>
+                                    <button type="submit" disabled={projectFormLoading} className="flex-[2] py-3 bg-[#0066FF] text-white font-semibold rounded-xl shadow-sm disabled:opacity-50">Save Project</button>
                                 </div>
                             </form>
                         </motion.div>
@@ -447,16 +451,17 @@ const Profile: React.FC = () => {
                 )}
             </AnimatePresence>
 
+            {/* Connect Modal */}
             <AnimatePresence>
                 {isConnectModalOpen && (
                     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsConnectModalOpen(false)} className="absolute inset-0 bg-black/60" />
-                        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="relative w-full max-w-md bg-white rounded-3xl p-8">
-                            <h3 className="text-xl font-black mb-4">Send Request</h3>
-                            <textarea rows={4} placeholder="Personalized note (optional)" value={connectNote} onChange={e => setConnectNote(e.target.value)} className="w-full px-5 py-3 rounded-2xl bg-gray-50 border border-gray-100 outline-none focus:border-[#0066FF] mb-6" />
-                            <div className="flex gap-4">
-                                <button onClick={() => setIsConnectModalOpen(false)} className="flex-1 font-bold text-gray-400">Cancel</button>
-                                <button onClick={handleConnect} disabled={actionLoading} className="flex-[2] py-3 bg-[#0066FF] text-white font-bold rounded-2xl">Send</button>
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsConnectModalOpen(false)} className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+                        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="relative w-full max-w-md bg-white rounded-2xl p-6">
+                            <h3 className="text-xl font-bold mb-4">Send Connection Request</h3>
+                            <textarea rows={3} placeholder="Add a personalized note (optional)" value={connectNote} onChange={e => setConnectNote(e.target.value)} className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 outline-none focus:border-[#0066FF] mb-4 text-sm" />
+                            <div className="flex gap-3">
+                                <button onClick={() => setIsConnectModalOpen(false)} className="flex-1 font-semibold text-gray-400 hover:text-gray-600">Cancel</button>
+                                <button onClick={handleConnect} disabled={actionLoading} className="flex-[2] py-3 bg-[#0066FF] text-white font-semibold rounded-xl disabled:opacity-50">Send</button>
                             </div>
                         </motion.div>
                     </div>

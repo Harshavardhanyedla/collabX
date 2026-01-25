@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { getUserProfile, updateProfile } from '../lib/profiles';
+import { containsProfanity, getProfanityErrorMessage } from '../utils/profanityFilter';
 import type { UserProfile } from '../types';
 
 interface ProfileEditModalProps {
@@ -22,6 +23,7 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({ isOpen, onClose, us
     const [skillsText, setSkillsText] = useState('');
     const [loading, setLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
+    const [profileError, setProfileError] = useState('');
 
     useEffect(() => {
         if (isOpen && userId) {
@@ -41,6 +43,18 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({ isOpen, onClose, us
 
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Check for profanity in profile fields
+        const nameCheck = containsProfanity(profile.name || '');
+        const headlineCheck = containsProfanity(profile.headline || '');
+        const bioCheck = containsProfanity(profile.bio || '');
+
+        if (nameCheck.hasProfanity || headlineCheck.hasProfanity || bioCheck.hasProfanity) {
+            setProfileError(getProfanityErrorMessage());
+            return;
+        }
+        setProfileError('');
+
         setIsSaving(true);
         try {
             const updatedData = {
@@ -85,12 +99,20 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({ isOpen, onClose, us
                             <div className="p-12 text-center text-gray-500">Loading profile...</div>
                         ) : (
                             <form onSubmit={handleSave} className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+                                {profileError && (
+                                    <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm">
+                                        {profileError}
+                                    </div>
+                                )}
                                 <div>
                                     <label className="block text-sm font-bold text-gray-700 mb-1">Full Name</label>
                                     <input
                                         type="text"
                                         value={profile.name}
-                                        onChange={(e) => setProfile({ ...profile, name: e.target.value })}
+                                        onChange={(e) => {
+                                            setProfile({ ...profile, name: e.target.value });
+                                            if (profileError) setProfileError('');
+                                        }}
                                         className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#0066FF] focus:bg-white transition-all outline-none"
                                         required
                                     />

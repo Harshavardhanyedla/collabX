@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { auth } from '../lib/firebase';
 import { addProject } from '../lib/projects';
+import { containsProfanity, getProfanityErrorMessage } from '../utils/profanityFilter';
 
 interface ShareProjectModalProps {
     isOpen: boolean;
@@ -26,6 +27,15 @@ const ShareProjectModal: React.FC<ShareProjectModalProps> = ({ isOpen, onClose, 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!auth.currentUser) return;
+
+        // Check for profanity in title and description
+        const titleCheck = containsProfanity(formData.title);
+        const descCheck = containsProfanity(formData.description);
+
+        if (titleCheck.hasProfanity || descCheck.hasProfanity) {
+            setError(getProfanityErrorMessage());
+            return;
+        }
 
         setIsSubmitting(true);
         setError('');
