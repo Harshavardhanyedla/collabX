@@ -733,3 +733,22 @@ body {
 .lowercase {
   text-transform: lowercase;
 }
+
+/* Safe Area Utilities */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.pt-safe {
+  padding-top: env(safe-area-inset-top);
+}
+
+/* Hide scrollbar for clean horizontal scrolling if needed */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

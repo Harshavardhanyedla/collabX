@@ -21,6 +21,7 @@ import MainLayout from './components/MainLayout';
 import HomeFeed from './components/HomeFeed';
 import Projects from './pages/Projects';
 import Resources from './pages/Resources';
+import Explore from './pages/Explore';
 
 const Home: React.FC = () => {
     const location = useLocation();
@@ -111,6 +112,14 @@ const App: React.FC = () => {
                         <PrivateRoute>
                             <Resources />
                         </PrivateRoute>
+                    }
+                />
+                <Route
+                    path="/explore"
+                    element={
+                        <MainLayout>
+                            <Explore />
+                        </MainLayout>
                     }
                 />
                 <Route
