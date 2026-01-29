@@ -4,7 +4,7 @@ import { auth, db } from '../lib/firebase';
 import { doc, collection, query, where, getDocs, updateDoc } from 'firebase/firestore';
 import { useNavigate, useParams } from 'react-router-dom';
 import type { UserProfile, Project } from '../types';
-import { sendConnectionRequest, fetchConnectionCount } from '../lib/networking';
+import { sendConnectionRequest, fetchConnectionCount, acceptConnectionRequest } from '../lib/networking';
 import { getOrCreateConversation } from '../lib/messaging';
 import { fetchUserProjects, addProject, updateProject, deleteProject } from '../lib/projects';
 import AvatarUpload from '../components/AvatarUpload';
@@ -22,6 +22,7 @@ const Profile: React.FC = () => {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [connectionCount, setConnectionCount] = useState<number>(0);
     const [connectionStatus, setConnectionStatus] = useState<'none' | 'pending' | 'connected' | 'received'>('none');
+    const [requestId, setRequestId] = useState<string | null>(null);
     const [actionLoading, setActionLoading] = useState(false);
     const [userProjects, setUserProjects] = useState<Project[]>([]);
     const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
@@ -68,11 +69,16 @@ const Profile: React.FC = () => {
                     const [sent, received] = await Promise.all([getDocs(q1), getDocs(q2)]);
 
                     if (!sent.empty) {
-                        const status = sent.docs[0].data().status;
-                        setConnectionStatus(status === 'accepted' ? 'connected' : 'pending');
+                        const data = sent.docs[0].data();
+                        setConnectionStatus(data.status === 'accepted' ? 'connected' : 'pending');
+                        setRequestId(sent.docs[0].id);
                     } else if (!received.empty) {
-                        const status = received.docs[0].data().status;
-                        setConnectionStatus(status === 'accepted' ? 'connected' : 'received');
+                        const data = received.docs[0].data();
+                        setConnectionStatus(data.status === 'accepted' ? 'connected' : 'received');
+                        setRequestId(received.docs[0].id);
+                    } else {
+                        setConnectionStatus('none');
+                        setRequestId(null);
                     }
                 }
             } else if (!userId) {
@@ -99,6 +105,22 @@ const Profile: React.FC = () => {
     const handleConnect = async () => {
         const targetUserId = userId || (user?.uid);
         if (!auth.currentUser || !targetUserId) return;
+
+        if (connectionStatus === 'received') {
+            if (requestId) {
+                setActionLoading(true);
+                try {
+                    await acceptConnectionRequest(requestId, targetUserId);
+                    setConnectionStatus('connected');
+                    setConnectionCount(prev => prev + 1);
+                } catch (error) {
+                    console.error("Error accepting request:", error);
+                } finally {
+                    setActionLoading(false);
+                }
+            }
+            return;
+        }
 
         if (!isConnectModalOpen) {
             setIsConnectModalOpen(true);

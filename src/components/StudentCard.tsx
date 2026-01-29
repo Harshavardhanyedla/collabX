@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import type { UserProfile } from '../types';
 import { useNavigate } from 'react-router-dom';
 import { getOrCreateConversation } from '../lib/messaging';
-import { fetchConnectionStatus, sendConnectionRequest } from '../lib/networking';
+import { fetchConnectionStatusData, sendConnectionRequest, acceptConnectionRequest } from '../lib/networking';
 import { auth } from '../lib/firebase';
 
 interface StudentCardProps {
@@ -13,6 +13,7 @@ interface StudentCardProps {
 
 const StudentCard: React.FC<StudentCardProps> = ({ student, onClick }) => {
     const [status, setStatus] = useState<'none' | 'pending' | 'received' | 'connected'>('none');
+    const [requestId, setRequestId] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const currentUser = auth.currentUser;
     const navigate = useNavigate();
@@ -34,8 +35,9 @@ const StudentCard: React.FC<StudentCardProps> = ({ student, onClick }) => {
         const getStatus = async () => {
             if (currentUser && currentUser.uid !== student.uid) {
                 try {
-                    const s = await fetchConnectionStatus(student.uid);
+                    const { status: s, requestId: rid } = await fetchConnectionStatusData(student.uid);
                     setStatus(s as 'none' | 'pending' | 'received' | 'connected');
+                    setRequestId(rid);
                 } catch (err) {
                     console.error("Error fetching status:", err);
                 }
@@ -50,8 +52,13 @@ const StudentCard: React.FC<StudentCardProps> = ({ student, onClick }) => {
 
         setLoading(true);
         try {
-            await sendConnectionRequest(student.uid);
-            setStatus('pending');
+            if (status === 'received' && requestId) {
+                await acceptConnectionRequest(requestId, student.uid);
+                setStatus('connected');
+            } else if (status === 'none') {
+                await sendConnectionRequest(student.uid);
+                setStatus('pending');
+            }
         } catch (error) {
             const err = error as Error;
             console.error("Error connecting:", err);
