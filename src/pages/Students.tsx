@@ -105,7 +105,7 @@ const Students: React.FC = () => {
                 </div>
 
                 {/* Filters Section */}
-                <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm sticky top-[72px] z-10">
+                <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm lg:sticky lg:top-24 z-10">
                     <StudentFilters
                         onSearchChange={setSearchQuery}
                         onFilterChange={(type, val) => setFilters(prev => ({ ...prev, [type]: val }))}

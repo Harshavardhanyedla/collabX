@@ -116,7 +116,7 @@ const Projects: React.FC = () => {
                 </div>
 
                 {/* Search & Filters */}
-                <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm sticky top-[72px] z-10 space-y-4">
+                <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm lg:sticky lg:top-24 z-10 space-y-4">
                     <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
