@@ -28,6 +28,7 @@
     "@types/aos": "^3.0.7",
     "@types/json-server": "^0.14.8",
     "@types/react-router-dom": "^5.3.3",
+    "@vercel/analytics": "^1.6.1",
     "aos": "^2.3.4",
     "autoprefixer": "^10.4.21",
     "date-fns": "^4.1.0",

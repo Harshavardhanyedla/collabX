@@ -1,5 +1,6 @@
 import React from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 import NavBar from './components/NavBar';
 import Hero from './components/Hero';
 import ProjectsSection from './components/ProjectsSection';
@@ -137,6 +138,7 @@ const App: React.FC = () => {
                 <Route path="/resource/programming-languages/:languageId" element={<LanguageDetail />} />
                 <Route path="/login" element={<LoginPage />} />
             </Routes>
+            <Analytics />
             {/* Footer is typically not shown on the main feed in LinkedIn-style apps, 
                 but let's keep it for now or move it to sidebars */}
         </div>
