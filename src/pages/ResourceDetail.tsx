@@ -38,6 +38,61 @@ const ResourceDetail: React.FC = () => {
             ];
         }
 
+        if (resourceId === 'cybersecurity') {
+            return [
+                { id: 'cs-1', title: 'Ethical Hacking', type: 'Video', url: '#', description: 'Learn the fundamentals of penetration testing and ethical hacking.' },
+                { id: 'cs-2', title: 'Web Security', type: 'Video', url: '#', description: 'Secure web applications against common vulnerabilities like XSS and SQLi.' },
+                { id: 'cs-3', title: 'Network Security', type: 'Video', url: '#', description: 'Protect network infrastructure and data from unauthorized access.' },
+                { id: 'cs-4', title: 'OSINT', type: 'Video', url: '#', description: 'Open Source Intelligence gathering techniques and tools.' },
+                { id: 'cs-5', title: 'Cloud Security', type: 'Video', url: '#', description: 'Securing cloud environments and native applications.' },
+            ];
+        }
+
+        if (resourceId === 'data-ai') {
+            return [
+                { id: 'da-1', title: 'Data Structures & Algorithms', type: 'Video', url: '#', description: 'Core computer science concepts for efficient problem solving.' },
+                { id: 'da-2', title: 'Machine Learning', type: 'Video', url: '#', description: 'Supervised, unsupervised, and reinforcement learning algorithms.' },
+                { id: 'da-3', title: 'Deep Learning', type: 'Video', url: '#', description: 'Neural networks, computer vision, and NLP foundations.' },
+                { id: 'da-4', title: 'Data Science', type: 'Video', url: '#', description: 'Data analysis, visualization, and statistical modeling.' },
+                { id: 'da-5', title: 'MLOps', type: 'Video', url: '#', description: 'Deploying, monitoring, and maintaining ML models in production.' },
+            ];
+        }
+
+        if (resourceId === 'web-app-dev') {
+            return [
+                { id: 'wd-1', title: 'Frontend Development', type: 'Video', url: '#', description: 'Building responsive and interactive user interfaces.' },
+                { id: 'wd-2', title: 'Backend Development', type: 'Video', url: '#', description: 'Server-side logic, databases, and API development.' },
+                { id: 'wd-3', title: 'Full Stack Development', type: 'Video', url: '#', description: 'Mastering both client and server-side technologies.' },
+                { id: 'wd-4', title: 'Mobile App Development', type: 'Video', url: '#', description: 'Creating native and cross-platform mobile applications.' },
+            ];
+        }
+
+        if (resourceId === 'cloud-devops') {
+            return [
+                { id: 'cd-1', title: 'AWS, Azure, GCP', type: 'Video', url: '#', description: 'Mastering major public cloud platforms and services.' },
+                { id: 'cd-2', title: 'Docker & Kubernetes', type: 'Video', url: '#', description: 'Containerization and orchestration for scalable applications.' },
+                { id: 'cd-3', title: 'CI/CD Pipelines', type: 'Video', url: '#', description: 'Automating software delivery and deployment workflows.' },
+                { id: 'cd-4', title: 'Linux & SysAdmin', type: 'Video', url: '#', description: 'Essential Linux skills for server management and operations.' },
+            ];
+        }
+
+        if (resourceId === 'career-prep') {
+            return [
+                { id: 'cp-1', title: 'Interview Preparation', type: 'Link', url: '#', description: 'Technical and behavioral interview guides and tips.' },
+                { id: 'cp-2', title: 'Resume Building', type: 'Link', url: '#', description: 'Crafting effective resumes and cover letters.' },
+                { id: 'cp-3', title: 'System Design', type: 'Link', url: '#', description: 'Designing scalable and reliable software systems.' },
+                { id: 'cp-4', title: 'Internship Preparation', type: 'Link', url: '#', description: 'Guide to landing and succeeding in internships.' },
+            ];
+        }
+
+        if (resourceId === 'competitive-prep') {
+            return [
+                { id: 'cmp-1', title: 'Placement Aptitude', type: 'Link', url: '#', description: 'Quantitative, logical reasoning, and verbal ability practice.' },
+                { id: 'cmp-2', title: 'Coding Practice', type: 'Link', url: '#', description: 'Platform links and problem sets for coding interviews.' },
+                { id: 'cmp-3', title: 'CS Fundamentals', type: 'Link', url: '#', description: 'OS, DBMS, Networks, and OOPS core concepts.' },
+            ];
+        }
+
         const commonResources: ResourceItem[] = [
             { id: '1', title: 'Syllabus & Exam Pattern', type: 'PDF', url: '#', description: 'Official syllabus and detailed exam pattern breakdown.' },
             { id: '2', title: 'Previous Year Questions (2020-2024)', type: 'PDF', url: '#', description: 'Solved papers from the last 5 years.' },
@@ -52,6 +107,12 @@ const ResourceDetail: React.FC = () => {
         switch (id) {
             case 'programming-languages': return 'Programming Languages';
             case 'roadmaps-merged': return 'Learning Roadmaps';
+            case 'cybersecurity': return 'Cybersecurity';
+            case 'data-ai': return 'Data & AI';
+            case 'web-app-dev': return 'Web & App Development';
+            case 'cloud-devops': return 'Cloud & DevOps';
+            case 'career-prep': return 'Career Preparation';
+            case 'competitive-prep': return 'Competitive & Exam Prep';
             case 'cat': return 'CAT Study Materials';
             case 'upsc': return 'UPSC Study Materials';
             case 'gate': return 'GATE Study Materials';
@@ -101,11 +162,11 @@ const ResourceDetail: React.FC = () => {
                             >
                                 <div className="flex justify-between items-start mb-4">
                                     <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide ${resourceId === 'programming-languages'
-                                            ? 'bg-blue-50 text-blue-600'
-                                            : resource.type === 'PDF' ? 'bg-red-50 text-red-600' :
-                                                resource.type === 'Video' ? 'bg-blue-50 text-blue-600' :
-                                                    resource.type === 'Book' ? 'bg-yellow-50 text-yellow-600' :
-                                                        'bg-green-50 text-green-600'
+                                        ? 'bg-blue-50 text-blue-600'
+                                        : resource.type === 'PDF' ? 'bg-red-50 text-red-600' :
+                                            resource.type === 'Video' ? 'bg-blue-50 text-blue-600' :
+                                                resource.type === 'Book' ? 'bg-yellow-50 text-yellow-600' :
+                                                    'bg-green-50 text-green-600'
                                         }`}>
                                         {resourceId === 'programming-languages' ? 'Full Course' : resource.type}
                                     </span>
