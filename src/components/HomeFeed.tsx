@@ -12,7 +12,9 @@ import { HandThumbUpIcon as HandThumbUpSolidIcon } from '@heroicons/react/24/sol
 import { auth } from '../lib/firebase';
 import { createPost, listenToFeed, toggleLike, getUserLikes } from '../lib/posts';
 import { containsProfanity, getProfanityErrorMessage, filterProfanity } from '../utils/profanityFilter';
-import type { Post } from '../types';
+import { fetchConnections } from '../lib/networking';
+import { getOrCreateConversation, sendMessage } from '../lib/messaging';
+import type { Post, UserProfile } from '../types';
 
 const HomeFeed: React.FC = () => {
     const navigate = useNavigate();
@@ -22,6 +24,14 @@ const HomeFeed: React.FC = () => {
     const [profanityError, setProfanityError] = useState('');
     const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set());
     const [loadingLikes, setLoadingLikes] = useState<{ [key: string]: boolean }>({});
+
+    // Share Modal State
+    const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+    const [postToShare, setPostToShare] = useState<Post | null>(null);
+    const [connections, setConnections] = useState<UserProfile[]>([]);
+    const [loadingConnections, setLoadingConnections] = useState(false);
+    const [sharingIds, setSharingIds] = useState<Set<string>>(new Set());
+
     const user = auth.currentUser;
 
     useEffect(() => {
@@ -125,6 +135,49 @@ const HomeFeed: React.FC = () => {
 
     const navigateToProfile = (userId: string) => {
         navigate(`/profile/${userId}`);
+    };
+
+    const openShareModal = async (post: Post) => {
+        if (!user) return;
+        setPostToShare(post);
+        setIsShareModalOpen(true);
+
+        if (connections.length === 0) {
+            setLoadingConnections(true);
+            try {
+                // Assuming fetchConnections returns UserProfile[]
+                // We need to cast or ensure types match. 
+                // The fetchConnections returns (UserProfile | null)[], filtered to UserProfile[]
+                const conns = await fetchConnections(user.uid);
+                setConnections(conns as UserProfile[]);
+            } catch (error) {
+                console.error("Failed to fetch connections:", error);
+            } finally {
+                setLoadingConnections(false);
+            }
+        }
+    };
+
+    const handleSharePost = async (targetUserId: string) => {
+        if (!user || !postToShare) return;
+
+        setSharingIds(prev => new Set(prev).add(targetUserId));
+
+        try {
+            const conversationId = await getOrCreateConversation(targetUserId);
+            const shareContent = `Shared a post by ${postToShare.authorName}:\n\n${postToShare.content.substring(0, 100)}...`;
+
+            await sendMessage(conversationId, shareContent);
+
+            // Optional: You could show a transient success message here
+        } catch (error) {
+            console.error("Failed to share post:", error);
+            setSharingIds(prev => {
+                const next = new Set(prev);
+                next.delete(targetUserId);
+                return next;
+            });
+        }
     };
 
     return (
@@ -248,7 +301,7 @@ const HomeFeed: React.FC = () => {
                         <button
                             onClick={() => handleLike(item.id)}
                             disabled={loadingLikes[item.id]}
-                            className={`flex_1 flex items-center justify-center gap-2 py-2.5 rounded transition-colors group ${likedPosts.has(item.id)
+                            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded transition-colors group ${likedPosts.has(item.id)
                                 ? 'text-[#0066FF] bg-blue-50/50'
                                 : 'text-gray-500 hover:bg-gray-100'
                                 }`}
@@ -260,21 +313,77 @@ const HomeFeed: React.FC = () => {
                             )}
                             <span className="text-sm font-bold">{likedPosts.has(item.id) ? 'Liked' : 'Like'}</span>
                         </button>
-                        <button className="flex-1 flex items-center justify-center gap-2 py-2.5 text-gray-500 hover:bg-gray-100 rounded transition-colors group">
-                            <ChatBubbleLeftIcon className="h-5 w-5 group-hover:scale-110" />
-                            <span className="text-sm font-bold">Comment</span>
-                        </button>
-                        <button className="flex-1 flex items-center justify-center gap-2 py-2.5 text-gray-500 hover:bg-gray-100 rounded transition-colors group">
-                            <ShareIcon className="h-5 w-5 group-hover:scale-110" />
-                            <span className="text-sm font-bold">Repost</span>
-                        </button>
-                        <button className="flex-1 flex items-center justify-center gap-2 py-2.5 text-gray-500 hover:bg-gray-100 rounded transition-colors group">
-                            <PaperAirplaneIcon className="h-5 w-5 -rotate-45 group-hover:scale-110" />
-                            <span className="text-sm font-bold">Send</span>
+
+                        <button
+                            onClick={() => openShareModal(item)}
+                            className="flex-1 flex items-center justify-center gap-2 py-2.5 text-gray-500 hover:bg-gray-100 rounded transition-colors group"
+                        >
+                            <PaperAirplaneIcon className="h-5 w-5 -rotate-45 group-hover:scale-110 group-hover:text-[#0066FF]" />
+                            <span className="text-sm font-bold group-hover:text-[#0066FF]">Share</span>
                         </button>
                     </div>
                 </div>
             ))}
+
+            {/* Share/Send Modal */}
+            {isShareModalOpen && postToShare && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsShareModalOpen(false)} />
+                    <div className="relative w-full max-w-md bg-white rounded-2xl p-6 shadow-2xl overflow-hidden max-h-[80vh] flex flex-col">
+                        <div className="flex justify-between items-center mb-4">
+                            <h3 className="text-lg font-bold text-gray-900">Share with Connections</h3>
+                            <button onClick={() => setIsShareModalOpen(false)} className="text-gray-400 hover:text-gray-600">
+                                <span className="text-2xl">&times;</span>
+                            </button>
+                        </div>
+
+                        <div className="flex-1 overflow-y-auto min-h-[200px]">
+                            {loadingConnections ? (
+                                <div className="flex justify-center py-8">
+                                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                                </div>
+                            ) : connections.length > 0 ? (
+                                <div className="space-y-3">
+                                    {connections.map(conn => (
+                                        <div key={conn.uid} className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 rounded-full bg-blue-100 overflow-hidden">
+                                                    {conn.avatar ? (
+                                                        <img src={conn.avatar} alt={conn.name} className="w-full h-full object-cover" />
+                                                    ) : (
+                                                        <div className="w-full h-full flex items-center justify-center text-blue-600 font-bold">
+                                                            {conn.name[0]}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                <div>
+                                                    <p className="font-bold text-sm text-gray-900">{conn.name}</p>
+                                                    <p className="text-xs text-gray-500 truncate w-40">{conn.role || 'Student'}</p>
+                                                </div>
+                                            </div>
+                                            <button
+                                                onClick={() => handleSharePost(conn.uid)}
+                                                disabled={sharingIds.has(conn.uid)}
+                                                className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${sharingIds.has(conn.uid)
+                                                    ? 'bg-green-100 text-green-700'
+                                                    : 'bg-blue-50 text-blue-600 hover:bg-blue-100'
+                                                    }`}
+                                            >
+                                                {sharingIds.has(conn.uid) ? 'Sent' : 'Send'}
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="text-center py-8 text-gray-500">
+                                    <p>No connections found.</p>
+                                    <p className="text-sm mt-1">Connect with students to share posts!</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {posts.length === 0 && (
                 <div className="bg-white rounded-xl border border-gray-200 p-8 text-center text-gray-500">
