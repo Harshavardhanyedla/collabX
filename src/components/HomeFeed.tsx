@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
-    PhotoIcon,
-    CalendarIcon,
-    DocumentTextIcon,
     EllipsisHorizontalIcon,
     ChatBubbleLeftIcon,
     ShareIcon,
@@ -17,6 +15,7 @@ import { containsProfanity, getProfanityErrorMessage, filterProfanity } from '..
 import type { Post } from '../types';
 
 const HomeFeed: React.FC = () => {
+    const navigate = useNavigate();
     const [posts, setPosts] = useState<Post[]>([]);
     const [newPostContent, setNewPostContent] = useState('');
     const [isPosting, setIsPosting] = useState(false);
@@ -124,12 +123,16 @@ const HomeFeed: React.FC = () => {
         return `${Math.floor(diffSeconds / 86400)}d ago`;
     };
 
+    const navigateToProfile = (userId: string) => {
+        navigate(`/profile/${userId}`);
+    };
+
     return (
         <div className="flex flex-col gap-2">
             {/* Create Post Card */}
             <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
                 <div className="flex gap-3">
-                    <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-[#0066FF] font-bold text-lg shrink-0 overflow-hidden">
+                    <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-[#0066FF] font-bold text-lg shrink-0 overflow-hidden cursor-pointer" onClick={() => user && navigateToProfile(user.uid)}>
                         {user?.photoURL ? (
                             <img src={user.photoURL} alt="Me" className="w-full h-full object-cover" />
                         ) : (
@@ -165,20 +168,6 @@ const HomeFeed: React.FC = () => {
                         )}
                     </form>
                 </div>
-                <div className="flex justify-between mt-3 px-2 border-t border-gray-50 pt-2">
-                    <button className="flex items-center gap-2 text-gray-500 hover:bg-gray-100 p-2 rounded transition-colors group">
-                        <PhotoIcon className="h-5 w-5 text-blue-400" />
-                        <span className="text-sm font-medium group-hover:text-gray-700">Media</span>
-                    </button>
-                    <button className="flex items-center gap-2 text-gray-500 hover:bg-gray-100 p-2 rounded transition-colors group">
-                        <CalendarIcon className="h-5 w-5 text-yellow-500" />
-                        <span className="text-sm font-medium group-hover:text-gray-700">Event</span>
-                    </button>
-                    <button className="flex items-center gap-2 text-gray-500 hover:bg-gray-100 p-2 rounded transition-colors group">
-                        <DocumentTextIcon className="h-5 w-5 text-orange-400" />
-                        <span className="text-sm font-medium group-hover:text-gray-700">Write article</span>
-                    </button>
-                </div>
             </div>
 
             {/* Feed Items */}
@@ -187,7 +176,10 @@ const HomeFeed: React.FC = () => {
                     {/* Item Header */}
                     <div className="flex justify-between px-4 mb-2">
                         <div className="flex gap-2">
-                            <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-[#0066FF] font-bold text-lg overflow-hidden shrink-0">
+                            <div
+                                onClick={() => navigateToProfile(item.userId)}
+                                className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-[#0066FF] font-bold text-lg overflow-hidden shrink-0 cursor-pointer hover:opacity-90 transition-opacity"
+                            >
                                 {item.authorAvatar ? (
                                     <img src={item.authorAvatar} alt={filterProfanity(item.authorName)} className="w-full h-full object-cover" />
                                 ) : (
@@ -195,7 +187,10 @@ const HomeFeed: React.FC = () => {
                                 )}
                             </div>
                             <div className="flex flex-col">
-                                <span className="text-sm font-bold text-gray-900 flex items-center gap-1 hover:text-[#0066FF] hover:underline cursor-pointer">
+                                <span
+                                    onClick={() => navigateToProfile(item.userId)}
+                                    className="text-sm font-bold text-gray-900 flex items-center gap-1 hover:text-[#0066FF] hover:underline cursor-pointer"
+                                >
                                     {filterProfanity(item.authorName)}
                                     <span className="text-xs font-normal text-gray-400">• 1st</span>
                                 </span>
