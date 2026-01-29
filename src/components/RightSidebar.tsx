@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
     PlusIcon,
     ArrowRightIcon,
-    InformationCircleIcon,
-    CheckBadgeIcon
+    InformationCircleIcon
 } from '@heroicons/react/24/solid';
 import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../lib/firebase';
@@ -114,10 +113,10 @@ const RightSidebar: React.FC = () => {
                                         onClick={() => handleConnect(person.uid)}
                                         disabled={connectionStates[person.uid] !== 'none' && connectionStates[person.uid] !== undefined}
                                         className={`mt-1.5 flex items-center justify-center gap-1 px-3 py-1 border rounded-full text-sm font-bold transition-colors w-24 ${connectionStates[person.uid] === 'pending'
-                                                ? 'bg-gray-100 text-gray-500 border-gray-200 cursor-default'
-                                                : connectionStates[person.uid] === 'connected'
-                                                    ? 'bg-green-50 text-green-600 border-green-200 cursor-default'
-                                                    : 'border-gray-500 text-gray-600 hover:bg-gray-50 hover:border-gray-800'
+                                            ? 'bg-gray-100 text-gray-500 border-gray-200 cursor-default'
+                                            : connectionStates[person.uid] === 'connected'
+                                                ? 'bg-green-50 text-green-600 border-green-200 cursor-default'
+                                                : 'border-gray-500 text-gray-600 hover:bg-gray-50 hover:border-gray-800'
                                             }`}
                                     >
                                         {connectionStates[person.uid] === 'pending' ? (
