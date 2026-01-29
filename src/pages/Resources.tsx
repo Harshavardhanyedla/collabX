@@ -58,6 +58,48 @@ const Resources: React.FC = () => {
                         color: 'badge-red'
                     },
                     {
+                        id: 'cybersecurity',
+                        title: 'Cybersecurity',
+                        description: 'Ethical Hacking, Web Security, Network Security, OSINT, Cloud Security.',
+                        icon: '🔒',
+                        color: 'badge-red'
+                    },
+                    {
+                        id: 'data-ai',
+                        title: 'Data & AI',
+                        description: 'DSA, Machine Learning, Deep Learning, Data Science, MLOps.',
+                        icon: '🤖',
+                        color: 'badge-blue'
+                    },
+                    {
+                        id: 'web-app-dev',
+                        title: 'Web & App Development',
+                        description: 'Frontend, Backend, Full Stack, Mobile App Development.',
+                        icon: '📱',
+                        color: 'badge-purple'
+                    },
+                    {
+                        id: 'cloud-devops',
+                        title: 'Cloud & DevOps',
+                        description: 'AWS, Azure, GCP, Docker, Kubernetes, CI/CD, Linux.',
+                        icon: '☁️',
+                        color: 'badge-blue'
+                    },
+                    {
+                        id: 'career-prep',
+                        title: 'Career Preparation',
+                        description: 'Interview Prep, Resume Building, System Design, Internship Prep.',
+                        icon: '💼',
+                        color: 'badge-yellow'
+                    },
+                    {
+                        id: 'competitive-prep',
+                        title: 'Competitive & Exam Prep',
+                        description: 'Placement Aptitude, Coding Practice, CS Fundamentals.',
+                        icon: '🎯',
+                        color: 'badge-green'
+                    },
+                    {
                         id: 'cat',
                         title: 'CAT Resources',
                         description: 'Comprehensive study materials, mock tests, and guides for Common Admission Test preparation.',
@@ -80,30 +122,75 @@ const Resources: React.FC = () => {
                     }
                 ]);
             } else {
-                // If there are resources in DB, we still want to ensure Programming Languages and Roadmaps are handled or added if missing
-                // For now, let's assume we want to always have these two at the top if they aren't already there
-                const hasProg = fetchedResources.some(r => r.id === 'programming-languages');
-                const hasRoadmaps = fetchedResources.some(r => r.id === 'roadmaps-merged');
-
-                let combined = [...fetchedResources];
-                if (!hasRoadmaps) {
-                    combined.unshift({
-                        id: 'roadmaps-merged',
-                        title: 'Learning Roadmaps',
-                        description: 'Structured paths to help you master new skills and prepare for career goals.',
-                        icon: '🗺️',
-                        color: 'badge-red'
-                    });
-                }
-                if (!hasProg) {
-                    combined.unshift({
+                // If there are resources in DB, we still want to ensure crucial tech topics are present
+                // This logic merges fetched resources with our local set if they are missing
+                const defaultResources = [
+                    {
                         id: 'programming-languages',
                         title: 'Programming Languages',
                         description: 'Detailed guides and resources for Java, Python, C++, JavaScript, and more.',
                         icon: '💻',
                         color: 'badge-purple'
-                    });
-                }
+                    },
+                    {
+                        id: 'roadmaps-merged',
+                        title: 'Learning Roadmaps',
+                        description: 'Structured paths to help you master new skills and prepare for career goals.',
+                        icon: '🗺️',
+                        color: 'badge-red'
+                    },
+                    {
+                        id: 'cybersecurity',
+                        title: 'Cybersecurity',
+                        description: 'Ethical Hacking, Web Security, Network Security, OSINT, Cloud Security.',
+                        icon: '🔒',
+                        color: 'badge-red'
+                    },
+                    {
+                        id: 'data-ai',
+                        title: 'Data & AI',
+                        description: 'DSA, Machine Learning, Deep Learning, Data Science, MLOps.',
+                        icon: '🤖',
+                        color: 'badge-blue'
+                    },
+                    {
+                        id: 'web-app-dev',
+                        title: 'Web & App Development',
+                        description: 'Frontend, Backend, Full Stack, Mobile App Development.',
+                        icon: '📱',
+                        color: 'badge-purple'
+                    },
+                    {
+                        id: 'cloud-devops',
+                        title: 'Cloud & DevOps',
+                        description: 'AWS, Azure, GCP, Docker, Kubernetes, CI/CD, Linux.',
+                        icon: '☁️',
+                        color: 'badge-blue'
+                    },
+                    {
+                        id: 'career-prep',
+                        title: 'Career Preparation',
+                        description: 'Interview Prep, Resume Building, System Design, Internship Prep.',
+                        icon: '💼',
+                        color: 'badge-yellow'
+                    },
+                    {
+                        id: 'competitive-prep',
+                        title: 'Competitive & Exam Prep',
+                        description: 'Placement Aptitude, Coding Practice, CS Fundamentals.',
+                        icon: '🎯',
+                        color: 'badge-green'
+                    }
+                ];
+
+                let combined = [...fetchedResources];
+
+                defaultResources.forEach(def => {
+                    if (!combined.some(r => r.id === def.id)) {
+                        combined.unshift(def);
+                    }
+                });
+
                 setResources(combined);
             }
         } catch (error) {
