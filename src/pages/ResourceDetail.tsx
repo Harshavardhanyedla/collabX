@@ -135,7 +135,7 @@ const ResourceDetail: React.FC = () => {
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                     >
-                        <span className="group-hover:-translate-x-1 transition-transform">←</span> Back to Dashboard
+                        <span className="group-hover:-translate-x-1 transition-transform">←</span> Back
                     </motion.button>
 
                     <motion.div
