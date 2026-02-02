@@ -49,10 +49,10 @@ export const languagesData: Record<string, LanguageDetail> = {
         careerScope: 'Explosive growth due to AI/ML revolution; widely used in startups and researchers.',
         whoShouldLearn: 'Beginners, future data scientists, and AI engineers.',
         youtubeCourses: [
-            { id: '1', title: 'Python for Beginners', channel: 'Programming with Mosh', duration: '6h 14m', thumbnail: 'https://img.youtube.com/vi/placeholder/hqdefault.jpg', url: '#' },
-            { id: '2', title: '100 Days of Python Code', channel: 'Angela Yu', duration: '60h+', thumbnail: 'https://img.youtube.com/vi/placeholder/hqdefault.jpg', url: '#' }
+            { id: '1', title: 'Python Full Course for free 🐍', channel: 'Bro Code', duration: '12h 00m', thumbnail: 'https://img.youtube.com/vi/ix9cRaBkVe0/hqdefault.jpg', url: 'https://www.youtube.com/watch?v=ix9cRaBkVe0' },
+            { id: '2', title: 'Python Tutorial for Beginners (with mini-projects)', channel: 'freeCodeCamp.org', duration: '8h 41m', thumbnail: 'https://img.youtube.com/vi/qwAFL1597eM/hqdefault.jpg', url: 'https://www.youtube.com/watch?v=qwAFL1597eM' }
         ],
-        notesLink: '#'
+        notesLink: 'https://drive.google.com/file/d/1Ht-K9p4-bpNsuRly5z2VCCObLgcEw17c/view?usp=drivesdk'
     },
     'cpp': {
         id: 'cpp',
