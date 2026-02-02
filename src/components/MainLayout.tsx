@@ -8,7 +8,7 @@ interface MainLayoutProps {
 
 const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
     return (
-        <div className="main-content pt-16 pb-32 lg:pt-20 lg:pb-8">
+        <div className="main-content pt-16 pb-24 lg:pt-20 lg:pb-8">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 {/* Left Sidebar - hidden on mobile, 3 cols on large */}
                 <div className="hidden lg:block lg:col-span-3">

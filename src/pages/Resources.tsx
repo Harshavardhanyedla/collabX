@@ -217,32 +217,32 @@ const Resources: React.FC = () => {
     return (
         <MainLayout>
             <div className="flex flex-col gap-4">
-                {/* Header & Search */}
+                {/* Header */}
                 <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                        <div>
-                            <div className="flex items-center gap-3 mb-2">
-                                <div className="p-2 bg-blue-50 rounded-lg text-[#0066FF]">
-                                    <BookOpenIcon className="h-6 w-6" />
-                                </div>
-                                <h1 className="text-2xl font-bold text-[#0f172a]">Learning Resources</h1>
-                            </div>
-                            <p className="text-gray-500 text-sm">
-                                Curated study materials and exam preparation guides.
-                            </p>
+                    <div className="flex items-center gap-3 mb-2">
+                        <div className="p-2 bg-blue-50 rounded-lg text-[#0066FF]">
+                            <BookOpenIcon className="h-6 w-6" />
                         </div>
-                        <div className="relative min-w-[300px]">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
-                            </div>
-                            <input
-                                type="text"
-                                placeholder="Search resources..."
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                className="block w-full pl-10 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#0066FF] focus:bg-white transition-all"
-                            />
+                        <h1 className="text-2xl font-bold text-[#0f172a]">Learning Resources</h1>
+                    </div>
+                    <p className="text-gray-500 text-sm">
+                        Curated study materials and exam preparation guides to help you excel.
+                    </p>
+                </div>
+
+                {/* Search */}
+                <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm lg:sticky lg:top-24 z-10">
+                    <div className="relative">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
                         </div>
+                        <input
+                            type="text"
+                            placeholder="Search resources, exams, or topics..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="block w-full pl-10 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#0066FF] focus:bg-white transition-all"
+                        />
                     </div>
                 </div>
 

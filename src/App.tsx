@@ -95,9 +95,7 @@ const App: React.FC = () => {
                     path="/students"
                     element={
                         <PrivateRoute>
-                            <MainLayout>
-                                <Students />
-                            </MainLayout>
+                            <Students />
                         </PrivateRoute>
                     }
                 />
@@ -105,9 +103,7 @@ const App: React.FC = () => {
                     path="/projects"
                     element={
                         <PrivateRoute>
-                            <MainLayout>
-                                <Projects />
-                            </MainLayout>
+                            <Projects />
                         </PrivateRoute>
                     }
                 />
@@ -115,9 +111,7 @@ const App: React.FC = () => {
                     path="/resources"
                     element={
                         <PrivateRoute>
-                            <MainLayout>
-                                <Resources />
-                            </MainLayout>
+                            <Resources />
                         </PrivateRoute>
                     }
                 />

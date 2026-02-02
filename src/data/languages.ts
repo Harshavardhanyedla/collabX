@@ -33,10 +33,10 @@ export const languagesData: Record<string, LanguageDetail> = {
         careerScope: 'High demand in large corporations, banking sectors, and Android app development firms.',
         whoShouldLearn: 'Anyone interested in building large-scale backend systems or Android applications.',
         youtubeCourses: [
-            { id: '1', title: 'Java Full Course 2024', channel: 'CodeWithHarry', duration: '12h 30m', thumbnail: 'https://img.youtube.com/vi/placeholder/hqdefault.jpg', url: '#' },
-            { id: '2', title: 'Java for Beginners', channel: 'Telusko', duration: '15h 45m', thumbnail: 'https://img.youtube.com/vi/placeholder/hqdefault.jpg', url: '#' }
+            { id: '1', title: 'Java Full Course for free ☕', channel: 'Bro Code', duration: '12h 00m', thumbnail: 'https://img.youtube.com/vi/xTtL8E4LzTQ/hqdefault.jpg', url: 'https://www.youtube.com/watch?v=xTtL8E4LzTQ' },
+            { id: '2', title: 'Learn Java 8 - Full Tutorial for Beginners', channel: 'freeCodeCamp.org', duration: '9h 32m', thumbnail: 'https://img.youtube.com/vi/grEKMHGYyns/hqdefault.jpg', url: 'https://www.youtube.com/watch?v=grEKMHGYyns' }
         ],
-        notesLink: '#'
+        notesLink: 'https://drive.google.com/file/d/1LPnOYZCFu1Vnnby74KVcgpWY8S1XOaBY/view?usp=drivesdk'
     },
     'python': {
         id: 'python',

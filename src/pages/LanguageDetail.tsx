@@ -95,15 +95,19 @@ const LanguageDetail: React.FC = () => {
                                             <div className="absolute bottom-2 right-2 px-2 py-1 bg-black/70 text-white text-[10px] font-bold rounded">
                                                 {course.duration}
                                             </div>
-                                            <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400">
-                                                <VideoCameraIcon className="h-8 w-8" />
-                                            </div>
+                                            <img
+                                                src={course.thumbnail}
+                                                alt={course.title}
+                                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                            />
                                         </div>
                                         <div className="p-4 flex-1">
                                             <h3 className="font-bold text-gray-900 mb-1 line-clamp-2 leading-snug">{course.title}</h3>
                                             <p className="text-xs text-gray-500 mb-4 font-medium">{course.channel}</p>
                                             <a
                                                 href={course.url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
                                                 className="mt-auto inline-flex items-center gap-2 text-sm font-bold text-[#0066FF] hover:bg-blue-50 px-3 py-1.5 rounded-lg transition-colors w-fit"
                                             >
                                                 Start Learning <ArrowUpRightIcon className="h-3 w-3" />
@@ -166,6 +170,8 @@ const LanguageDetail: React.FC = () => {
                             </p>
                             <a
                                 href={language.notesLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
                                 className="w-full flex items-center justify-center gap-2 py-3 bg-white text-[#0066FF] rounded-2xl font-bold text-sm hover:bg-blue-50 transition-colors shadow-lg"
                             >
                                 Get Drive Notes <ArrowUpRightIcon className="h-4 w-4" />
