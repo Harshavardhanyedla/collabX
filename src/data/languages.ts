@@ -81,9 +81,10 @@ export const languagesData: Record<string, LanguageDetail> = {
         careerScope: 'Universal demand; essential for every full-stack developer.',
         whoShouldLearn: 'Aspiring web developers and software engineers.',
         youtubeCourses: [
-            { id: '1', title: 'JavaScript Mastery', channel: 'Clever Programmer', duration: '10h 25m', thumbnail: 'https://img.youtube.com/vi/placeholder/hqdefault.jpg', url: '#' }
+            { id: '1', title: 'JavaScript Full Course for free 🌐', channel: 'Bro Code', duration: '12h 00m', thumbnail: 'https://img.youtube.com/vi/lfmg-EJ8gm4/hqdefault.jpg', url: 'https://www.youtube.com/watch?v=lfmg-EJ8gm4' },
+            { id: '2', title: 'JavaScript Programming - Full Course', channel: 'freeCodeCamp.org', duration: '7h 44m', thumbnail: 'https://img.youtube.com/vi/jS4aFq5-91M/hqdefault.jpg', url: 'https://www.youtube.com/watch?v=jS4aFq5-91M' }
         ],
-        notesLink: '#'
+        notesLink: 'https://drive.google.com/file/d/1y2uGTTn77pXBYqrQIPtP6UYtFC31dEtI/view?usp=drivesdk'
     },
     'typescript': {
         id: 'typescript',
