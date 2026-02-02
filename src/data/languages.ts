@@ -115,9 +115,10 @@ export const languagesData: Record<string, LanguageDetail> = {
         careerScope: 'Excellent scope in infrastructure-heavy companies and modern backend development.',
         whoShouldLearn: 'Backend engineers and developers interested in cloud infrastructure.',
         youtubeCourses: [
-            { id: '1', title: 'Go / Golang Tutorial', channel: 'CodeAcademy', duration: '4h 30m', thumbnail: 'https://img.youtube.com/vi/placeholder/hqdefault.jpg', url: '#' }
+            { id: '1', title: 'Go Programming – Golang Course with Bonus Projects', channel: 'freeCodeCamp.org', duration: '9h 32m', thumbnail: 'https://img.youtube.com/vi/un6ZyFkqFKo/hqdefault.jpg', url: 'https://www.youtube.com/watch?v=un6ZyFkqFKo' },
+            { id: '2', title: 'Learn Go Programming - Golang Tutorial for Beginners', channel: 'freeCodeCamp.org', duration: '6h 39m', thumbnail: 'https://img.youtube.com/vi/YS4e4q9oBaU/hqdefault.jpg', url: 'https://www.youtube.com/watch?v=YS4e4q9oBaU' }
         ],
-        notesLink: '#'
+        notesLink: 'https://drive.google.com/file/d/1NZqqkvO9R1YfxmjeiGx9AoGr-IZXMD2T/view?usp=drivesdk'
     },
     'rust': {
         id: 'rust',
