@@ -19,6 +19,7 @@ export interface LanguageDetail {
     whoShouldLearn: string;
     youtubeCourses: VideoCourse[];
     notesLink: string;
+    notesLabel?: string;
 }
 
 export const languagesData: Record<string, LanguageDetail> = {
@@ -97,9 +98,11 @@ export const languagesData: Record<string, LanguageDetail> = {
         careerScope: 'Increasingly preferred by top tech companies for web development over plain JS.',
         whoShouldLearn: 'JavaScript developers looking to build more reliable and scalable applications.',
         youtubeCourses: [
-            { id: '1', title: 'TypeScript Full Course', channel: 'Web Dev Simplified', duration: '2h 15m', thumbnail: 'https://img.youtube.com/vi/placeholder/hqdefault.jpg', url: '#' }
+            { id: '1', title: 'Learn TypeScript – Full Tutorial', channel: 'freeCodeCamp.org', duration: '4h 46m', thumbnail: 'https://img.youtube.com/vi/30LWjhZzg50/hqdefault.jpg', url: 'https://www.youtube.com/watch?v=30LWjhZzg50' },
+            { id: '2', title: 'Learn TypeScript - Full Course for Beginners', channel: 'freeCodeCamp.org', duration: '2h 06m', thumbnail: 'https://img.youtube.com/vi/SpwzRDUQ1GI/hqdefault.jpg', url: 'https://www.youtube.com/watch?v=SpwzRDUQ1GI' }
         ],
-        notesLink: '#'
+        notesLink: 'http://learn.microsoft.com/training/paths/build-javascript-applications-typescript/',
+        notesLabel: 'Additional Resources'
     },
     'golang': {
         id: 'golang',

@@ -152,7 +152,7 @@ const LanguageDetail: React.FC = () => {
                                     ))}
                                 </div>
                             </div>
-                            sections</section>
+                        </section>
                     </div>
 
                     {/* Right Column: Quick Stats & Notes */}
@@ -174,7 +174,7 @@ const LanguageDetail: React.FC = () => {
                                 rel="noopener noreferrer"
                                 className="w-full flex items-center justify-center gap-2 py-3 bg-white text-[#0066FF] rounded-2xl font-bold text-sm hover:bg-blue-50 transition-colors shadow-lg"
                             >
-                                Get Drive Notes <ArrowUpRightIcon className="h-4 w-4" />
+                                {language.notesLabel || "Get Drive Notes"} <ArrowUpRightIcon className="h-4 w-4" />
                             </a>
                         </div>
 
