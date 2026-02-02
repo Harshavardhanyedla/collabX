@@ -131,9 +131,10 @@ export const languagesData: Record<string, LanguageDetail> = {
         careerScope: 'Highly paid niche; rapidly growing in popularity for safety-critical systems.',
         whoShouldLearn: 'Systems programmers and anyone interested in high-performance, safe software.',
         youtubeCourses: [
-            { id: '1', title: 'Rust Programming Course', channel: 'No Boilerplate', duration: '5h 10m', thumbnail: 'https://img.youtube.com/vi/placeholder/hqdefault.jpg', url: '#' }
+            { id: '1', title: 'Learn Rust Programming - Complete Course 🦀', channel: 'freeCodeCamp.org', duration: '13h 59m', thumbnail: 'https://img.youtube.com/vi/BpPEoZW5IiY/hqdefault.jpg', url: 'https://www.youtube.com/watch?v=BpPEoZW5IiY' },
+            { id: '2', title: 'Rust 101 Crash Course: Learn Rust (6 HOURS!)', channel: 'Zero To Mastery', duration: '6h 01m', thumbnail: 'https://img.youtube.com/vi/lzKeecy4OmQ/hqdefault.jpg', url: 'https://www.youtube.com/watch?v=lzKeecy4OmQ' }
         ],
-        notesLink: '#'
+        notesLink: 'https://drive.google.com/file/d/1TRt-CXjDqAcvvvNYcwMM0EThflu_HU20/view?usp=drivesdk'
     },
     'swift': {
         id: 'swift',
