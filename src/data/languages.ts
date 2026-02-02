@@ -68,7 +68,7 @@ export const languagesData: Record<string, LanguageDetail> = {
             { id: '1', title: 'C++ Full Course for free ⚡️', channel: 'Bro Code', duration: '6h 00m', thumbnail: 'https://img.youtube.com/vi/-TkoO8Z07hI/hqdefault.jpg', url: 'https://www.youtube.com/watch?v=-TkoO8Z07hI' },
             { id: '2', title: 'C++ Tutorial for Beginners - Full Course', channel: 'freeCodeCamp.org', duration: '4h 01m', thumbnail: 'https://img.youtube.com/vi/vLnPwxZdW4Y/hqdefault.jpg', url: 'https://www.youtube.com/watch?v=vLnPwxZdW4Y' }
         ],
-        notesLink: '#'
+        notesLink: 'https://drive.google.com/file/d/1mmwZq9f9YcUbxrzvuIelqfedQpyNwMaX/view?usp=drivesdk'
     },
     'javascript': {
         id: 'javascript',
