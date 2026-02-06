@@ -2,19 +2,45 @@ import React from 'react';
 import {
     PlusIcon,
     ArrowRightIcon,
-    InformationCircleIcon,
-    CheckBadgeIcon
+    InformationCircleIcon
 } from '@heroicons/react/24/solid';
 import { useNavigate } from 'react-router-dom';
 
 const RightSidebar: React.FC = () => {
     const navigate = useNavigate();
 
-    const studentSuggestions = [
-        { name: 'Priya Sharma', role: 'GDSC Lead', college: 'BITS Pilani', verified: true },
-        { name: 'David Kim', role: 'Hackathon Winner', college: 'Georgia Tech', verified: true },
-        { name: 'Ananya Gupta', role: 'Open Source Contributor', college: 'IIIT Hyderabad', verified: true },
-    ];
+    const [students, setStudents] = React.useState<any[]>([]);
+    const [loading, setLoading] = React.useState(true);
+
+    React.useEffect(() => {
+        const fetchStudents = async () => {
+            try {
+                // Dynamic import to avoid SSR issues if any, though likely client side
+                const { collection, getDocs, query, limit } = await import('firebase/firestore');
+                const { db, auth } = await import('../lib/firebase');
+
+                const q = query(collection(db, 'users'), limit(5));
+                const querySnapshot = await getDocs(q);
+
+                const fetchedStudents: any[] = [];
+                const currentUserId = auth.currentUser?.uid;
+
+                querySnapshot.forEach((doc) => {
+                    if (doc.id !== currentUserId) {
+                        fetchedStudents.push({ ...doc.data(), uid: doc.id });
+                    }
+                });
+
+                setStudents(fetchedStudents.slice(0, 3));
+            } catch (error) {
+                console.error("Error fetching students:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchStudents();
+    }, []);
 
     const resourcePreview = [
         { title: 'Cybersecurity', icon: '🔒', desc: 'Ethical Hacking, Web Security' },
@@ -32,24 +58,55 @@ const RightSidebar: React.FC = () => {
                 </div>
 
                 <div className="flex flex-col gap-4">
-                    {studentSuggestions.map((person, idx) => (
-                        <div key={idx} className="flex gap-3">
-                            <div className="w-10 h-10 rounded-full bg-blue-100 shrink-0 flex items-center justify-center text-[#0066FF] font-bold text-xs uppercase">
-                                {person.name[0]}
-                            </div>
-                            <div className="flex flex-col min-w-0">
-                                <div className="flex items-center gap-1">
-                                    <span className="font-bold text-sm text-gray-900 truncate hover:text-[#0066FF] hover:underline cursor-pointer">{person.name}</span>
-                                    {person.verified && <CheckBadgeIcon className="h-3.5 w-3.5 text-[#0066FF]" />}
+                    {loading ? (
+                        // Simple Skeleton
+                        [1, 2, 3].map((i) => (
+                            <div key={i} className="flex gap-3 animate-pulse">
+                                <div className="w-10 h-10 rounded-full bg-gray-100 shrink-0"></div>
+                                <div className="flex flex-col gap-1 w-full">
+                                    <div className="h-4 bg-gray-100 rounded w-2/3"></div>
+                                    <div className="h-3 bg-gray-100 rounded w-1/2"></div>
                                 </div>
-                                <span className="text-xs text-gray-500 truncate">{person.role} at {person.college}</span>
-                                <button className="mt-1.5 flex items-center justify-center gap-1 px-3 py-1 border border-gray-500 text-gray-600 rounded-full text-sm font-bold hover:bg-gray-50 hover:border-gray-800 transition-colors w-24">
-                                    <PlusIcon className="h-4 w-4" />
-                                    <span>Connect</span>
-                                </button>
                             </div>
+                        ))
+                    ) : students.length > 0 ? (
+                        students.map((person, idx) => (
+                            <div key={idx} className="flex gap-3">
+                                {person.avatar ? (
+                                    <img src={person.avatar} alt={person.name} className="w-10 h-10 rounded-full object-cover border border-gray-100 shrink-0" />
+                                ) : (
+                                    <div className="w-10 h-10 rounded-full bg-blue-100 shrink-0 flex items-center justify-center text-[#0066FF] font-bold text-xs uppercase">
+                                        {person.name?.[0] || '?'}
+                                    </div>
+                                )}
+                                <div className="flex flex-col min-w-0">
+                                    <div className="flex items-center gap-1">
+                                        <span
+                                            className="font-bold text-sm text-gray-900 truncate hover:text-[#0066FF] hover:underline cursor-pointer"
+                                            onClick={() => navigate(`/profile/${person.uid}`)}
+                                        >
+                                            {person.name}
+                                        </span>
+                                        {/* Verification badge can be added if we have a field for it */}
+                                    </div>
+                                    <span className="text-xs text-gray-500 truncate">
+                                        {person.role || 'Student'}
+                                        {(person.college || person.institution) && ` at ${person.college || person.institution}`}
+                                    </span>
+                                    <button
+                                        className="mt-1.5 flex items-center justify-center gap-1 px-3 py-1 border border-gray-500 text-gray-600 rounded-full text-sm font-bold hover:bg-gray-50 hover:border-gray-800 transition-colors w-24"
+                                    >
+                                        <PlusIcon className="h-4 w-4" />
+                                        <span>Connect</span>
+                                    </button>
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <div className="text-center py-4 text-sm text-gray-500">
+                            No students found yet.
                         </div>
-                    ))}
+                    )}
                 </div>
 
                 <div className="mt-4 pt-2 border-t border-gray-50">
